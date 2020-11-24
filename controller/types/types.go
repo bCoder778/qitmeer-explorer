@@ -93,6 +93,7 @@ type Block struct {
 	CircleNonces  string         `json:"circlenonces"`
 	Address       string         `json:"address"`
 	Amount        float64        `json:"amount"`
+	Miner         *MinerPool     `json:"miner"`
 	Stat          stat.BlockStat `json:"stat"`
 }
 
@@ -145,6 +146,7 @@ func DBVinoutToVinout(vinout *types.Vinout) *Vinout {
 }
 
 func DBBlockToBlock(block *types.Block) *Block {
+	_, miner := Miners.Get(block.Address)
 	return &Block{
 		Id:            block.Id,
 		Hash:          block.Hash,
@@ -169,6 +171,7 @@ func DBBlockToBlock(block *types.Block) *Block {
 		EdgeBits:      block.EdgeBits,
 		CircleNonces:  block.CircleNonces,
 		Address:       block.Address,
+		Miner:         miner,
 		Amount:        qittypes.Amount(block.Amount).ToCoin(),
 		Stat:          block.Stat,
 	}
