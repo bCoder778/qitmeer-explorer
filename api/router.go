@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/bCoder778/log"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -52,7 +51,6 @@ type Token struct {
 
 func NewRestApi(addr string) *RestApi {
 	if restApi == nil {
-		log.Debugf("set addr: %s", addr)
 		restApi = &RestApi{Address: addr, routerMap: map[string]RouteOption{}, Auth: false}
 	}
 	return restApi
@@ -72,7 +70,7 @@ func (rest *RestApi) RouteSet(path string) *RestSet {
 	return &res
 }
 
-func (rest *RestApi) Start() {
+func (rest *RestApi) Start() error {
 	http.HandleFunc("/", Handle)
 	rest.Serv = &http.Server{Addr: rest.Address}
 	log.Debugf("Listen:%s", rest.Address)
@@ -80,9 +78,9 @@ func (rest *RestApi) Start() {
 		log.Debug(k)
 	}
 	if err := rest.Serv.ListenAndServe(); err != nil {
-		log.Error(err.Error())
-		os.Exit(1)
+		return err
 	}
+	return nil
 }
 
 func (rest *RestApi) Stop() {

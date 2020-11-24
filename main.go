@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/bCoder778/log"
 	"github.com/bCoder778/qitmeer-explorer/api"
-	"github.com/bCoder778/qitmeer-explorer/bCoder778/log"
 	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-explorer/version"
 	"os"
@@ -48,8 +48,15 @@ func runApi() {
 	log.SetOption(&log.Option{
 		LogLevel: conf.Setting.Log.Level,
 		Mode:     conf.Setting.Log.Mode,
+		Email:    &log.EMailOption{},
 	})
 
-	a := api.NewApi(":11360")
-	a.Run()
+	a, err := api.NewApi(conf.Setting)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if err := a.Run(); err != nil {
+		fmt.Println(err)
+	}
 }

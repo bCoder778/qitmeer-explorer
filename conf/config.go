@@ -35,7 +35,7 @@ type Config struct {
 }
 
 type Api struct {
-	Port int `toml:"port"`
+	Listen string `toml:"listen"`
 }
 
 type Rpc struct {

@@ -21,7 +21,7 @@ func StringifySingleLine() string {
 	} else {
 		GitCommitLog = GitCommitLog[0:10]
 	}
-	return fmt.Sprintf("Qitmeer-sync Version=%s. GitCommitLog=%s. GitStatus=%s. BuildTime=%s. GoVersion=%s. runtime=%s/%s.",
+	return fmt.Sprintf("Qitmeer-explorer Version=%s. GitCommitLog=%s. GitStatus=%s. BuildTime=%s. GoVersion=%s. runtime=%s/%s.",
 		Version, GitCommitLog[0:10], GitStatus, BuildTime, BuildGoVersion, runtime.GOOS, runtime.GOARCH)
 }
 
@@ -32,6 +32,6 @@ func StringifyMultiLine() string {
 	} else {
 		GitCommitLog = GitCommitLog[0:10]
 	}
-	return fmt.Sprintf("Qitmeer-sync = %s\nGitCommit = %s\nBuildTime = %s\nGoVersion = %s\n",
+	return fmt.Sprintf("Qitmeer-explorer = %s\nGitCommit = %s\nBuildTime = %s\nGoVersion = %s\n",
 		Version, GitCommitLog, BuildTime, BuildGoVersion)
 }
