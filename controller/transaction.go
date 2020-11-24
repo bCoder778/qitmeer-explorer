@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Controller) LastTransactions(page, size int) (*types.ListResp, error) {
-	blocks, err := c.db.LastTransactions(page, size)
+	txs, err := c.db.LastTransactions(page, size)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func (c *Controller) LastTransactions(page, size int) (*types.ListResp, error) {
 	return &types.ListResp{
 		Page:  page,
 		Size:  size,
-		List:  blocks,
+		List:  types.DBTransactionsToTransactions(txs),
 		Count: count,
 	}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-explorer/db/sqldb"
+	dbtypes "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 )
 
@@ -25,6 +26,7 @@ type IGet interface {
 	GetBlockCount() (int64, error)
 	GetTransactionCount() (int64, error)
 	GetBlock(hash string) (*types.Block, error)
+	GetAddressCount() (int64, error)
 }
 
 type IQuery interface {
@@ -38,8 +40,9 @@ type IQuery interface {
 }
 
 type IList interface {
-	LastBlocks(page, size int) ([]types.Block, error)
-	LastTransactions(page, size int) ([]types.Transaction, error)
+	LastBlocks(page, size int) ([]*types.Block, error)
+	LastTransactions(page, size int) ([]*types.Transaction, error)
+	MaxBalanceAddress(page, size int) ([]*dbtypes.Address, error)
 }
 
 func ConnectDB(setting *conf.Config) (IDB, error) {

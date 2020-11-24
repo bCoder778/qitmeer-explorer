@@ -56,3 +56,9 @@ func (d *DB) GetBlock(hash string) (*types.Block, error) {
 	_, err := d.engine.Table(block).Where("hash = ?", hash).Get(block)
 	return block, err
 }
+
+func (d *DB) GetAddressCount() (int64, error) {
+	return d.engine.Table(new(types.Vinout)).
+		Where("type = ? and spent_tx = ? and stat = ?", stat.TX_Vout, "", stat.TX_Confirmed).
+		GroupBy("address").Count()
+}

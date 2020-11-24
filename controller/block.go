@@ -16,7 +16,7 @@ func (c *Controller) LastBlocks(page, size int) (*types.ListResp, error) {
 	return &types.ListResp{
 		Page:  page,
 		Size:  size,
-		List:  blocks,
+		List:  types.DBBlocksToBlocks(blocks),
 		Count: count,
 	}, nil
 }

@@ -20,7 +20,6 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	var opt RouteOption
 	var exist bool
 	//var ok bool
-	log.Debugf("Authorization verification successful")
 	key := fmt.Sprintf("%s-%s", r.Method, reqPath)
 	log.Debugf("Key:%s", key)
 	if opt, exist = restApi.routerMap[key]; exist {

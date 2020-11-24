@@ -44,7 +44,8 @@ func (a *Api) listenInterrupt() {
 func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v1/list").
 		GetSub("block", a.lastBlocks).
-		GetSub("transaction", a.lastTransaction)
+		GetSub("transaction", a.lastTransaction).
+		GetSub("address", a.maxBalanceAddress)
 
 	a.rest.AuthRouteSet("api/v1/detail").
 		GetSub("block", a.blockDetail).
@@ -53,24 +54,36 @@ func (a *Api) addApi() {
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
 	blocks, err := a.controller.LastBlocks(page, size)
 	if err != nil {
-		return nil, &Error{
-			Code:    ERROR_UNKNOWN,
-			Message: err.Error(),
-		}
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	return blocks, nil
 }
 
 func (a *Api) lastTransaction(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
 	txs, err := a.controller.LastTransactions(page, size)
 	if err != nil {
-		return nil, &Error{
-			Code:    ERROR_UNKNOWN,
-			Message: err.Error(),
-		}
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) maxBalanceAddress(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.MaxBalanceAddress(page, size)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	return txs, nil
 }

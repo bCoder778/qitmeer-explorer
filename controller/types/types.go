@@ -2,6 +2,7 @@ package types
 
 import (
 	qittypes "github.com/Qitmeer/qitmeer/core/types"
+	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 )
@@ -122,6 +123,14 @@ func DBTransactionToTransaction(tx *types.Transaction) *Transaction {
 	}
 }
 
+func DBTransactionsToTransactions(dbTxs []*types.Transaction) []*Transaction {
+	txs := []*Transaction{}
+	for _, tx := range dbTxs {
+		txs = append(txs, DBTransactionToTransaction(tx))
+	}
+	return txs
+}
+
 func DBVinoutToVinout(vinout *types.Vinout) *Vinout {
 	return &Vinout{
 		Id:                     vinout.Id,
@@ -174,5 +183,35 @@ func DBBlockToBlock(block *types.Block) *Block {
 		Miner:         miner,
 		Amount:        qittypes.Amount(block.Amount).ToCoin(),
 		Stat:          block.Stat,
+	}
+}
+
+func DBBlocksToBlocks(dbBlocks []*types.Block) []*Block {
+	blocks := []*Block{}
+	for _, block := range dbBlocks {
+		blocks = append(blocks, DBBlockToBlock(block))
+	}
+	return blocks
+}
+
+type AddressResp struct {
+	Id      uint64  `json:"id"`
+	Address string  `json:"address"`
+	Balance float64 `json:"balance"`
+}
+
+func ToAddressRespList(addrList []*types2.Address, start uint64) []*AddressResp {
+	addrRespList := []*AddressResp{}
+	for i, addr := range addrList {
+		addrRespList = append(addrRespList, ToAddressResp(addr, start+uint64(i)+1))
+	}
+	return addrRespList
+}
+
+func ToAddressResp(addr *types2.Address, id uint64) *AddressResp {
+	return &AddressResp{
+		Id:      id,
+		Address: addr.Address,
+		Balance: qittypes.Amount(addr.Balance).ToCoin(),
 	}
 }
