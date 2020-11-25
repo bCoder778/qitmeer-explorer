@@ -28,6 +28,8 @@ type IGet interface {
 	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)
 	GetAddressCount() (int64, error)
+	GetUsableAmount(address string) (float64, error)
+	GetLockedAmount(address string) (float64, error)
 }
 
 type IQuery interface {

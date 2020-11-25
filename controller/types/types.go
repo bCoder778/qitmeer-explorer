@@ -216,3 +216,10 @@ func ToAddressResp(addr *types2.Address, id uint64) *AddressResp {
 		Balance: qittypes.Amount(addr.Balance).ToCoin(),
 	}
 }
+
+type AddressStatusResp struct {
+	Address string  `json:"address"`
+	Balance float64 `json:"balance"`
+	Usable  float64 `json:"usable"`
+	Locked  float64 `json:"locaked"`
+}

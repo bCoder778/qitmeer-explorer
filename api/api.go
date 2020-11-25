@@ -51,6 +51,9 @@ func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v1/detail").
 		GetSub("block", a.blockDetail).
 		GetSub("transaction", a.transactionDetail)
+
+	a.rest.AuthRouteSet("api/v1/status").
+		GetSub("address", a.addressStatus)
 }
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
@@ -121,6 +124,17 @@ func (a *Api) transactionDetail(ct *Context) (interface{}, *Error) {
 		}
 	}
 	return block, nil
+}
+
+func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
+	status, err := a.controller.AddressStatus(ct.Query["address"])
+	if err != nil {
+		return nil, &Error{
+			Code:    ERROR_UNKNOWN,
+			Message: err.Error(),
+		}
+	}
+	return status, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {

@@ -67,3 +67,15 @@ func (d *DB) GetAddressCount() (int64, error) {
 		Where("type = ? and spent_tx = ? and stat = ?", stat.TX_Vout, "", stat.TX_Confirmed).
 		GroupBy("address").Count()
 }
+
+func (d *DB) GetUsableAmount(address string) (float64, error) {
+	return d.engine.Table(new(types.Vinout)).Where("address = ? and type = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
+		address, stat.TX_Vout, "", "", stat.TX_Confirmed).
+		Sum(new(types.Vinout), "amount")
+}
+
+func (d *DB) GetLockedAmount(address string) (float64, error) {
+	return d.engine.Table(new(types.Vinout)).Where("address = ? and type = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
+		address, stat.TX_Vout, "", "", stat.TX_Unconfirmed).
+		Sum(new(types.Vinout), "amount")
+}
