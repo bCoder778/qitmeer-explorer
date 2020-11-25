@@ -29,7 +29,7 @@ func (c *Controller) BlockDetail(hash string) (*types.BlockDetail, error) {
 	txDetails := []*types.TransactionDetail{}
 	txs, err := c.db.QueryTransactionsByBlockHash(hash)
 	for _, tx := range txs {
-		tx, err := c.TransactionDetail(tx.TxId)
+		tx, err := c.TransactionDetail(tx.TxId, "no address")
 		if err != nil {
 			return nil, err
 		}

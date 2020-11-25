@@ -51,6 +51,11 @@ func (d *DB) GetTransactionCount() (int64, error) {
 	return d.engine.Table(new(types.Transaction)).Count()
 }
 
+func (d *DB) GetAddressTransactionCount(address string) (int64, error) {
+	return d.engine.Table(new(types.Vinout)).Distinct("tx_id").Where("address = ?", address).
+		Count()
+}
+
 func (d *DB) GetBlock(hash string) (*types.Block, error) {
 	block := &types.Block{}
 	_, err := d.engine.Table(block).Where("hash = ?", hash).Get(block)

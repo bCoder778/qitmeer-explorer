@@ -43,6 +43,7 @@ type Transaction struct {
 	Vouts         int         `json:"vout"`
 	TotalVin      float64     `json:"totalvin"`
 	TotalVout     float64     `json:"totalvout"`
+	AddressChange float64     `json:"addresschange"`
 	Fees          float64     `json:"fees"`
 	Duplicate     bool        `json:"duplicate"`
 	Stat          stat.TxStat `json:"stat"`

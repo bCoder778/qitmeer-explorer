@@ -45,7 +45,8 @@ func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v1/list").
 		GetSub("block", a.lastBlocks).
 		GetSub("transaction", a.lastTransaction).
-		GetSub("address", a.maxBalanceAddress)
+		GetSub("transaction/address", a.lastAddressTransaction).
+		GetSub("top/balance", a.balanceTop)
 
 	a.rest.AuthRouteSet("api/v1/detail").
 		GetSub("block", a.blockDetail).
@@ -76,12 +77,24 @@ func (a *Api) lastTransaction(ct *Context) (interface{}, *Error) {
 	return txs, nil
 }
 
-func (a *Api) maxBalanceAddress(ct *Context) (interface{}, *Error) {
+func (a *Api) lastAddressTransaction(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
-	txs, err := a.controller.MaxBalanceAddress(page, size)
+	txs, err := a.controller.LastAddressTransactions(page, size, ct.Query["address"])
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) balanceTop(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.BalanceTop(page, size)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
@@ -100,7 +113,7 @@ func (a *Api) blockDetail(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) transactionDetail(ct *Context) (interface{}, *Error) {
-	block, err := a.controller.TransactionDetail(ct.Query["txid"])
+	block, err := a.controller.TransactionDetail(ct.Query["txid"], "no address")
 	if err != nil {
 		return nil, &Error{
 			Code:    ERROR_UNKNOWN,

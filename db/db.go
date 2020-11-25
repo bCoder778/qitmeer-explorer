@@ -25,6 +25,7 @@ type IGet interface {
 	GetConfirmedBlockCount() int64
 	GetBlockCount() (int64, error)
 	GetTransactionCount() (int64, error)
+	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)
 	GetAddressCount() (int64, error)
 }
@@ -42,7 +43,8 @@ type IQuery interface {
 type IList interface {
 	LastBlocks(page, size int) ([]*types.Block, error)
 	LastTransactions(page, size int) ([]*types.Transaction, error)
-	MaxBalanceAddress(page, size int) ([]*dbtypes.Address, error)
+	LastAddressTxId(page, size int, address string) ([]string, error)
+	BalanceTop(page, size int) ([]*dbtypes.Address, error)
 }
 
 func ConnectDB(setting *conf.Config) (IDB, error) {

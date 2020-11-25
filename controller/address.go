@@ -2,8 +2,8 @@ package controller
 
 import "github.com/bCoder778/qitmeer-explorer/controller/types"
 
-func (c *Controller) MaxBalanceAddress(page, size int) (*types.ListResp, error) {
-	address, err := c.db.MaxBalanceAddress(page, size)
+func (c *Controller) BalanceTop(page, size int) (*types.ListResp, error) {
+	address, err := c.db.BalanceTop(page, size)
 	if err != nil {
 		return nil, err
 	}

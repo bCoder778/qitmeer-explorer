@@ -1,6 +1,7 @@
 package controller
 
 import (
+	types2 "github.com/Qitmeer/qitmeer/core/types"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 )
@@ -22,10 +23,37 @@ func (c *Controller) LastTransactions(page, size int) (*types.ListResp, error) {
 	}, nil
 }
 
-func (c *Controller) TransactionDetail(txId string) (*types.TransactionDetail, error) {
+func (c *Controller) LastAddressTransactions(page, size int, address string) (*types.ListResp, error) {
+	txIds, err := c.db.LastAddressTxId(page, size, address)
+	if err != nil {
+		return nil, err
+	}
+	count, err := c.db.GetAddressTransactionCount(address)
+	if err != nil {
+		return nil, err
+	}
+	txsDetail := []*types.TransactionDetail{}
+	for _, txId := range txIds {
+		tx, err := c.TransactionDetail(txId, address)
+		if err != nil {
+			return nil, err
+		}
+		txsDetail = append(txsDetail, tx)
+	}
+
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  txsDetail,
+		Count: count,
+	}, nil
+}
+
+func (c *Controller) TransactionDetail(txId string, address string) (*types.TransactionDetail, error) {
 	var header *types.Transaction
 	vin := []*types.Vinout{}
 	vout := []*types.Vinout{}
+	var totalVin, totalVout uint64
 	txs, err := c.db.GetTransactionByTxId(txId)
 	if err != nil {
 		return nil, err
@@ -48,13 +76,20 @@ func (c *Controller) TransactionDetail(txId string) (*types.TransactionDetail, e
 	}
 	for _, in := range dbVin {
 		vin = append(vin, types.DBVinoutToVinout(in))
+		if in.Address == address {
+			totalVin += in.Amount
+		}
 	}
 	dbVout, err := c.db.QueryTransactionVout(txId)
 	if err != nil {
 		return nil, err
 	}
-	for _, in := range dbVout {
-		vout = append(vout, types.DBVinoutToVinout(in))
+	for _, out := range dbVout {
+		vout = append(vout, types.DBVinoutToVinout(out))
+		if out.Address == address {
+			totalVin += out.Amount
+		}
 	}
+	header.AddressChange = types2.Amount(totalVin).ToCoin() - types2.Amount(totalVout).ToCoin()
 	return &types.TransactionDetail{Header: header, Vout: vout, Vin: vin}, nil
 }
