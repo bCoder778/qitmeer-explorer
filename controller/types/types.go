@@ -14,18 +14,18 @@ type ListResp struct {
 	List  interface{} `json:"list"`
 }
 
-type BlockDetail struct {
-	Header       *Block               `json:"header"`
-	Transactions []*TransactionDetail `json:"transactions"`
+type BlockDetailResp struct {
+	Header       *BlockResp               `json:"header"`
+	Transactions []*TransactionDetailResp `json:"transactions"`
 }
 
-type TransactionDetail struct {
-	Header *Transaction `json:"header"`
-	Vin    []*Vinout    `json:"vin"`
-	Vout   []*Vinout    `json:"vout"`
+type TransactionDetailResp struct {
+	Header *TransactionResp `json:"header"`
+	Vin    []*VinResp       `json:"vin"`
+	Vout   []*VoutResp      `json:"vout"`
 }
 
-type Transaction struct {
+type TransactionResp struct {
 	Id            uint64      `json:"id"`
 	TxId          string      `json:"txid"`
 	BlockHash     string      `json:"blockhash"`
@@ -49,7 +49,7 @@ type Transaction struct {
 	Stat          stat.TxStat `json:"stat"`
 }
 
-type Vinout struct {
+type VinoutResp struct {
 	Id                     uint64              `json:"id"`
 	TxId                   string              `json:"txid"`
 	Type                   stat.TxType         `json:"type"`
@@ -70,7 +70,38 @@ type Vinout struct {
 	Stat                   stat.TxStat         `json:"stat"`
 }
 
-type Block struct {
+type VinResp struct {
+	Id        uint64           `json:"id"`
+	TxId      string           `json:"txid"`
+	Number    int              `json:"number"`
+	Order     uint64           `json:"order"`
+	Timestamp int64            `json:"timestamp"`
+	Address   string           `json:"address"`
+	Amount    float64          `json:"amount"`
+	SpentedTx string           `json:"spentedtx"`
+	Vout      int              `json:"vout"`
+	Sequence  uint64           `json:"sequence"`
+	ScriptSig *types.ScriptSig `json:"scriptsig"`
+	Stat      stat.TxStat      `json:"stat"`
+}
+
+type VoutResp struct {
+	Id                     uint64              `json:"id"`
+	TxId                   string              `json:"txid"`
+	Number                 int                 `json:"number"`
+	Order                  uint64              `json:"order"`
+	Timestamp              int64               `json:"timestamp"`
+	Address                string              `json:"address"`
+	Amount                 float64             `json:"amount"`
+	ScriptPubKey           *types.ScriptPubKey `json:"scriptpubkey"`
+	SpentTx                string              `json:"spenttx"`
+	SpentNumber            int                 `json:"spentnumber"`
+	UnconfirmedSpentTx     string              `json:"unconfirmedspenttx"`
+	UnconfirmedSpentNumber int                 `json:"unconfirmedspentnumber"`
+	Stat                   stat.TxStat         `json:"stat"`
+}
+
+type BlockResp struct {
 	Id            uint64         `json:"id"`
 	Hash          string         `json:"hash"`
 	Txvalid       bool           `json:"txvalid"`
@@ -99,8 +130,8 @@ type Block struct {
 	Stat          stat.BlockStat `json:"stat"`
 }
 
-func DBTransactionToTransaction(tx *types.Transaction) *Transaction {
-	return &Transaction{
+func ToTransactionResp(tx *types.Transaction) *TransactionResp {
+	return &TransactionResp{
 		Id:            tx.Id,
 		TxId:          tx.TxId,
 		BlockHash:     tx.BlockHash,
@@ -124,16 +155,16 @@ func DBTransactionToTransaction(tx *types.Transaction) *Transaction {
 	}
 }
 
-func DBTransactionsToTransactions(dbTxs []*types.Transaction) []*Transaction {
-	txs := []*Transaction{}
+func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
+	txs := []*TransactionResp{}
 	for _, tx := range dbTxs {
-		txs = append(txs, DBTransactionToTransaction(tx))
+		txs = append(txs, ToTransactionResp(tx))
 	}
 	return txs
 }
 
-func DBVinoutToVinout(vinout *types.Vinout) *Vinout {
-	return &Vinout{
+func ToVinoutResp(vinout *types.Vinout) *VinoutResp {
+	return &VinoutResp{
 		Id:                     vinout.Id,
 		TxId:                   vinout.TxId,
 		Type:                   vinout.Type,
@@ -155,9 +186,43 @@ func DBVinoutToVinout(vinout *types.Vinout) *Vinout {
 	}
 }
 
-func DBBlockToBlock(block *types.Block) *Block {
+func ToVinResp(vinout *types.Vinout) *VinResp {
+	return &VinResp{
+		Id:        vinout.Id,
+		TxId:      vinout.TxId,
+		Number:    vinout.Number,
+		Order:     vinout.Order,
+		Timestamp: vinout.Timestamp,
+		Address:   vinout.Address,
+		Amount:    qittypes.Amount(vinout.Amount).ToCoin(),
+		SpentedTx: vinout.SpentedTx,
+		Vout:      vinout.Vout,
+		Sequence:  vinout.Sequence,
+		ScriptSig: vinout.ScriptSig,
+		Stat:      vinout.Stat,
+	}
+}
+
+func ToVoutResp(vinout *types.Vinout) *VoutResp {
+	return &VoutResp{
+		Id:                     vinout.Id,
+		TxId:                   vinout.TxId,
+		Number:                 vinout.Number,
+		Order:                  vinout.Order,
+		Timestamp:              vinout.Timestamp,
+		Address:                vinout.Address,
+		Amount:                 qittypes.Amount(vinout.Amount).ToCoin(),
+		ScriptPubKey:           vinout.ScriptPubKey,
+		SpentTx:                vinout.SpentTx,
+		SpentNumber:            vinout.SpentNumber,
+		UnconfirmedSpentTx:     vinout.UnconfirmedSpentTx,
+		UnconfirmedSpentNumber: vinout.UnconfirmedSpentNumber,
+	}
+}
+
+func ToBlockResp(block *types.Block) *BlockResp {
 	_, miner := Miners.Get(block.Address)
-	return &Block{
+	return &BlockResp{
 		Id:            block.Id,
 		Hash:          block.Hash,
 		Txvalid:       block.Txvalid,
@@ -187,10 +252,10 @@ func DBBlockToBlock(block *types.Block) *Block {
 	}
 }
 
-func DBBlocksToBlocks(dbBlocks []*types.Block) []*Block {
-	blocks := []*Block{}
+func ToBlockRespList(dbBlocks []*types.Block) []*BlockResp {
+	blocks := []*BlockResp{}
 	for _, block := range dbBlocks {
-		blocks = append(blocks, DBBlockToBlock(block))
+		blocks = append(blocks, ToBlockResp(block))
 	}
 	return blocks
 }
@@ -222,4 +287,10 @@ type AddressStatusResp struct {
 	Balance float64 `json:"balance"`
 	Usable  float64 `json:"usable"`
 	Locked  float64 `json:"locaked"`
+}
+
+type AlgorithmResp struct {
+	Name       string `json:"name"`
+	HashRate   string `json:"hashrate"`
+	Difficulty string `json:"difficulty"`
 }

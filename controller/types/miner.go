@@ -30,7 +30,7 @@ var Miners = MinerPools{
 	},
 	"TmUHh6bAdLbto9AYhodEwGZi9WY77CoBFXr": {
 		Name: "Hashpool",
-		Url:  "https://hashpool.com/",
+		Url:  "https://hashpool.com",
 	},
 	"TmRfnZPT3r93WG1LhHdEgeJi36gmPN4MytD": {
 		Name: "uupool.cn",
@@ -40,4 +40,16 @@ var Miners = MinerPools{
 		Name: "hpt.com",
 		Url:  "https://hpt.com",
 	},
+	"TmYEsUQbcbFG3t2rEZfRqgk5DhDBhof9qSJ": {
+		Name: "F2Pool",
+		Url:  "https://www.f2pool.com",
+	},
+}
+
+type DistributionResp struct {
+	Miner         string `json:"miner"`
+	Blocks        uint64 `json:"blocks"`
+	Proportion    string `json:"proportion"`
+	LastOrder     uint64 `json:"lastorder"`
+	LastTimestamp int64  `json:"lasttimestamp"`
 }

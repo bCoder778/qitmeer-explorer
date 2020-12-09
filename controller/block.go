@@ -5,29 +5,29 @@ import (
 )
 
 func (c *Controller) LastBlocks(page, size int) (*types.ListResp, error) {
-	blocks, err := c.db.LastBlocks(page, size)
+	blocks, err := c.storage.LastBlocks(page, size)
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.db.GetBlockCount()
+	count, err := c.storage.GetBlockCount()
 	if err != nil {
 		return nil, err
 	}
 	return &types.ListResp{
 		Page:  page,
 		Size:  size,
-		List:  types.DBBlocksToBlocks(blocks),
+		List:  types.ToBlockRespList(blocks),
 		Count: count,
 	}, nil
 }
 
-func (c *Controller) BlockDetail(hash string) (*types.BlockDetail, error) {
-	blockHeader, err := c.db.GetBlock(hash)
+func (c *Controller) BlockDetail(hash string) (*types.BlockDetailResp, error) {
+	blockHeader, err := c.storage.GetBlock(hash)
 	if err != nil {
 		return nil, err
 	}
-	txDetails := []*types.TransactionDetail{}
-	txs, err := c.db.QueryTransactionsByBlockHash(hash)
+	txDetails := []*types.TransactionDetailResp{}
+	txs, err := c.storage.QueryTransactionsByBlockHash(hash)
 	for _, tx := range txs {
 		tx, err := c.TransactionDetail(tx.TxId, "no address")
 		if err != nil {
@@ -35,5 +35,5 @@ func (c *Controller) BlockDetail(hash string) (*types.BlockDetail, error) {
 		}
 		txDetails = append(txDetails, tx)
 	}
-	return &types.BlockDetail{Header: types.DBBlockToBlock(blockHeader), Transactions: txDetails}, nil
+	return &types.BlockDetailResp{Header: types.ToBlockResp(blockHeader), Transactions: txDetails}, nil
 }

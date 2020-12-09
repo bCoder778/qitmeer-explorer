@@ -27,11 +27,17 @@ func init() {
 }
 
 type Config struct {
+	Qitmeer   *Qitmeer   `toml:"qitmeer"`
 	Api       *Api       `toml:"api"`
 	Rpc       *Rpc       `toml:"rpc"`
 	DB        *DB        `toml:"db"`
 	Log       *Log       `toml:"log"`
 	Resources *Resources `toml:"resources"`
+}
+
+type Qitmeer struct {
+	Version string `toml:"version"`
+	Network string `toml:"network"`
 }
 
 type Api struct {

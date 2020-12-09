@@ -12,6 +12,7 @@ type IDB interface {
 	IGet
 	IQuery
 	IList
+	IStatus
 	Close() error
 }
 
@@ -30,6 +31,8 @@ type IGet interface {
 	GetAddressCount() (int64, error)
 	GetUsableAmount(address string) (float64, error)
 	GetLockedAmount(address string) (float64, error)
+	GetLastMinerBlock(address string) *types.Block
+	GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block, error)
 }
 
 type IQuery interface {
@@ -47,6 +50,10 @@ type IList interface {
 	LastTransactions(page, size int) ([]*types.Transaction, error)
 	LastAddressTxId(page, size int, address string) ([]string, error)
 	BalanceTop(page, size int) ([]*dbtypes.Address, error)
+}
+
+type IStatus interface {
+	BlocksDistribution() []*dbtypes.MinerStatus
 }
 
 func ConnectDB(setting *conf.Config) (IDB, error) {

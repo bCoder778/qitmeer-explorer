@@ -44,9 +44,9 @@ func (a *Api) listenInterrupt() {
 func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v1/list").
 		GetSub("block", a.lastBlocks).
-		GetSub("transaction", a.lastTransaction).
-		GetSub("transaction/address", a.lastAddressTransaction).
-		GetSub("top/balance", a.balanceTop)
+		GetSub("transaction", a.lastTransactions).
+		GetSub("address/transaction", a.lastAddressTransactions).
+		GetSub("top/address", a.balanceTop)
 
 	a.rest.AuthRouteSet("api/v1/detail").
 		GetSub("block", a.blockDetail).
@@ -54,6 +54,12 @@ func (a *Api) addApi() {
 
 	a.rest.AuthRouteSet("api/v1/status").
 		GetSub("address", a.addressStatus)
+
+	a.rest.AuthRouteSet("api/v1/blocks").
+		GetSub("distribution", a.blocksDistribution)
+
+	a.rest.AuthRouteSet("api/v1/algorithm").
+		GetSub("list", a.algorithmList)
 }
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
@@ -68,7 +74,7 @@ func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
 	return blocks, nil
 }
 
-func (a *Api) lastTransaction(ct *Context) (interface{}, *Error) {
+func (a *Api) lastTransactions(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
@@ -80,7 +86,7 @@ func (a *Api) lastTransaction(ct *Context) (interface{}, *Error) {
 	return txs, nil
 }
 
-func (a *Api) lastAddressTransaction(ct *Context) (interface{}, *Error) {
+func (a *Api) lastAddressTransactions(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
@@ -135,6 +141,16 @@ func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
 		}
 	}
 	return status, nil
+}
+
+func (a *Api) blocksDistribution(ct *Context) (interface{}, *Error) {
+	distribution := a.controller.BlocksDistribution()
+	return distribution, nil
+}
+
+func (a *Api) algorithmList(ct *Context) (interface{}, *Error) {
+	alist := a.controller.AlgorithmList()
+	return alist, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {

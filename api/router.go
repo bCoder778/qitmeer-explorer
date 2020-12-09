@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -85,7 +86,7 @@ func (rest *RestApi) Start() error {
 
 func (rest *RestApi) Stop() {
 	if rest.Serv != nil {
-		rest.Serv.Shutdown(nil)
+		rest.Serv.Shutdown(context.Background())
 		log.Debug("Shutdown")
 	}
 }

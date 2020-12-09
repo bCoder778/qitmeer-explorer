@@ -23,3 +23,8 @@ level=0
 [resources]
 cpu-number=4
 gc-percent=20
+
+[qitmeer]
+# 0.9|0.10
+version="0.10"
+network="testnet"

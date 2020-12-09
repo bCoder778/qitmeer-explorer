@@ -6,11 +6,11 @@ import (
 )
 
 func (c *Controller) BalanceTop(page, size int) (*types.ListResp, error) {
-	address, err := c.db.BalanceTop(page, size)
+	address, err := c.storage.BalanceTop(page, size)
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.db.GetAddressCount()
+	count, err := c.storage.GetAddressCount()
 	if err != nil {
 		return nil, err
 	}
@@ -24,11 +24,11 @@ func (c *Controller) BalanceTop(page, size int) (*types.ListResp, error) {
 }
 
 func (c *Controller) AddressStatus(address string) (*types.AddressStatusResp, error) {
-	usable, err := c.db.GetUsableAmount(address)
+	usable, err := c.storage.GetUsableAmount(address)
 	if err != nil {
 		return nil, err
 	}
-	locked, err := c.db.GetLockedAmount(address)
+	locked, err := c.storage.GetLockedAmount(address)
 	if err != nil {
 		return nil, err
 	}

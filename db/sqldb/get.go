@@ -79,3 +79,18 @@ func (d *DB) GetLockedAmount(address string) (float64, error) {
 		address, stat.TX_Vout, "", "", stat.TX_Unconfirmed).
 		Sum(new(types.Vinout), "amount")
 }
+
+func (d *DB) GetLastMinerBlock(address string) *types.Block {
+	block := types.Block{}
+	d.engine.Table(new(types.Block)).Where("address = ? and stat in (?, ?)", address, stat.Block_Confirmed, stat.Block_Unconfirmed).Desc("order").Get(&block)
+	return &block
+}
+
+func (d *DB) GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block, error) {
+	block := new(types.Block)
+	_, err := d.engine.Where("pow_name = ? and edge_bits = ?", algorithm, edgeBits).Desc("order").Get(block)
+	if err != nil {
+		return nil, err
+	}
+	return block, nil
+}
