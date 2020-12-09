@@ -47,6 +47,10 @@ func (d *DB) GetBlockCount() (int64, error) {
 	return d.engine.Table(new(types.Block)).Count()
 }
 
+func (d *DB) GetValidBlockCount() (int64, error) {
+	return d.engine.Table(new(types.Block)).Where("stat in (?, ?)", stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
+}
+
 func (d *DB) GetTransactionCount() (int64, error) {
 	return d.engine.Table(new(types.Transaction)).Count()
 }

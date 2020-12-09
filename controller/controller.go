@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/bCoder778/qitmeer-explorer/cache"
 	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-explorer/controller/qitmeer"
 	"github.com/bCoder778/qitmeer-explorer/db"
@@ -10,6 +11,7 @@ import (
 type Controller struct {
 	storage db.IDB
 	qitmeer IQitmeer
+	cache   *cache.MemCache
 }
 
 func NewController(conf *conf.Config) (*Controller, error) {
@@ -21,7 +23,7 @@ func NewController(conf *conf.Config) (*Controller, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Controller{storage: storage, qitmeer: qitmeer}, nil
+	return &Controller{storage: storage, qitmeer: qitmeer, cache: cache.NewMemCache()}, nil
 }
 
 func newQitmeer(c *conf.Qitmeer, storage db.IDB) (IQitmeer, error) {

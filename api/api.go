@@ -61,6 +61,13 @@ func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v1/algorithm").
 		GetSub("list", a.algorithmList).
 		GetSub("line", a.algorithmLine)
+
+	a.rest.AuthRouteSet("api/v1/explorer").
+		GetSub("price", a.getPrice).
+		GetSub("circulating", a.getCirculating).
+		GetSub("circulatingfloat", a.getCirculatingFloat).
+		GetSub("max", a.getMax).
+		GetSub("maxfloat", a.getMaxFloat)
 }
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
@@ -68,6 +75,7 @@ func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
+
 	blocks, err := a.controller.LastBlocks(page, size)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
@@ -179,6 +187,37 @@ func (a *Api) algorithmLine(ct *Context) (interface{}, *Error) {
 	}
 	alist := a.controller.AlgorithmLine(algorithm, iSec)
 	return alist, nil
+}
+
+func (a *Api) getPrice(ct *Context) (interface{}, *Error) {
+	price, err := a.controller.GetPrice()
+	if err != nil {
+		return nil, &Error{
+			Code:    ERROR_UNKNOWN,
+			Message: err.Error(),
+		}
+	}
+	return price, nil
+}
+
+func (a *Api) getCirculatingFloat(ct *Context) (interface{}, *Error) {
+	pMeer := a.controller.GetCirculatingFloat()
+	return pMeer, nil
+}
+
+func (a *Api) getCirculating(ct *Context) (interface{}, *Error) {
+	pMeer := a.controller.GetCirculating()
+	return pMeer, nil
+}
+
+func (a *Api) getMax(ct *Context) (interface{}, *Error) {
+	pMeer := a.controller.GetMaxPMeer()
+	return pMeer, nil
+}
+
+func (a *Api) getMaxFloat(ct *Context) (interface{}, *Error) {
+	pMeer := a.controller.GetMaxFloatPMeer()
+	return pMeer, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {

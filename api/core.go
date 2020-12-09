@@ -12,7 +12,7 @@ import (
 
 func Handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	log.Debug("Request:%s", r.RequestURI)
+	log.Debugf("Request:%s", r.RequestURI)
 	reqPath := strings.TrimLeft(r.URL.Path, "/")
 	var result interface{}
 	var err *Error //errors.New(fmt.Sprintf("%s is not exist.", reqPath))
@@ -36,6 +36,10 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		result, err = handleFile(reqPath, w)
+		if err != nil {
+			w.WriteHeader(404)
+			log.Warnf("Not Found Key:%s", key)
+		}
 		return
 	}
 

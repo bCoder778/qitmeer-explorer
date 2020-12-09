@@ -1,11 +1,28 @@
 package controller
 
-import "github.com/bCoder778/qitmeer-explorer/controller/types"
+import (
+	"fmt"
+	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	"time"
+)
 
 func (c *Controller) AlgorithmList() []*types.AlgorithmResp {
-	return c.qitmeer.AlgorithmList()
+	value, err := c.cache.Value("AlgorithmList", "AlgorithmList")
+	if err != nil {
+		list := c.qitmeer.AlgorithmList()
+		c.cache.Add("AlgorithmList", "AlgorithmList", 120*time.Second, list)
+		return list
+	}
+	return value.([]*types.AlgorithmResp)
 }
 
 func (c *Controller) AlgorithmLine(algorithm string, sec int) *types.AlgorithmLineResp {
-	return c.qitmeer.AlgorithmLine(algorithm, sec)
+	key := fmt.Sprintf("%s-%s", algorithm, sec)
+	value, err := c.cache.Value("AlgorithmLine", key)
+	if err != nil {
+		line := c.qitmeer.AlgorithmLine(algorithm, sec)
+		c.cache.Add("AlgorithmLine", key, time.Second*time.Duration(sec/10), line)
+		return line
+	}
+	return value.(*types.AlgorithmLineResp)
 }

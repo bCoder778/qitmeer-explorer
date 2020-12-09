@@ -3,9 +3,20 @@ package controller
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	"time"
 )
 
 func (c *Controller) BlocksDistribution() []*types.DistributionResp {
+	value, err := c.cache.Value("BlocksDistribution", "BlocksDistribution")
+	if err != nil {
+		distributions := c.blocksDistribution()
+		c.cache.Add("BlocksDistribution", "BlocksDistribution", 60*60*time.Second, distributions)
+		return distributions
+	}
+	return value.([]*types.DistributionResp)
+}
+
+func (c *Controller) blocksDistribution() []*types.DistributionResp {
 	minerstatus := c.storage.BlocksDistribution()
 	distributions := map[string]*types.DistributionResp{}
 	rs := []*types.DistributionResp{}

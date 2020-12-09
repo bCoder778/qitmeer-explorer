@@ -25,6 +25,7 @@ type IGet interface {
 	GetAllUtxo() float64
 	GetConfirmedBlockCount() int64
 	GetBlockCount() (int64, error)
+	GetValidBlockCount() (int64, error)
 	GetTransactionCount() (int64, error)
 	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)

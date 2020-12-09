@@ -1,10 +1,27 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	"time"
 )
 
 func (c *Controller) LastBlocks(page, size int) (*types.ListResp, error) {
+	key := fmt.Sprintf("%d-%d", page, size)
+	value, err := c.cache.Value("LastBlocks", key)
+	if err != nil {
+		blockList, err := c.lastBlocks(page, size)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("LastBlocks", key, 30*time.Second, blockList)
+		return blockList, nil
+	} else {
+		return value.(*types.ListResp), nil
+	}
+}
+
+func (c *Controller) lastBlocks(page, size int) (*types.ListResp, error) {
 	blocks, err := c.storage.LastBlocks(page, size)
 	if err != nil {
 		return nil, err
@@ -22,6 +39,20 @@ func (c *Controller) LastBlocks(page, size int) (*types.ListResp, error) {
 }
 
 func (c *Controller) BlockDetail(hash string) (*types.BlockDetailResp, error) {
+	value, err := c.cache.Value("BlockDetail", hash)
+	if err != nil {
+		detail, err := c.blockDetail(hash)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("BlockDetail", hash, 2*60*time.Second, detail)
+		return detail, nil
+	} else {
+		return value.(*types.BlockDetailResp), nil
+	}
+}
+
+func (c *Controller) blockDetail(hash string) (*types.BlockDetailResp, error) {
 	blockHeader, err := c.storage.GetBlock(hash)
 	if err != nil {
 		return nil, err
