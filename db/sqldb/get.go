@@ -62,6 +62,12 @@ func (d *DB) GetBlock(hash string) (*types.Block, error) {
 	return block, err
 }
 
+func (d *DB) GetLastBlock() (*types.Block, error) {
+	var block = &types.Block{}
+	_, err := d.engine.Table(new(types.Block)).Desc("order").Get(block)
+	return block, err
+}
+
 func (d *DB) GetAddressCount() (int64, error) {
 	return d.engine.Table(new(types.Vinout)).
 		Where("type = ? and spent_tx = ? and stat = ?", stat.TX_Vout, "", stat.TX_Confirmed).

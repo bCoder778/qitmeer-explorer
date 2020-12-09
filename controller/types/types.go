@@ -294,3 +294,15 @@ type AlgorithmResp struct {
 	HashRate   string `json:"hashrate"`
 	Difficulty string `json:"difficulty"`
 }
+
+type AlgorithmAvg struct {
+	Value string
+	Time  int64
+	Uint  string
+}
+
+type AlgorithmLineResp struct {
+	Name string
+	Sec  int
+	Avgs []*AlgorithmAvg
+}

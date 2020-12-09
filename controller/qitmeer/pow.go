@@ -44,7 +44,7 @@ func getHashUint(difficulty uint32, uintIndex int, blocktime int) string {
 	if !ok {
 		return H
 	}
-	val := compactToHashrate(difficulty, uint, blocktime)
+	val, _ := compactToHashrate(difficulty, uint, blocktime)
 	fVal, _ := strconv.ParseFloat(val, 64)
 	if fVal < float64(100) {
 		return getHashUint(difficulty, uintIndex-1, blocktime)
@@ -52,13 +52,12 @@ func getHashUint(difficulty uint32, uintIndex int, blocktime int) string {
 	return uint
 }
 
-func compactToHashrate(input uint32, unit string, blocktime int) string {
+func compactToHashrate(input uint32, unit string, blocktime int) (string, string) {
 	diffBig := pow.CompactToBig(input)
 	maxBig, _ := new(big.Int).SetString("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16)
 	maxBig.Div(maxBig, diffBig)
 	maxBig.Div(maxBig, big.NewInt(int64(blocktime)))
-	val, _ := qx.GetHashrate(maxBig, unit)
-	return val
+	return qx.GetHashrate(maxBig, unit)
 }
 
 func compactToGPS(compact uint32, blockTime, scale int) float64 {

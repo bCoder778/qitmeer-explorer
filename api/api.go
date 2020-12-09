@@ -59,7 +59,8 @@ func (a *Api) addApi() {
 		GetSub("distribution", a.blocksDistribution)
 
 	a.rest.AuthRouteSet("api/v1/algorithm").
-		GetSub("list", a.algorithmList)
+		GetSub("list", a.algorithmList).
+		GetSub("line", a.algorithmLine)
 }
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
@@ -150,6 +151,33 @@ func (a *Api) blocksDistribution(ct *Context) (interface{}, *Error) {
 
 func (a *Api) algorithmList(ct *Context) (interface{}, *Error) {
 	alist := a.controller.AlgorithmList()
+	return alist, nil
+}
+
+func (a *Api) algorithmLine(ct *Context) (interface{}, *Error) {
+	algorithm := ct.Query["algorithm"]
+	if len(algorithm) == 0 {
+		return nil, &Error{
+			Code:    ERROR_UNKNOWN,
+			Message: "algorithm is required",
+		}
+	}
+	sec := ct.Query["sec"]
+	if len(algorithm) == 0 {
+		return nil, &Error{
+			Code:    ERROR_UNKNOWN,
+			Message: "sec is required",
+		}
+	}
+
+	iSec, err := strconv.Atoi(sec)
+	if len(algorithm) == 0 {
+		return nil, &Error{
+			Code:    ERROR_UNKNOWN,
+			Message: err.Error(),
+		}
+	}
+	alist := a.controller.AlgorithmLine(algorithm, iSec)
 	return alist, nil
 }
 

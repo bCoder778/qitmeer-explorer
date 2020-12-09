@@ -28,6 +28,7 @@ type IGet interface {
 	GetTransactionCount() (int64, error)
 	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)
+	GetLastBlock() (*types.Block, error)
 	GetAddressCount() (int64, error)
 	GetUsableAmount(address string) (float64, error)
 	GetLockedAmount(address string) (float64, error)
@@ -43,6 +44,7 @@ type IQuery interface {
 	QueryTransactionsByBlockHash(hash string) ([]types.Transaction, error)
 	QueryTransactionVout(txId string) ([]*types.Vinout, error)
 	QueryTransactionVin(txId string) ([]*types.Vinout, error)
+	QueryAlgorithmDiffInTime(algorithm string, edgeBits int, max int64, min int64) []*types.Block
 }
 
 type IList interface {

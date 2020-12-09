@@ -1,7 +1,7 @@
 package qitmeer
 
 const (
-	Cuckaroom29_Show = "Cuckaroom 29"
+	Cuckaroom29_Show = "Cuckaroom29"
 	Keccak256_Show   = "Keccak256"
 	Cuckaroo_Show    = "Cuckaroo"
 	Cryptonight_Show = "Cryptonight"
@@ -17,50 +17,50 @@ const (
 )
 
 type Params struct {
-	AlgorithmList []*Algorithm
+	AlgorithmList map[string]*Algorithm
 }
 
 type Algorithm struct {
 	ShowName string
-	Name     string
+	DBName   string
 	EdgeBits int
 }
 
 var Params0_9 = &Params{
-	AlgorithmList: []*Algorithm{
-		{
+	AlgorithmList: map[string]*Algorithm{
+		Cuckaroom29_Show: {
 			ShowName: Cuckaroom29_Show,
-			Name:     Cuckaroom29_DB,
+			DBName:   Cuckaroom29_DB,
 			EdgeBits: 29,
 		},
-		{
+		Keccak256_Show: {
 			ShowName: Keccak256_Show,
-			Name:     Keccak256_DB,
+			DBName:   Keccak256_DB,
 			EdgeBits: 0,
 		},
 	},
 }
 
 var Params0_10 = &Params{
-	AlgorithmList: []*Algorithm{
-		{
+	AlgorithmList: map[string]*Algorithm{
+		Cuckaroo_Show: {
 			ShowName: Cuckaroo_Show,
-			Name:     Cuckaroo_DB,
+			DBName:   Cuckaroo_DB,
 			EdgeBits: 24,
 		},
-		{
+		Keccak256_Show: {
 			ShowName: Keccak256_Show,
-			Name:     Keccak256_DB,
+			DBName:   Keccak256_DB,
 			EdgeBits: 0,
 		},
-		{
+		Cryptonight_Show: {
 			ShowName: Cryptonight_Show,
-			Name:     Cryptonight_DB,
+			DBName:   Cryptonight_DB,
 			EdgeBits: 0,
 		},
-		{
+		Blake2b_Show: {
 			ShowName: Blake2b_Show,
-			Name:     Blake2b_DB,
+			DBName:   Blake2b_DB,
 			EdgeBits: 0,
 		},
 	},
