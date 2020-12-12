@@ -176,3 +176,7 @@ func getBlockList(blocks []*dbtypes.Block, max, min int64) []*dbtypes.Block {
 	}
 	return blockList
 }
+
+func (q *QitmeerV0_9) NodeList() {
+
+}

@@ -52,7 +52,6 @@ type TransactionResp struct {
 type VinoutResp struct {
 	Id                     uint64              `json:"id"`
 	TxId                   string              `json:"txid"`
-	Type                   stat.TxType         `json:"type"`
 	Number                 int                 `json:"number"`
 	Order                  uint64              `json:"order"`
 	Timestamp              int64               `json:"timestamp"`
@@ -163,30 +162,7 @@ func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
 	return txs
 }
 
-func ToVinoutResp(vinout *types.Vinout) *VinoutResp {
-	return &VinoutResp{
-		Id:                     vinout.Id,
-		TxId:                   vinout.TxId,
-		Type:                   vinout.Type,
-		Number:                 vinout.Number,
-		Order:                  vinout.Order,
-		Timestamp:              vinout.Timestamp,
-		Address:                vinout.Address,
-		Amount:                 qittypes.Amount(vinout.Amount).ToCoin(),
-		ScriptPubKey:           vinout.ScriptPubKey,
-		SpentTx:                vinout.SpentTx,
-		SpentNumber:            vinout.SpentNumber,
-		UnconfirmedSpentTx:     vinout.UnconfirmedSpentTx,
-		UnconfirmedSpentNumber: vinout.UnconfirmedSpentNumber,
-		SpentedTx:              vinout.SpentedTx,
-		Vout:                   vinout.Vout,
-		Sequence:               vinout.Sequence,
-		ScriptSig:              vinout.ScriptSig,
-		Stat:                   vinout.Stat,
-	}
-}
-
-func ToVinResp(vinout *types.Vinout) *VinResp {
+func ToVinResp(vinout *types.Vin) *VinResp {
 	return &VinResp{
 		Id:        vinout.Id,
 		TxId:      vinout.TxId,
@@ -203,7 +179,7 @@ func ToVinResp(vinout *types.Vinout) *VinResp {
 	}
 }
 
-func ToVoutResp(vinout *types.Vinout) *VoutResp {
+func ToVoutResp(vinout *types.Vout) *VoutResp {
 	return &VoutResp{
 		Id:                     vinout.Id,
 		TxId:                   vinout.TxId,
@@ -305,4 +281,9 @@ type AlgorithmLineResp struct {
 	Name string
 	Sec  int
 	Avgs []*AlgorithmAvg
+}
+
+type PeerResp struct {
+	Id   string `json:"id"`
+	Addr string `json:"addr"`
 }

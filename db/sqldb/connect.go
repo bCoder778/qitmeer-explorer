@@ -28,7 +28,9 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 	if err = engine.Sync2(
 		new(types.Block),
 		new(types.Transaction),
-		new(types.Vinout),
+		new(types.Vin),
+		new(types.Vout),
+		new(types.Transfer),
 	); err != nil {
 		return nil, err
 	}
@@ -39,10 +41,21 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 func ConnectSqlServer(conf *conf.DB) (*DB, error) {
 	path := fmt.Sprintf("server=%s;user id=%s;password=%s;database=%s", conf.Address, conf.User, conf.Password, conf.DBName)
 	engine, err := xorm.NewEngine("mssql", path)
-	engine.ShowSQL(false)
+
 	if err != nil {
 		return nil, err
 	}
+	engine.ShowSQL(false)
+	if err = engine.Sync2(
+		new(types.Block),
+		new(types.Transaction),
+		new(types.Vin),
+		new(types.Vout),
+		new(types.Transfer),
+	); err != nil {
+		return nil, err
+	}
+
 	return &DB{engine}, nil
 }
 

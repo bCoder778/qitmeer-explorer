@@ -46,7 +46,8 @@ func (a *Api) addApi() {
 		GetSub("block", a.lastBlocks).
 		GetSub("transaction", a.lastTransactions).
 		GetSub("address/transaction", a.lastAddressTransactions).
-		GetSub("top/address", a.balanceTop)
+		GetSub("top/address", a.balanceTop).
+		GetSub("node", a.nodeList)
 
 	a.rest.AuthRouteSet("api/v1/detail").
 		GetSub("block", a.blockDetail).
@@ -68,6 +69,7 @@ func (a *Api) addApi() {
 		GetSub("circulatingfloat", a.getCirculatingFloat).
 		GetSub("max", a.getMax).
 		GetSub("maxfloat", a.getMaxFloat)
+
 }
 
 func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
@@ -218,6 +220,11 @@ func (a *Api) getMax(ct *Context) (interface{}, *Error) {
 func (a *Api) getMaxFloat(ct *Context) (interface{}, *Error) {
 	pMeer := a.controller.GetMaxFloatPMeer()
 	return pMeer, nil
+}
+
+func (a *Api) nodeList(ct *Context) (interface{}, *Error) {
+	a.controller.NodeList()
+	return nil, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {

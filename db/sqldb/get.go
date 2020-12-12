@@ -15,9 +15,9 @@ func (d *DB) GetTransactionByTxId(txId string) ([]*types.Transaction, error) {
 	return txs, err
 }
 
-func (d *DB) GetVout(txId string, vout int) (*types.Vinout, error) {
-	vinout := &types.Vinout{}
-	_, err := d.engine.Where("tx_id = ? and type = ? and number = ?", txId, stat.TX_Vout, vout).Get(vinout)
+func (d *DB) GetVout(txId string, vout int) (*types.Vout, error) {
+	vinout := &types.Vout{}
+	_, err := d.engine.Where("tx_id = ? and number = ?", txId, vout).Get(vinout)
 	return vinout, err
 }
 
@@ -34,7 +34,7 @@ func (d *DB) GetLastUnconfirmedOrder() (uint64, error) {
 }
 
 func (d *DB) GetAllUtxo() float64 {
-	amount, _ := d.engine.Where("spent_tx = ? and type = ? and stat = ?", "", stat.TX_Vout, stat.TX_Confirmed).Sum(new(types.Vinout), "amount")
+	amount, _ := d.engine.Where("spent_tx = ? and stat = ?", "", stat.TX_Confirmed).Sum(new(types.Vout), "amount")
 	return amount
 }
 
@@ -56,8 +56,7 @@ func (d *DB) GetTransactionCount() (int64, error) {
 }
 
 func (d *DB) GetAddressTransactionCount(address string) (int64, error) {
-	return d.engine.Table(new(types.Vinout)).Distinct("tx_id").Where("address = ?", address).
-		Count()
+	return d.engine.Table(new(types.Transfer)).Where("address = ? ", address).Count()
 }
 
 func (d *DB) GetBlock(hash string) (*types.Block, error) {
@@ -73,21 +72,21 @@ func (d *DB) GetLastBlock() (*types.Block, error) {
 }
 
 func (d *DB) GetAddressCount() (int64, error) {
-	return d.engine.Table(new(types.Vinout)).
-		Where("type = ? and spent_tx = ? and stat = ?", stat.TX_Vout, "", stat.TX_Confirmed).
+	return d.engine.Table(new(types.Vout)).
+		Where("and spent_tx = ? and stat = ?", "", stat.TX_Confirmed).
 		GroupBy("address").Count()
 }
 
 func (d *DB) GetUsableAmount(address string) (float64, error) {
-	return d.engine.Table(new(types.Vinout)).Where("address = ? and type = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
-		address, stat.TX_Vout, "", "", stat.TX_Confirmed).
-		Sum(new(types.Vinout), "amount")
+	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
+		address, "", "", stat.TX_Confirmed).
+		Sum(new(types.Vout), "amount")
 }
 
 func (d *DB) GetLockedAmount(address string) (float64, error) {
-	return d.engine.Table(new(types.Vinout)).Where("address = ? and type = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
-		address, stat.TX_Vout, "", "", stat.TX_Unconfirmed).
-		Sum(new(types.Vinout), "amount")
+	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and unconfirmed_spent_tx = ? and stat = ?",
+		address, "", "", stat.TX_Unconfirmed).
+		Sum(new(types.Vout), "amount")
 }
 
 func (d *DB) GetLastMinerBlock(address string) *types.Block {

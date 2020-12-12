@@ -29,11 +29,11 @@ func (d *DB) LastAddressTxId(page, size int, address string) ([]string, error) {
 	page -= 1
 	start := page * size
 	txIds := []string{}
-	vinouts := []types.Vinout{}
-	err := d.engine.Table(new(types.Vinout)).Select("DISTINCT(tx_id),`id`").Desc("id").Where("address = ?", address).
-		Limit(size, start).Find(&vinouts)
-	for _, vinout := range vinouts {
-		txIds = append(txIds, vinout.TxId)
+	transfers := []types.Transfer{}
+	err := d.engine.Table(new(types.Transfer)).Select("tx_id,`timestamp`").Where("address = ?", address).Desc("timestamp").
+		Limit(size, start).Find(&transfers)
+	for _, trans := range transfers {
+		txIds = append(txIds, trans.TxId)
 	}
 	return txIds, err
 }
@@ -44,9 +44,9 @@ func (d *DB) BalanceTop(page, size int) ([]*dbtype.Address, error) {
 	start := page * size
 
 	addrs := []*dbtype.Address{}
-	err := d.engine.Table(new(types.Vinout)).
+	err := d.engine.Table(new(types.Vout)).
 		Select("address, sum(amount) as balance").
-		Where("type = ? and spent_tx = ? and stat = ?", stat.TX_Vout, "", stat.TX_Confirmed).
+		Where("spent_tx = ? and unconfirmed_spent_tx = ? and stat in ( ?,? )", "", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Desc("balance").Limit(size, start).Find(&addrs)
 
 	return addrs, err

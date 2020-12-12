@@ -21,7 +21,7 @@ type IGet interface {
 	GetLastUnconfirmedOrder() (uint64, error)
 	GetTransaction(txId string, blockHash string) (*types.Transaction, error)
 	GetTransactionByTxId(txId string) ([]*types.Transaction, error)
-	GetVout(txId string, vout int) (*types.Vinout, error)
+	GetVout(txId string, vout int) (*types.Vout, error)
 	GetAllUtxo() float64
 	GetConfirmedBlockCount() int64
 	GetBlockCount() (int64, error)
@@ -43,8 +43,8 @@ type IQuery interface {
 	QueryUnConfirmedOrders() ([]uint64, error)
 	QueryTransactions(txId string) ([]types.Transaction, error)
 	QueryTransactionsByBlockHash(hash string) ([]types.Transaction, error)
-	QueryTransactionVout(txId string) ([]*types.Vinout, error)
-	QueryTransactionVin(txId string) ([]*types.Vinout, error)
+	QueryTransactionVout(txId string) ([]*types.Vout, error)
+	QueryTransactionVin(txId string) ([]*types.Vin, error)
 	QueryAlgorithmDiffInTime(algorithm string, edgeBits int, max int64, min int64) []*types.Block
 }
 

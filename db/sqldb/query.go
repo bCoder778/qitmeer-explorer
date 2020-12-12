@@ -36,15 +36,15 @@ func (d *DB) QueryTransactionsByBlockHash(hash string) ([]types.Transaction, err
 	return txs, err
 }
 
-func (d *DB) QueryTransactionVin(txId string) ([]*types.Vinout, error) {
-	txs := []*types.Vinout{}
-	err := d.engine.Where("tx_id = ? and type = ?", txId, stat.TX_Vin).Find(&txs)
+func (d *DB) QueryTransactionVin(txId string) ([]*types.Vin, error) {
+	txs := []*types.Vin{}
+	err := d.engine.Where("tx_id = ?", txId).Find(&txs)
 	return txs, err
 }
 
-func (d *DB) QueryTransactionVout(txId string) ([]*types.Vinout, error) {
-	txs := []*types.Vinout{}
-	err := d.engine.Where("tx_id = ? and type = ?", txId, stat.TX_Vout).Find(&txs)
+func (d *DB) QueryTransactionVout(txId string) ([]*types.Vout, error) {
+	txs := []*types.Vout{}
+	err := d.engine.Where("tx_id = ?", txId).Find(&txs)
 	return txs, err
 }
 

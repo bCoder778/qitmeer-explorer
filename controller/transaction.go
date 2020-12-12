@@ -131,9 +131,13 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	for _, out := range dbVout {
 		vout = append(vout, types.ToVoutResp(out))
 		if out.Address == address {
-			totalVin += out.Amount
+			totalVout += out.Amount
 		}
 	}
-	header.AddressChange = types2.Amount(totalVin).ToCoin() - types2.Amount(totalVout).ToCoin()
+	header.AddressChange = types2.Amount(totalVin - totalVout).ToCoin()
+	if address != "" {
+		header.TotalVin = types2.Amount(totalVin).ToCoin()
+		header.TotalVout = types2.Amount(totalVout).ToCoin()
+	}
 	return &types.TransactionDetailResp{Header: header, Vout: vout, Vin: vin}, nil
 }
