@@ -46,7 +46,7 @@ func (d *DB) BalanceTop(page, size int) ([]*dbtype.Address, error) {
 	addrs := []*dbtype.Address{}
 	err := d.engine.Table(new(types.Vout)).
 		Select("address, sum(amount) as balance").
-		Where("spent_tx = ? and unconfirmed_spent_tx = ? and stat in ( ?,? )", "", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
+		Where("spent_tx = ? and unconfirmed_spent_tx = ? and stat in (?,?)", "", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Desc("balance").Limit(size, start).Find(&addrs)
 
 	return addrs, err

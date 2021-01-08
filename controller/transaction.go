@@ -97,7 +97,10 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	var header *types.TransactionResp = &types.TransactionResp{}
 	vin := []*types.VinResp{}
 	vout := []*types.VoutResp{}
-	var totalVin, totalVout uint64
+	changeMap := map[string]*types.TransferChange{}
+	feesMap := map[string]*types.Fees{}
+	changeList := []*types.TransferChange{}
+	feesList := []*types.Fees{}
 	txs, err := c.storage.GetTransactionByTxId(txId)
 	if err != nil {
 		return nil, err
@@ -121,7 +124,23 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	for _, in := range dbVin {
 		vin = append(vin, types.ToVinResp(in))
 		if in.Address == address {
-			totalVin += in.Amount
+			change, ok := changeMap[in.CoinId]
+			if ok {
+				change.UTotalVin += in.Amount
+			} else {
+				changeMap[in.CoinId] = &types.TransferChange{
+					UTotalVin: in.Amount,
+				}
+			}
+		}
+
+		fee, ok := feesMap[in.CoinId]
+		if ok {
+			fee.UTotalVin += in.Amount
+		} else {
+			feesMap[in.CoinId] = &types.Fees{
+				UTotalVin: in.Amount,
+			}
 		}
 	}
 	dbVout, err := c.storage.QueryTransactionVout(txId)
@@ -131,13 +150,47 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	for _, out := range dbVout {
 		vout = append(vout, types.ToVoutResp(out))
 		if out.Address == address {
-			totalVout += out.Amount
+			change, ok := changeMap[out.CoinId]
+			if ok {
+				change.UTotalVout += out.Amount
+			} else {
+				changeMap[out.CoinId] = &types.TransferChange{
+					UTotalVout: out.Amount,
+				}
+			}
+		}
+
+		fee, ok := feesMap[out.CoinId]
+		if ok {
+			fee.UTotalVout += out.Amount
+		} else {
+			feesMap[out.CoinId] = &types.Fees{
+				UTotalVout: out.Amount,
+			}
 		}
 	}
-	header.AddressChange = types2.Amount(totalVin - totalVout).ToCoin()
 	if address != "" {
-		header.TotalVin = types2.Amount(totalVin).ToCoin()
-		header.TotalVout = types2.Amount(totalVout).ToCoin()
+		for coinId, change := range changeMap {
+			change.TotalVin = types2.Amount(change.UTotalVin).ToCoin()
+			change.TotalVout = types2.Amount(change.UTotalVout).ToCoin()
+			change.CoinId = coinId
+			change.Change = types2.Amount(change.UTotalVin - change.UTotalVout).ToCoin()
+			changeList = append(changeList, change)
+		}
 	}
+
+	for coinId, fees := range feesMap {
+		fees.CoinId = coinId
+		if fees.UTotalVin > fees.UTotalVout {
+			fees.TotalVin = types2.Amount(fees.UTotalVin).ToCoin()
+			fees.TotalVout = types2.Amount(fees.UTotalVout).ToCoin()
+			fees.Amount = types2.Amount(fees.UTotalVin - fees.UTotalVout).ToCoin()
+		} else {
+			fees.Amount = 0
+		}
+		feesList = append(feesList, fees)
+	}
+	header.Changes = changeList
+	header.Fees = feesList
 	return &types.TransactionDetailResp{Header: header, Vout: vout, Vin: vin}, nil
 }

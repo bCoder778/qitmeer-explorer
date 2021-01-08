@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	db "github.com/bCoder778/qitmeer-explorer/db"
+	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"strconv"
 )
@@ -16,6 +17,18 @@ type QitmeerV0_10 struct {
 
 func NewQitmeerV0_10(network string, storage db.IDB) *QitmeerV0_10 {
 	return &QitmeerV0_10{network: network, storage: storage, params: Params0_10}
+}
+
+func (q *QitmeerV0_10) StartFindPeer() error {
+	return nil
+}
+
+func (q *QitmeerV0_10) StopFindPeer() error {
+	return nil
+}
+
+func (q *QitmeerV0_10) PeerList() []*types2.Peer {
+	return nil
 }
 
 func (q *QitmeerV0_10) AlgorithmList() []*types.AlgorithmResp {

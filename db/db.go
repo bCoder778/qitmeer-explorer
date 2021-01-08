@@ -59,9 +59,9 @@ type IStatus interface {
 	BlocksDistribution() []*dbtypes.MinerStatus
 }
 
-func ConnectDB(setting *conf.Config) (IDB, error) {
+func ConnectDB(setting *conf.Config) (*sqldb.DB, error) {
 	var (
-		db  IDB
+		db  *sqldb.DB
 		err error
 	)
 	switch setting.DB.DBType {

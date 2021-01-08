@@ -3,6 +3,7 @@ package sqldb
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/conf"
+	dbtypes "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
@@ -31,6 +32,7 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 		new(types.Vin),
 		new(types.Vout),
 		new(types.Transfer),
+		new(dbtypes.Peer),
 	); err != nil {
 		return nil, err
 	}
@@ -52,6 +54,7 @@ func ConnectSqlServer(conf *conf.DB) (*DB, error) {
 		new(types.Vin),
 		new(types.Vout),
 		new(types.Transfer),
+		new(dbtypes.Peer),
 	); err != nil {
 		return nil, err
 	}

@@ -26,27 +26,43 @@ type TransactionDetailResp struct {
 }
 
 type TransactionResp struct {
-	Id            uint64      `json:"id"`
-	TxId          string      `json:"txid"`
-	BlockHash     string      `json:"blockhash"`
-	BlockOrder    uint64      `json:"blockorder"`
-	TxHash        string      `json:"txhash"`
-	Size          int         `json:"size"`
-	Version       uint32      `json:"version"`
-	Locktime      uint64      `json:"locktime"`
-	Timestamp     int64       `json:"timestamp"`
-	Expire        uint64      `json:"expire"`
-	Confirmations uint64      `json:"confirmations"`
-	Txsvaild      bool        `json:"txsvaild"`
-	IsCoinbase    bool        `json:"iscoinbase"`
-	Vins          int         `json:"vin"`
-	Vouts         int         `json:"vout"`
-	TotalVin      float64     `json:"totalvin"`
-	TotalVout     float64     `json:"totalvout"`
-	AddressChange float64     `json:"addresschange"`
-	Fees          float64     `json:"fees"`
-	Duplicate     bool        `json:"duplicate"`
-	Stat          stat.TxStat `json:"stat"`
+	Id            uint64            `json:"id"`
+	TxId          string            `json:"txid"`
+	BlockHash     string            `json:"blockhash"`
+	BlockOrder    uint64            `json:"blockorder"`
+	TxHash        string            `json:"txhash"`
+	Size          int               `json:"size"`
+	Version       uint32            `json:"version"`
+	Locktime      uint64            `json:"locktime"`
+	Timestamp     int64             `json:"timestamp"`
+	Expire        uint64            `json:"expire"`
+	Confirmations uint64            `json:"confirmations"`
+	Txsvaild      bool              `json:"txsvaild"`
+	IsCoinbase    bool              `json:"iscoinbase"`
+	Vins          int               `json:"vin"`
+	Vouts         int               `json:"vout"`
+	Fees          []*Fees           `json:"fees"`
+	Changes       []*TransferChange `json:"changes"`
+	Duplicate     bool              `json:"duplicate"`
+	Stat          stat.TxStat       `json:"stat"`
+}
+
+type TransferChange struct {
+	CoinId     string  `json:"coinid"`
+	Change     float64 `json:"change"`
+	TotalVin   float64 `json:"totalvin"`
+	TotalVout  float64 `json:"totalvout"`
+	UTotalVin  uint64  `json:"utotalvin"`
+	UTotalVout uint64  `json:"utotalvout"`
+}
+
+type Fees struct {
+	CoinId     string  `json:"coinid"`
+	TotalVin   float64 `json:"totalvin"`
+	TotalVout  float64 `json:"totalvout"`
+	UTotalVin  uint64  `json:"utotalvin"`
+	UTotalVout uint64  `json:"utotalvout"`
+	Amount     float64 `json:"amount"`
 }
 
 type VinoutResp struct {
@@ -76,6 +92,7 @@ type VinResp struct {
 	Order     uint64           `json:"order"`
 	Timestamp int64            `json:"timestamp"`
 	Address   string           `json:"address"`
+	CoinId    string           `json:"coinid"`
 	Amount    float64          `json:"amount"`
 	SpentedTx string           `json:"spentedtx"`
 	Vout      int              `json:"vout"`
@@ -91,6 +108,7 @@ type VoutResp struct {
 	Order                  uint64              `json:"order"`
 	Timestamp              int64               `json:"timestamp"`
 	Address                string              `json:"address"`
+	CoinId                 string              `json:"coinid"`
 	Amount                 float64             `json:"amount"`
 	ScriptPubKey           *types.ScriptPubKey `json:"scriptpubkey"`
 	SpentTx                string              `json:"spenttx"`
@@ -146,9 +164,8 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		IsCoinbase:    tx.IsCoinbase,
 		Vins:          tx.Vins,
 		Vouts:         tx.Vouts,
-		TotalVin:      qittypes.Amount(tx.TotalVin).ToCoin(),
-		TotalVout:     qittypes.Amount(tx.TotalVout).ToCoin(),
-		Fees:          qittypes.Amount(tx.Fees).ToCoin(),
+		Fees:          nil,
+		Changes:       nil,
 		Duplicate:     false,
 		Stat:          0,
 	}
@@ -170,6 +187,7 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 		Order:     vinout.Order,
 		Timestamp: vinout.Timestamp,
 		Address:   vinout.Address,
+		CoinId:    vinout.CoinId,
 		Amount:    qittypes.Amount(vinout.Amount).ToCoin(),
 		SpentedTx: vinout.SpentedTx,
 		Vout:      vinout.Vout,
@@ -187,6 +205,7 @@ func ToVoutResp(vinout *types.Vout) *VoutResp {
 		Order:                  vinout.Order,
 		Timestamp:              vinout.Timestamp,
 		Address:                vinout.Address,
+		CoinId:                 vinout.CoinId,
 		Amount:                 qittypes.Amount(vinout.Amount).ToCoin(),
 		ScriptPubKey:           vinout.ScriptPubKey,
 		SpentTx:                vinout.SpentTx,
@@ -286,4 +305,14 @@ type AlgorithmLineResp struct {
 type PeerResp struct {
 	Id   string `json:"id"`
 	Addr string `json:"addr"`
+}
+
+type TipsResp struct {
+	BlockAvg          string `json:"blockavg"`
+	BlockInterval     string `json:"blockinterval"`
+	MainBlockAvg      string `json:"mainblockavg"`
+	MainBlockInterval string `json:"mainblockinterval"`
+	ConcurrencyRate   string `json:"concurrencyrate"`
+	BlockOrder        uint64 `json:"blockorder"`
+	BlockHeight       uint64 `json:"blockheight"`
 }

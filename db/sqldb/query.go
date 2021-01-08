@@ -1,7 +1,7 @@
 package sqldb
 
 import (
-	"fmt"
+	dbtypes "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 )
@@ -50,7 +50,12 @@ func (d *DB) QueryTransactionVout(txId string) ([]*types.Vout, error) {
 
 func (d *DB) QueryAlgorithmDiffInTime(algorithm string, edgeBits int, max int64, min int64) []*types.Block {
 	blocks := []*types.Block{}
-	err := d.engine.Table(new(types.Block)).Where("pow_name = ? and edge_bits = ? and timestamp between ? and ?", algorithm, edgeBits, min, max).Find(&blocks)
-	fmt.Println(err)
+	d.engine.Table(new(types.Block)).Where("pow_name = ? and edge_bits = ? and timestamp between ? and ?", algorithm, edgeBits, min, max).Find(&blocks)
 	return blocks
+}
+
+func (d *DB) QueryPeers() []*dbtypes.Peer {
+	peers := []*dbtypes.Peer{}
+	d.engine.Table(new(dbtypes.Peer)).Find(&peers)
+	return peers
 }

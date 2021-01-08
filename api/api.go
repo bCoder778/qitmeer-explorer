@@ -37,6 +37,7 @@ func (a *Api) listenInterrupt() {
 
 	go func() {
 		<-c
+		a.controller.Close()
 		a.rest.Stop()
 	}()
 }
@@ -63,6 +64,12 @@ func (a *Api) addApi() {
 		GetSub("list", a.algorithmList).
 		GetSub("line", a.algorithmLine)
 
+	a.rest.AuthRouteSet("api/v1/export").
+		GetSub("address/transaction", nil)
+
+	a.rest.AuthRouteSet("api/v1/tips").Get(a.tips)
+
+	// 交易所使用
 	a.rest.AuthRouteSet("api/v1/explorer").
 		GetSub("price", a.getPrice).
 		GetSub("circulating", a.getCirculating).
@@ -223,8 +230,13 @@ func (a *Api) getMaxFloat(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) nodeList(ct *Context) (interface{}, *Error) {
-	a.controller.NodeList()
-	return nil, nil
+	peer := a.controller.NodeList()
+	return peer, nil
+}
+
+func (a *Api) tips(ct *Context) (interface{}, *Error) {
+	tips := a.controller.Tips()
+	return tips, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {

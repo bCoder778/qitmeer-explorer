@@ -1,6 +1,7 @@
 package sqldb
 
 import (
+	dbtypes "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 )
@@ -73,7 +74,7 @@ func (d *DB) GetLastBlock() (*types.Block, error) {
 
 func (d *DB) GetAddressCount() (int64, error) {
 	return d.engine.Table(new(types.Vout)).
-		Where("and spent_tx = ? and stat = ?", "", stat.TX_Confirmed).
+		Where("spent_tx = ? and unconfirmed_spent_tx = ? and stat in (?, ?)", "", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Count()
 }
 
@@ -102,4 +103,13 @@ func (d *DB) GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block
 		return nil, err
 	}
 	return block, nil
+}
+
+func (d *DB) GetPeer(address string) (*dbtypes.Peer, error) {
+	peer := new(dbtypes.Peer)
+	_, err := d.engine.Where("address = ?", address).Get(peer)
+	if err != nil {
+		return nil, err
+	}
+	return peer, nil
 }

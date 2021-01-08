@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	"github.com/bCoder778/qitmeer-explorer/db"
+	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
+	"github.com/bCoder778/qitmeer-sync/rpc"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"strconv"
 )
@@ -12,10 +14,29 @@ type QitmeerV0_9 struct {
 	network string
 	storage db.IDB
 	params  *Params
+	peers   *PeerManager
 }
 
-func NewQitmeerV0_9(network string, storage db.IDB) *QitmeerV0_9 {
-	return &QitmeerV0_9{network: network, storage: storage, params: Params0_9}
+func NewQitmeerV0_9(network string, storage db.IDB, peerStorage IPeerDB, rpcClient *rpc.Client) *QitmeerV0_9 {
+	return &QitmeerV0_9{
+		network: network,
+		storage: storage,
+		params:  Params0_9,
+		peers:   NewPeerManager(network, rpcClient, peerStorage),
+	}
+}
+
+func (q *QitmeerV0_9) StartFindPeer() error {
+	q.peers.Find()
+	return nil
+}
+
+func (q *QitmeerV0_9) StopFindPeer() error {
+	return q.peers.Close()
+}
+
+func (q *QitmeerV0_9) PeerList() []*types2.Peer {
+	return q.peers.Peers()
 }
 
 func (q *QitmeerV0_9) AlgorithmList() []*types.AlgorithmResp {

@@ -12,7 +12,7 @@ dbtype="mysql"
 user="root"
 password="kahfxwxsx113"
 address="127.0.0.1:3306"
-dbname="qitmeersync"
+dbname="qitmeersync5"
 
 [log]
 # console=12 | file=11

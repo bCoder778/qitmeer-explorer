@@ -1,8 +1,8 @@
 package types
 
 type MinerPool struct {
-	Name string
-	Url  string
+	Name string `json:"name"`
+	Url  string `json:"url"`
 }
 
 type MinerPools map[string]*MinerPool
