@@ -40,6 +40,10 @@ var Miners = MinerPools{
 		Name: "hpt.com",
 		Url:  "https://hpt.com",
 	},
+	"TmRVpyzdG26WjygpTxqPb82H1HWVhD6nuZJ": {
+		Name: "hpt.com",
+		Url:  "https://hpt.com",
+	},
 	"TmYEsUQbcbFG3t2rEZfRqgk5DhDBhof9qSJ": {
 		Name: "F2Pool",
 		Url:  "https://www.f2pool.com",

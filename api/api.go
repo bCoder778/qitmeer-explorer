@@ -140,7 +140,7 @@ func (a *Api) blockDetail(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) transactionDetail(ct *Context) (interface{}, *Error) {
-	block, err := a.controller.TransactionDetail(ct.Query["txid"], "no address")
+	block, err := a.controller.TransactionDetail(ct.Query["txid"], "")
 	if err != nil {
 		return nil, &Error{
 			Code:    ERROR_UNKNOWN,

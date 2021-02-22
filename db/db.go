@@ -29,6 +29,7 @@ type IGet interface {
 	GetTransactionCount() (int64, error)
 	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)
+	GetBlockByOrder(order uint64) (*types.Block, error)
 	GetLastBlock() (*types.Block, error)
 	GetAddressCount() (int64, error)
 	GetUsableAmount(address string) (float64, error)

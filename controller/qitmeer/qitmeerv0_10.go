@@ -5,18 +5,28 @@ import (
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	db "github.com/bCoder778/qitmeer-explorer/db"
 	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
+	"github.com/bCoder778/qitmeer-explorer/rpc"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
+	"regexp"
 	"strconv"
+)
+
+const (
+	node_rpc_host = "http://127.0.0.1:2024"
+	node_rpc_user = "admin"
+	node_rpc_pas  = "123"
 )
 
 type QitmeerV0_10 struct {
 	network string
 	storage db.IDB
 	params  *Params
+	nodeRpc *rpc.Client
 }
 
 func NewQitmeerV0_10(network string, storage db.IDB) *QitmeerV0_10 {
-	return &QitmeerV0_10{network: network, storage: storage, params: Params0_10}
+	client := rpc.NewClient(node_rpc_host, node_rpc_user, node_rpc_pas)
+	return &QitmeerV0_10{network: network, storage: storage, params: Params0_10, nodeRpc: client}
 }
 
 func (q *QitmeerV0_10) StartFindPeer() error {
@@ -28,7 +38,25 @@ func (q *QitmeerV0_10) StopFindPeer() error {
 }
 
 func (q *QitmeerV0_10) PeerList() []*types2.Peer {
-	return nil
+	peers, err := q.nodeRpc.GetNodeList()
+	if err != nil {
+		return nil
+	}
+	rs := []*types2.Peer{}
+	for i, p := range peers {
+		rs = append(rs, &types2.Peer{
+			Id:      uint64(i),
+			Address: getIp(p.Ip),
+			Other:   p.Id,
+		})
+	}
+	return rs
+}
+
+func getIp(p2pAddr string) string {
+	r, _ := regexp.Compile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}`)
+	ip := string(r.Find([]byte(p2pAddr)))
+	return ip
 }
 
 func (q *QitmeerV0_10) AlgorithmList() []*types.AlgorithmResp {

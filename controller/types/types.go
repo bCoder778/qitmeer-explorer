@@ -102,20 +102,17 @@ type VinResp struct {
 }
 
 type VoutResp struct {
-	Id                     uint64              `json:"id"`
-	TxId                   string              `json:"txid"`
-	Number                 int                 `json:"number"`
-	Order                  uint64              `json:"order"`
-	Timestamp              int64               `json:"timestamp"`
-	Address                string              `json:"address"`
-	CoinId                 string              `json:"coinid"`
-	Amount                 float64             `json:"amount"`
-	ScriptPubKey           *types.ScriptPubKey `json:"scriptpubkey"`
-	SpentTx                string              `json:"spenttx"`
-	SpentNumber            int                 `json:"spentnumber"`
-	UnconfirmedSpentTx     string              `json:"unconfirmedspenttx"`
-	UnconfirmedSpentNumber int                 `json:"unconfirmedspentnumber"`
-	Stat                   stat.TxStat         `json:"stat"`
+	Id           uint64              `json:"id"`
+	TxId         string              `json:"txid"`
+	Number       int                 `json:"number"`
+	Order        uint64              `json:"order"`
+	Timestamp    int64               `json:"timestamp"`
+	Address      string              `json:"address"`
+	CoinId       string              `json:"coinid"`
+	Amount       float64             `json:"amount"`
+	ScriptPubKey *types.ScriptPubKey `json:"scriptpubkey"`
+	SpentTx      string              `json:"spenttx"`
+	Stat         stat.TxStat         `json:"stat"`
 }
 
 type BlockResp struct {
@@ -199,19 +196,16 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 
 func ToVoutResp(vinout *types.Vout) *VoutResp {
 	return &VoutResp{
-		Id:                     vinout.Id,
-		TxId:                   vinout.TxId,
-		Number:                 vinout.Number,
-		Order:                  vinout.Order,
-		Timestamp:              vinout.Timestamp,
-		Address:                vinout.Address,
-		CoinId:                 vinout.CoinId,
-		Amount:                 qittypes.Amount(vinout.Amount).ToCoin(),
-		ScriptPubKey:           vinout.ScriptPubKey,
-		SpentTx:                vinout.SpentTx,
-		SpentNumber:            vinout.SpentNumber,
-		UnconfirmedSpentTx:     vinout.UnconfirmedSpentTx,
-		UnconfirmedSpentNumber: vinout.UnconfirmedSpentNumber,
+		Id:           vinout.Id,
+		TxId:         vinout.TxId,
+		Number:       vinout.Number,
+		Order:        vinout.Order,
+		Timestamp:    vinout.Timestamp,
+		Address:      vinout.Address,
+		CoinId:       vinout.CoinId,
+		Amount:       qittypes.Amount(vinout.Amount).ToCoin(),
+		ScriptPubKey: vinout.ScriptPubKey,
+		SpentTx:      vinout.SpentTx,
 	}
 }
 

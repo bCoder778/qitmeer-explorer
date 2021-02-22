@@ -123,7 +123,18 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	}
 	for _, in := range dbVin {
 		vin = append(vin, types.ToVinResp(in))
-		if in.Address == address {
+		if address != "" {
+			if in.Address == address {
+				change, ok := changeMap[in.CoinId]
+				if ok {
+					change.UTotalVin += in.Amount
+				} else {
+					changeMap[in.CoinId] = &types.TransferChange{
+						UTotalVin: in.Amount,
+					}
+				}
+			}
+		} else {
 			change, ok := changeMap[in.CoinId]
 			if ok {
 				change.UTotalVin += in.Amount
@@ -149,14 +160,13 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	}
 	for _, out := range dbVout {
 		vout = append(vout, types.ToVoutResp(out))
-		if out.Address == address {
-			change, ok := changeMap[out.CoinId]
-			if ok {
-				change.UTotalVout += out.Amount
-			} else {
-				changeMap[out.CoinId] = &types.TransferChange{
-					UTotalVout: out.Amount,
-				}
+
+		change, ok := changeMap[out.CoinId]
+		if ok {
+			change.UTotalVout += out.Amount
+		} else {
+			changeMap[out.CoinId] = &types.TransferChange{
+				UTotalVout: out.Amount,
 			}
 		}
 
@@ -174,7 +184,15 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 			change.TotalVin = types2.Amount(change.UTotalVin).ToCoin()
 			change.TotalVout = types2.Amount(change.UTotalVout).ToCoin()
 			change.CoinId = coinId
-			change.Change = types2.Amount(change.UTotalVin - change.UTotalVout).ToCoin()
+			change.Change = types2.Amount(change.UTotalVout - change.UTotalVin).ToCoin()
+			changeList = append(changeList, change)
+		}
+	} else {
+		for coinId, change := range changeMap {
+			change.TotalVin = types2.Amount(change.UTotalVin).ToCoin()
+			change.TotalVout = types2.Amount(change.UTotalVout).ToCoin()
+			change.CoinId = coinId
+			change.Change = types2.Amount(change.UTotalVout).ToCoin()
 			changeList = append(changeList, change)
 		}
 	}

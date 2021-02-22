@@ -17,37 +17,37 @@ func (c *Controller) BlocksDistribution() []*types.DistributionResp {
 }
 
 func (c *Controller) blocksDistribution() []*types.DistributionResp {
-	minerstatus := c.storage.BlocksDistribution()
+	minerStatus := c.storage.BlocksDistribution()
 	distributions := map[string]*types.DistributionResp{}
-	rs := []*types.DistributionResp{}
+	rs := make([]*types.DistributionResp, 0)
 	var all uint64
-	for _, miner := range minerstatus {
+	for _, miner := range minerStatus {
 		all += miner.Count
 	}
-	for _, miner := range minerstatus {
-		distributuon := &types.DistributionResp{}
+	for _, miner := range minerStatus {
+		distribution := &types.DistributionResp{}
 		ok, pool := types.Miners.Get(miner.Address)
 		if ok {
-			distributuon.Miner = pool.Name
+			distribution.Miner = pool.Name
 		} else {
-			distributuon.Miner = miner.Address
+			distribution.Miner = miner.Address
 		}
 		block := c.storage.GetLastMinerBlock(miner.Address)
-		distributuon.Blocks = miner.Count
-		distributuon.LastOrder = block.Order
-		distributuon.LastTimestamp = block.Timestamp
-		distributuon.Proportion = blocksProportion(distributuon.Blocks, all)
-		dt, ok := distributions[distributuon.Miner]
+		distribution.Blocks = miner.Count
+		distribution.LastOrder = block.Order
+		distribution.LastTimestamp = block.Timestamp
+		distribution.Proportion = blocksProportion(distribution.Blocks, all)
+		dt, ok := distributions[distribution.Miner]
 		if ok {
-			if dt.LastOrder < distributuon.LastOrder {
-				dt.LastOrder = distributuon.LastOrder
-				dt.LastTimestamp = distributuon.LastTimestamp
+			if dt.LastOrder < distribution.LastOrder {
+				dt.LastOrder = distribution.LastOrder
+				dt.LastTimestamp = distribution.LastTimestamp
 			}
-			dt.Blocks += distributuon.Blocks
-			dt.Proportion = blocksProportion(distributuon.Blocks, all)
-			distributions[distributuon.Miner] = dt
+			dt.Blocks += distribution.Blocks
+			dt.Proportion = blocksProportion(distribution.Blocks, all)
+			distributions[distribution.Miner] = dt
 		} else {
-			distributions[distributuon.Miner] = distributuon
+			distributions[distribution.Miner] = distribution
 		}
 	}
 	for _, dt := range distributions {
