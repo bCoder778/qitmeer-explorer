@@ -297,8 +297,16 @@ type AlgorithmLineResp struct {
 }
 
 type PeerResp struct {
-	Id   string `json:"id"`
-	Addr string `json:"addr"`
+	Id       uint64    `json:"id"`
+	Addr     string    `json:"addr"`
+	Other    string    `json:"other"`
+	Location *Location `json:"location"`
+}
+
+type Location struct {
+	City string  `json:"city"`
+	Lat  float64 `json:"lat"`
+	Lon  float64 `json:"lon"`
 }
 
 type TipsResp struct {

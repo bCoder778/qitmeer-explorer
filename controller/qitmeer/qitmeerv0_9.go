@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	"github.com/bCoder778/qitmeer-explorer/db"
-	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/rpc"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"strconv"
+	"strings"
 )
 
 type QitmeerV0_9 struct {
@@ -35,8 +35,26 @@ func (q *QitmeerV0_9) StopFindPeer() error {
 	return q.peers.Close()
 }
 
-func (q *QitmeerV0_9) PeerList() []*types2.Peer {
-	return q.peers.Peers()
+func (q *QitmeerV0_9) PeerList() []*types.PeerResp {
+	peers := q.peers.Peers()
+	rs := []*types.PeerResp{}
+	for _, p := range peers {
+		loc := &types.Location{
+			City: "",
+			Lat:  0,
+			Lon:  0,
+		}
+		if p.Address != "127.0.0.1" && !strings.Contains(p.Address, "192.168.") {
+			loc = getLocation(p.Address)
+		}
+		rs = append(rs, &types.PeerResp{
+			Id:       p.Id,
+			Addr:     p.Address,
+			Other:    p.Other,
+			Location: loc,
+		})
+	}
+	return rs
 }
 
 func (q *QitmeerV0_9) AlgorithmList() []*types.AlgorithmResp {

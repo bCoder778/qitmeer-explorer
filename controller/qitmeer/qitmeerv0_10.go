@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	db "github.com/bCoder778/qitmeer-explorer/db"
-	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
+	"github.com/bCoder778/qitmeer-explorer/external"
 	"github.com/bCoder778/qitmeer-explorer/rpc"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -37,26 +38,43 @@ func (q *QitmeerV0_10) StopFindPeer() error {
 	return nil
 }
 
-func (q *QitmeerV0_10) PeerList() []*types2.Peer {
+func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 	peers, err := q.nodeRpc.GetNodeList()
 	if err != nil {
 		return nil
 	}
-	rs := []*types2.Peer{}
+	rs := []*types.PeerResp{}
 	for i, p := range peers {
-		rs = append(rs, &types2.Peer{
-			Id:      uint64(i),
-			Address: getIp(p.Ip),
-			Other:   p.Id,
+		r, _ := regexp.Compile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}`)
+		ip := string(r.Find([]byte(p.Ip)))
+		loc := &types.Location{
+			City: "",
+			Lat:  0,
+			Lon:  0,
+		}
+		if ip != "127.0.0.1" && !strings.Contains(ip, "192.168.") {
+			loc = getLocation(ip)
+		}
+		rs = append(rs, &types.PeerResp{
+			Id:       uint64(i),
+			Addr:     ip,
+			Other:    p.Id,
+			Location: loc,
 		})
 	}
 	return rs
 }
 
-func getIp(p2pAddr string) string {
-	r, _ := regexp.Compile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}`)
-	ip := string(r.Find([]byte(p2pAddr)))
-	return ip
+func getLocation(ip string) *types.Location {
+	addr, err := external.GetIpInfo(ip)
+	if err != nil {
+		return &types.Location{}
+	}
+	return &types.Location{
+		City: addr.City,
+		Lon:  addr.Lon,
+		Lat:  addr.Lat,
+	}
 }
 
 func (q *QitmeerV0_10) AlgorithmList() []*types.AlgorithmResp {
@@ -113,9 +131,9 @@ func (q *QitmeerV0_10) hashRate(difficulty uint64, showName string) *types.Algor
 	fVal, _ := strconv.ParseFloat(val, 64)
 	hashRateDiff := fmt.Sprintf("%.2f %s", fVal, uint)
 
-	val, _ = compactToHashrate(uint32(difficulty), uint, blockTime)
-	fVal, finlUint := strconv.ParseFloat(val, 64)
-	hashRate := fmt.Sprintf("%.2f %s", fVal, finlUint)
+	val, finalUint := compactToHashrate(uint32(difficulty), uint, blockTime)
+	fVal, _ = strconv.ParseFloat(val, 64)
+	hashRate := fmt.Sprintf("%.2f %s", fVal, finalUint)
 	return &types.AlgorithmResp{
 		Name:       showName,
 		HashRate:   hashRate,
