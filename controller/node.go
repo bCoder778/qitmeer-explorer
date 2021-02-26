@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
-	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
 	synctypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"time"
 )
@@ -15,7 +14,7 @@ func (c *Controller) NodeList() interface{} {
 		c.cache.Add("NodeList", "NodeList", 60*time.Second*10, list)
 		return list
 	}
-	return value.([]*types2.Peer)
+	return value.([]*types.PeerResp)
 }
 
 func (c *Controller) Tips() *types.TipsResp {
