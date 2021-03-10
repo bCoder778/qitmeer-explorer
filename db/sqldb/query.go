@@ -38,7 +38,7 @@ func (d *DB) QueryTransactionsByBlockHash(hash string) ([]types.Transaction, err
 
 func (d *DB) QueryTransactionVin(txId string) ([]*types.Vin, error) {
 	txs := []*types.Vin{}
-	err := d.engine.Where("spented_tx = ?", txId).Find(&txs)
+	err := d.engine.Where("tx_id = ?", txId).Find(&txs)
 	return txs, err
 }
 
