@@ -7,3 +7,7 @@ bin/darwin/qitmeer-explorer
 bin/linux/qitmeer-explorer
 bin/darwin/qitmeer-explorer
 bin/linux/qitmeer-explorer
+.idea/vcs.xml
+.idea/qitmeer-explorer.iml
+.idea/modules.xml
+.DS_Store

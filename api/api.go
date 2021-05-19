@@ -69,7 +69,7 @@ func (a *Api) addApi() {
 
 	a.rest.AuthRouteSet("api/v1/tips").Get(a.tips)
 
-	// 交易所使用
+	// 交易所使用，必须保证和原有API一致
 	a.rest.AuthRouteSet("api/v1/explorer").
 		GetSub("price", a.getPrice).
 		GetSub("circulating", a.getCirculating).
