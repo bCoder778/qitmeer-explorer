@@ -24,18 +24,19 @@ type IGet interface {
 	GetVout(txId string, vout int) (*types.Vout, error)
 	GetAllUtxo() float64
 	GetConfirmedBlockCount() int64
-	GetBlockCount() (int64, error)
+	GetBlockCount(stat string) (int64, error)
 	GetValidBlockCount() (int64, error)
-	GetTransactionCount() (int64, error)
+	GetTransactionCount(stat string) (int64, error)
 	GetAddressTransactionCount(address string) (int64, error)
 	GetBlock(hash string) (*types.Block, error)
 	GetBlockByOrder(order uint64) (*types.Block, error)
 	GetLastBlock() (*types.Block, error)
 	GetAddressCount() (int64, error)
-	GetUsableAmount(address string) (float64, error)
-	GetLockedAmount(address string) (float64, error)
+	GetUsableAmount(address, coinId string) (float64, error)
+	GetLockedAmount(address, coinId string) (float64, error)
 	GetLastMinerBlock(address string) *types.Block
 	GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block, error)
+	GetTokenTransactionCount(coinId, stat string) (int64, error)
 }
 
 type IQuery interface {
@@ -53,7 +54,10 @@ type IList interface {
 	LastBlocks(page, size int) ([]*types.Block, error)
 	LastTransactions(page, size int) ([]*types.Transaction, error)
 	LastAddressTxId(page, size int, address string) ([]string, error)
-	BalanceTop(page, size int) ([]*dbtypes.Address, error)
+	BalanceTop(page, size int, coinId string) ([]*dbtypes.Address, error)
+	QueryBlock(page, size int, stat string) ([]*types.Block, error)
+	QueryTransaction(page, size int, stat string) ([]*types.Transaction, error)
+	QueryTokenTransaction(page, size int, coinId, stat string) ([]*types.Vout, error)
 }
 
 type IStatus interface {

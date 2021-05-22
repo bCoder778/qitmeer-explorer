@@ -24,7 +24,7 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	//engine.ShowSQL(true)
+	engine.ShowSQL(true)
 
 	if err = engine.Sync2(
 		new(types.Block),

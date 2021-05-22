@@ -27,7 +27,7 @@ func (c *Controller) lastTransactions(page, size int) (*types.ListResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.storage.GetTransactionCount()
+	count, err := c.storage.GetTransactionCount("")
 	if err != nil {
 		return nil, err
 	}
@@ -179,20 +179,29 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 			}
 		}
 	}
+
+	getAmount := func(coinId string, value uint64) float64 {
+		amount := types2.Amount{
+			Id:    types2.NewCoinID(coinId),
+			Value: int64(value),
+		}
+		return amount.ToCoin()
+	}
+
 	if address != "" {
 		for coinId, change := range changeMap {
-			change.TotalVin = types2.Amount(change.UTotalVin).ToCoin()
-			change.TotalVout = types2.Amount(change.UTotalVout).ToCoin()
+			change.TotalVin = getAmount(coinId, change.UTotalVin)
+			change.TotalVout = getAmount(coinId, change.UTotalVout)
 			change.CoinId = coinId
-			change.Change = types2.Amount(change.UTotalVout - change.UTotalVin).ToCoin()
+			change.Change = getAmount(coinId, change.UTotalVout-change.UTotalVin)
 			changeList = append(changeList, change)
 		}
 	} else {
 		for coinId, change := range changeMap {
-			change.TotalVin = types2.Amount(change.UTotalVin).ToCoin()
-			change.TotalVout = types2.Amount(change.UTotalVout).ToCoin()
+			change.TotalVin = getAmount(coinId, change.UTotalVin)
+			change.TotalVout = getAmount(coinId, change.UTotalVout)
 			change.CoinId = coinId
-			change.Change = types2.Amount(change.UTotalVout).ToCoin()
+			change.Change = getAmount(coinId, change.UTotalVout)
 			changeList = append(changeList, change)
 		}
 	}
@@ -200,9 +209,9 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	for coinId, fees := range feesMap {
 		fees.CoinId = coinId
 		if fees.UTotalVin > fees.UTotalVout {
-			fees.TotalVin = types2.Amount(fees.UTotalVin).ToCoin()
-			fees.TotalVout = types2.Amount(fees.UTotalVout).ToCoin()
-			fees.Amount = types2.Amount(fees.UTotalVin - fees.UTotalVout).ToCoin()
+			fees.TotalVin = getAmount(coinId, fees.UTotalVin)
+			fees.TotalVout = getAmount(coinId, fees.UTotalVout)
+			fees.Amount = getAmount(coinId, fees.UTotalVin-fees.UTotalVout)
 		} else {
 			fees.Amount = 0
 		}
@@ -211,4 +220,35 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	header.Changes = changeList
 	header.Fees = feesList
 	return &types.TransactionDetailResp{Header: header, Vout: vout, Vin: vin}, nil
+}
+
+func (c *Controller) QueryTransactionByStatus(page, size int, stat string) (*types.ListResp, error) {
+	key := fmt.Sprintf("%d-%d-%s", page, size, stat)
+	value, err := c.cache.Value("LastTransactions", key)
+	if err != nil {
+		list, err := c.queryTransactionByStatus(page, size, stat)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("LastTransactions", key, 2*60*time.Second, list)
+		return list, nil
+	}
+	return value.(*types.ListResp), nil
+}
+
+func (c *Controller) queryTransactionByStatus(page, size int, stat string) (*types.ListResp, error) {
+	txs, err := c.storage.QueryTransaction(page, size, stat)
+	if err != nil {
+		return nil, err
+	}
+	count, err := c.storage.GetTransactionCount("")
+	if err != nil {
+		return nil, err
+	}
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  types.ToTransactionRespList(txs),
+		Count: count,
+	}, nil
 }

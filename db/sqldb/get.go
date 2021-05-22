@@ -44,16 +44,27 @@ func (d *DB) GetConfirmedBlockCount() int64 {
 	return count
 }
 
-func (d *DB) GetBlockCount() (int64, error) {
-	return d.engine.Table(new(types.Block)).Count()
+func (d *DB) GetBlockCount(stat string) (int64, error) {
+
+	sql := d.engine.Table(new(types.Block))
+	if len(stat) > 0 {
+		sql.Where("find_in_set(stat, ?)", stat)
+	}
+
+	return sql.Count()
 }
 
 func (d *DB) GetValidBlockCount() (int64, error) {
 	return d.engine.Table(new(types.Block)).Where("stat in (?, ?)", stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
 }
 
-func (d *DB) GetTransactionCount() (int64, error) {
-	return d.engine.Table(new(types.Transaction)).Count()
+func (d *DB) GetTransactionCount(stat string) (int64, error) {
+	sql := d.engine.Table(new(types.Transaction))
+	if len(stat) > 0 {
+		sql.Where("find_in_set(stat, ?)", stat)
+	}
+
+	return sql.Count()
 }
 
 func (d *DB) GetAddressTransactionCount(address string) (int64, error) {
@@ -84,15 +95,15 @@ func (d *DB) GetAddressCount() (int64, error) {
 		GroupBy("address").Count()
 }
 
-func (d *DB) GetUsableAmount(address string) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and stat = ?",
-		address, "", stat.TX_Confirmed).
+func (d *DB) GetUsableAmount(address, coinId string) (float64, error) {
+	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and coin_id = ? and stat = ?",
+		address, "", coinId, stat.TX_Confirmed).
 		Sum(new(types.Vout), "amount")
 }
 
-func (d *DB) GetLockedAmount(address string) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and stat = ?",
-		address, "", stat.TX_Unconfirmed).
+func (d *DB) GetLockedAmount(address, coinId string) (float64, error) {
+	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and coin_id = ? and stat = ?",
+		address, "", coinId, stat.TX_Unconfirmed).
 		Sum(new(types.Vout), "amount")
 }
 
@@ -118,4 +129,19 @@ func (d *DB) GetPeer(address string) (*dbtypes.Peer, error) {
 		return nil, err
 	}
 	return peer, nil
+}
+
+func (d *DB) GetTokenTransactionCount(coinId, stat string) (int64, error) {
+
+	sql := d.engine.Table(new(types.Vout))
+
+	if len(coinId) > 0 {
+		sql.Where("coin_id = ?", coinId)
+	}
+
+	if len(stat) > 0 {
+		sql.Where("find_in_set(stat, ?)", stat)
+	}
+
+	return sql.Count()
 }

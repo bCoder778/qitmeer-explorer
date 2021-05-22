@@ -39,15 +39,65 @@ func (d *DB) LastAddressTxId(page, size int, address string) ([]string, error) {
 }
 
 //select address, sum(Amount) as sumamount from %s WHERE spent_tx_id = '' and stat < %d GROUP BY address ORDER BY sumamount Desc Limit %d, %d
-func (d *DB) BalanceTop(page, size int) ([]*dbtype.Address, error) {
+func (d *DB) BalanceTop(page, size int, coinId string) ([]*dbtype.Address, error) {
 	page -= 1
 	start := page * size
 
 	addrs := []*dbtype.Address{}
 	err := d.engine.Table(new(types.Vout)).
-		Select("address, sum(amount) as balance").
-		Where("spent_tx = ?  and stat in (?,?)", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
+		Select("address, coin_id, sum(amount) as balance").
+		Where("spent_tx = ? and coin_id = ? and stat in (?,?)", "", coinId, stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Desc("balance").Limit(size, start).Find(&addrs)
 
 	return addrs, err
+}
+
+func (d *DB) QueryBlock(page, size int, stat string) ([]*types.Block, error) {
+	page -= 1
+	start := page * size
+
+	var bs []*types.Block
+
+	sql := d.engine.Table(new(types.Block)).Where("1 = 1")
+	if len(stat) > 0 {
+		sql.Where("stat in (?)", stat)
+	}
+
+	err := sql.Desc("order").Limit(size, start).Find(&bs)
+	return bs, err
+}
+
+func (d *DB) QueryTransaction(page, size int, stat string) ([]*types.Transaction, error) {
+	page -= 1
+	start := page * size
+
+	var txs []*types.Transaction
+	sql := d.engine.Table(new(types.Transaction))
+
+	if len(stat) > 0 {
+		sql.Where("stat in (?)", stat)
+	}
+
+	err := sql.Desc("id").Limit(size, start).Find(&txs)
+	return txs, err
+}
+
+func (d *DB) QueryTokenTransaction(page, size int, coinId, stat string) ([]*types.Vout, error) {
+	page -= 1
+	start := page * size
+
+	var vos []*types.Vout
+
+	sql := d.engine.Table(new(types.Vout))
+
+	if len(coinId) > 0 {
+		sql.Where("coin_id = ?", coinId)
+	}
+
+	if len(stat) > 0 {
+		sql.Where("find_in_set(stat, ?)", stat)
+	}
+	err := sql.Desc("id").Limit(size, start).Find(vos)
+
+	return vos, err
 }

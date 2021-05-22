@@ -94,19 +94,19 @@ func getCuckooScale(powType string, p *params.Params, edgeBits, mheight int64) i
 	switch powType {
 	case "cuckaroo":
 		instance := &pow.Cuckaroo{}
-		instance.SetMainHeight(mheight)
+		instance.SetMainHeight(pow.MainHeight(mheight))
 		instance.SetEdgeBits(uint8(edgeBits))
 		instance.SetParams(p.PowConfig)
 		return int(instance.GraphWeight())
 	case "cuckaroom":
 		instance := &pow.Cuckaroom{}
-		instance.SetMainHeight(mheight)
+		instance.SetMainHeight(pow.MainHeight(mheight))
 		instance.SetEdgeBits(uint8(edgeBits))
 		instance.SetParams(p.PowConfig)
 		return int(instance.GraphWeight())
 	case "cuckatoo":
 		instance := &pow.Cuckaroo{}
-		instance.SetMainHeight(mheight)
+		instance.SetMainHeight(pow.MainHeight(mheight))
 		instance.SetEdgeBits(uint8(edgeBits))
 		instance.SetParams(p.PowConfig)
 		return int(instance.GraphWeight())

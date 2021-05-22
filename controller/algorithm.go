@@ -26,3 +26,7 @@ func (c *Controller) AlgorithmLine(algorithm string, sec int) *types.AlgorithmLi
 	}
 	return value.(*types.AlgorithmLineResp)
 }
+
+func (c *Controller) GetCoinIds() []string {
+	return c.qitmeer.CoinIdList()
+}

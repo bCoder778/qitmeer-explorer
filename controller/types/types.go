@@ -145,7 +145,7 @@ type BlockResp struct {
 }
 
 func ToTransactionResp(tx *types.Transaction) *TransactionResp {
-	return &TransactionResp{
+	t := &TransactionResp{
 		Id:            tx.Id,
 		TxId:          tx.TxId,
 		BlockHash:     tx.BlockHash,
@@ -166,6 +166,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Duplicate:     false,
 		Stat:          0,
 	}
+	return t
 }
 
 func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
@@ -177,6 +178,12 @@ func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
 }
 
 func ToVinResp(vinout *types.Vin) *VinResp {
+
+	amount := qittypes.Amount{
+		Id:    qittypes.NewCoinID(vinout.CoinId),
+		Value: int64(vinout.Amount),
+	}
+
 	return &VinResp{
 		Id:        vinout.Id,
 		TxId:      vinout.TxId,
@@ -185,7 +192,7 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 		Timestamp: vinout.Timestamp,
 		Address:   vinout.Address,
 		CoinId:    vinout.CoinId,
-		Amount:    qittypes.Amount(vinout.Amount).ToCoin(),
+		Amount:    amount.ToCoin(),
 		SpentedTx: vinout.SpentedTx,
 		Vout:      vinout.Vout,
 		Sequence:  vinout.Sequence,
@@ -194,7 +201,21 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 	}
 }
 
+func ToVoutListResp(vs []*types.Vout) []*VoutResp {
+
+	var outs []*VoutResp
+	for _, item := range vs {
+		outs = append(outs, ToVoutResp(item))
+	}
+	return outs
+}
+
 func ToVoutResp(vinout *types.Vout) *VoutResp {
+	amount := qittypes.Amount{
+		Id:    qittypes.NewCoinID(vinout.CoinId),
+		Value: int64(vinout.Amount),
+	}
+
 	return &VoutResp{
 		Id:           vinout.Id,
 		TxId:         vinout.TxId,
@@ -203,7 +224,7 @@ func ToVoutResp(vinout *types.Vout) *VoutResp {
 		Timestamp:    vinout.Timestamp,
 		Address:      vinout.Address,
 		CoinId:       vinout.CoinId,
-		Amount:       qittypes.Amount(vinout.Amount).ToCoin(),
+		Amount:       amount.ToCoin(),
 		ScriptPubKey: vinout.ScriptPubKey,
 		SpentTx:      vinout.SpentTx,
 	}
@@ -211,6 +232,10 @@ func ToVoutResp(vinout *types.Vout) *VoutResp {
 
 func ToBlockResp(block *types.Block) *BlockResp {
 	_, miner := Miners.Get(block.Address)
+	amount := qittypes.Amount{
+		Id:    qittypes.MEERID,
+		Value: int64(block.Amount),
+	}
 	return &BlockResp{
 		Id:            block.Id,
 		Hash:          block.Hash,
@@ -236,7 +261,7 @@ func ToBlockResp(block *types.Block) *BlockResp {
 		CircleNonces:  block.CircleNonces,
 		Address:       block.Address,
 		Miner:         miner,
-		Amount:        qittypes.Amount(block.Amount).ToCoin(),
+		Amount:        amount.ToCoin(),
 		Stat:          block.Stat,
 	}
 }
@@ -264,10 +289,16 @@ func ToAddressRespList(addrList []*types2.Address, start uint64) []*AddressResp 
 }
 
 func ToAddressResp(addr *types2.Address, id uint64) *AddressResp {
+
+	amount := qittypes.Amount{
+		Id:    qittypes.NewCoinID(addr.CoinId),
+		Value: int64(addr.Balance),
+	}
+
 	return &AddressResp{
 		Id:      id,
 		Address: addr.Address,
-		Balance: qittypes.Amount(addr.Balance).ToCoin(),
+		Balance: amount.ToCoin(),
 	}
 }
 

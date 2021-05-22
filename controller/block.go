@@ -26,7 +26,7 @@ func (c *Controller) lastBlocks(page, size int) (*types.ListResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.storage.GetBlockCount()
+	count, err := c.storage.GetBlockCount("")
 	if err != nil {
 		return nil, err
 	}
@@ -67,4 +67,36 @@ func (c *Controller) blockDetail(hash string) (*types.BlockDetailResp, error) {
 		txDetails = append(txDetails, tx)
 	}
 	return &types.BlockDetailResp{Header: types.ToBlockResp(blockHeader), Transactions: txDetails}, nil
+}
+
+func (c *Controller) QueryBlockByStatus(page, size int, stat string) (*types.ListResp, error) {
+	key := fmt.Sprintf("%d-%d-%s", page, size, stat)
+	value, err := c.cache.Value("LastBlocks", key)
+	if err != nil {
+		blockList, err := c.queryBlockByStatus(page, size, stat)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("LastBlocks", key, 30*time.Second, blockList)
+		return blockList, nil
+	}
+	return value.(*types.ListResp), nil
+
+}
+
+func (c *Controller) queryBlockByStatus(page, size int, stat string) (*types.ListResp, error) {
+	blocks, err := c.storage.QueryBlock(page, size, stat)
+	if err != nil {
+		return nil, err
+	}
+	count, err := c.storage.GetBlockCount(stat)
+	if err != nil {
+		return nil, err
+	}
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  types.ToBlockRespList(blocks),
+		Count: count,
+	}, nil
 }
