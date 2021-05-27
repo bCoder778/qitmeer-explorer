@@ -104,7 +104,13 @@ func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v2/chain").
 		GetSub("tips", a.tips).
 		GetSub("algorithm/list", a.algorithmList).
-		GetSub("algorithm/line", a.algorithmLine)
+		GetSub("algorithm/line", a.algorithmLine).
+		GetSub("miner", a.blocksDistribution).
+		GetSub("circulating", a.getCirculating).
+		GetSub("circulatingfloat", a.getCirculatingFloat).
+		GetSub("max", a.getMax).
+		GetSub("maxfloat", a.getMaxFloat)
+
 }
 
 func (a *Api) queryBLock(ct *Context) (interface{}, *Error) {

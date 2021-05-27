@@ -97,7 +97,7 @@ func (d *DB) QueryTokenTransaction(page, size int, coinId, stat string) ([]*type
 	if len(stat) > 0 {
 		sql.Where("find_in_set(stat, ?)", stat)
 	}
-	err := sql.Desc("id").Limit(size, start).Find(vos)
+	err := sql.Desc("id").Limit(size, start).Find(&vos)
 
 	return vos, err
 }
