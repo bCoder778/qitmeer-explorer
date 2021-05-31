@@ -29,15 +29,15 @@ func (c *Controller) blocksDistribution() []*types.DistributionResp {
 		ok, pool := types.Miners.Get(miner.Address)
 		if ok {
 			distribution.Miner = pool.Name
-		} else {
-			distribution.Miner = miner.Address
 		}
 		block := c.storage.GetLastMinerBlock(miner.Address)
+		distribution.Address = miner.Address
 		distribution.Blocks = miner.Count
 		distribution.LastOrder = block.Order
 		distribution.LastTimestamp = block.Timestamp
 		distribution.Proportion = blocksProportion(distribution.Blocks, all)
-		dt, ok := distributions[distribution.Miner]
+		distribution.ProportionNumber = blocksProportionNumber(distribution.Blocks, all)
+		dt, ok := distributions[distribution.Address]
 		if ok {
 			if dt.LastOrder < distribution.LastOrder {
 				dt.LastOrder = distribution.LastOrder
@@ -45,9 +45,9 @@ func (c *Controller) blocksDistribution() []*types.DistributionResp {
 			}
 			dt.Blocks += distribution.Blocks
 			dt.Proportion = blocksProportion(distribution.Blocks, all)
-			distributions[distribution.Miner] = dt
+			distributions[distribution.Address] = dt
 		} else {
-			distributions[distribution.Miner] = distribution
+			distributions[distribution.Address] = distribution
 		}
 	}
 	for _, dt := range distributions {
@@ -57,5 +57,9 @@ func (c *Controller) blocksDistribution() []*types.DistributionResp {
 }
 
 func blocksProportion(blocks, all uint64) string {
-	return fmt.Sprintf("%.2f %%", (float64(blocks) / float64(all) * 100))
+	return fmt.Sprintf("%.5f %%", float64(blocks)/float64(all)*100)
+}
+
+func blocksProportionNumber(blocks, all uint64) float64 {
+	return float64(blocks) / float64(all) * 100
 }

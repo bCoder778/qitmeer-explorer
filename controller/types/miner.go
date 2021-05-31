@@ -51,9 +51,11 @@ var Miners = MinerPools{
 }
 
 type DistributionResp struct {
-	Miner         string `json:"miner"`
-	Blocks        uint64 `json:"blocks"`
-	Proportion    string `json:"proportion"`
-	LastOrder     uint64 `json:"lastorder"`
-	LastTimestamp int64  `json:"lasttimestamp"`
+	Miner            string  `json:"miner"`
+	Address          string  `json:"address"`
+	Blocks           uint64  `json:"blocks"`
+	Proportion       string  `json:"proportion"`
+	ProportionNumber float64 `json:"proportionNum"`
+	LastOrder        uint64  `json:"lastorder"`
+	LastTimestamp    int64   `json:"lasttimestamp"`
 }

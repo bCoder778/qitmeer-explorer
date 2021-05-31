@@ -1,7 +1,7 @@
 package types
 
 import (
-	qittypes "github.com/Qitmeer/qitmeer/core/types"
+	qitTypes "github.com/Qitmeer/qitmeer/core/types"
 	types2 "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
@@ -170,7 +170,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 }
 
 func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
-	txs := []*TransactionResp{}
+	var txs []*TransactionResp
 	for _, tx := range dbTxs {
 		txs = append(txs, ToTransactionResp(tx))
 	}
@@ -179,8 +179,8 @@ func ToTransactionRespList(dbTxs []*types.Transaction) []*TransactionResp {
 
 func ToVinResp(vinout *types.Vin) *VinResp {
 
-	amount := qittypes.Amount{
-		Id:    qittypes.NewCoinID(vinout.CoinId),
+	amount := qitTypes.Amount{
+		Id:    qitTypes.NewCoinID(vinout.CoinId),
 		Value: int64(vinout.Amount),
 	}
 
@@ -211,8 +211,8 @@ func ToVoutListResp(vs []*types.Vout) []*VoutResp {
 }
 
 func ToVoutResp(vinout *types.Vout) *VoutResp {
-	amount := qittypes.Amount{
-		Id:    qittypes.NewCoinID(vinout.CoinId),
+	amount := qitTypes.Amount{
+		Id:    qitTypes.NewCoinID(vinout.CoinId),
 		Value: int64(vinout.Amount),
 	}
 
@@ -232,8 +232,8 @@ func ToVoutResp(vinout *types.Vout) *VoutResp {
 
 func ToBlockResp(block *types.Block) *BlockResp {
 	_, miner := Miners.Get(block.Address)
-	amount := qittypes.Amount{
-		Id:    qittypes.MEERID,
+	amount := qitTypes.Amount{
+		Id:    qitTypes.MEERID,
 		Value: int64(block.Amount),
 	}
 	return &BlockResp{
@@ -267,7 +267,7 @@ func ToBlockResp(block *types.Block) *BlockResp {
 }
 
 func ToBlockRespList(dbBlocks []*types.Block) []*BlockResp {
-	blocks := []*BlockResp{}
+	var blocks []*BlockResp
 	for _, block := range dbBlocks {
 		blocks = append(blocks, ToBlockResp(block))
 	}
@@ -278,10 +278,11 @@ type AddressResp struct {
 	Id      uint64  `json:"id"`
 	Address string  `json:"address"`
 	Balance float64 `json:"balance"`
+	Tag     string  `json:"tag"`
 }
 
 func ToAddressRespList(addrList []*types2.Address, start uint64) []*AddressResp {
-	addrRespList := []*AddressResp{}
+	var addrRespList []*AddressResp
 	for i, addr := range addrList {
 		addrRespList = append(addrRespList, ToAddressResp(addr, start+uint64(i)+1))
 	}
@@ -290,8 +291,8 @@ func ToAddressRespList(addrList []*types2.Address, start uint64) []*AddressResp 
 
 func ToAddressResp(addr *types2.Address, id uint64) *AddressResp {
 
-	amount := qittypes.Amount{
-		Id:    qittypes.NewCoinID(addr.CoinId),
+	amount := qitTypes.Amount{
+		Id:    qitTypes.NewCoinID(addr.CoinId),
 		Value: int64(addr.Balance),
 	}
 
