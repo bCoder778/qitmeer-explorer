@@ -141,6 +141,7 @@ type BlockResp struct {
 	Address       string         `json:"address"`
 	Amount        float64        `json:"amount"`
 	Miner         *MinerPool     `json:"miner"`
+	Color 		    stat.Color     `json:"miner"`
 	Stat          stat.BlockStat `json:"stat"`
 }
 
@@ -261,7 +262,8 @@ func ToBlockResp(block *types.Block) *BlockResp {
 		CircleNonces:  block.CircleNonces,
 		Address:       block.Address,
 		Miner:         miner,
-		Amount:        amount.ToCoin(),
+		Amount:        qittypes.Amount(block.Amount).ToCoin(),
+		Color: 		     block.Color,
 		Stat:          block.Stat,
 	}
 }
