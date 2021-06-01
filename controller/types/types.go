@@ -164,7 +164,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Fees:          nil,
 		Changes:       nil,
 		Duplicate:     false,
-		Stat:          0,
+		Stat:          tx.Stat,
 	}
 	return t
 }
