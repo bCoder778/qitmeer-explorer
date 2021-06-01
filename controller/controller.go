@@ -43,8 +43,8 @@ func (c *Controller) Close() {
 
 func newQitmeer(c *conf.Qitmeer, storage *sqldb.DB, rpcClient *rpc.Client) (IQitmeer, error) {
 	switch c.Version {
-	case "0.9":
-		return qitmeer.NewQitmeerV0_9(c.Network, storage, storage, rpcClient), nil
+	//case "0.9":
+	//	return qitmeer.NewQitmeerV0_9(c.Network, storage, storage, rpcClient), nil
 	case "0.10":
 		return qitmeer.NewQitmeerV0_10(c.Network, storage), nil
 	}

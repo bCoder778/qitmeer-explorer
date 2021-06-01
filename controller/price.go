@@ -77,7 +77,7 @@ func (c *Controller) getCirculating() string {
 	if err != nil {
 		return "0"
 	}
-	pMeer := (uint64(count)-1)*verify.BlockReward + verify.GenesisUTXO
+	pMeer := (uint64(count) - 1) * verify.BlockReward //verify.GenesisUTXO
 	sPMeer := strconv.FormatUint(pMeer, 10)
 	return sPMeer
 }

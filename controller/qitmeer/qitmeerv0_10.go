@@ -2,6 +2,7 @@ package qitmeer
 
 import (
 	"fmt"
+	qts "github.com/Qitmeer/qitmeer/core/types"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	db "github.com/bCoder778/qitmeer-explorer/db"
 	"github.com/bCoder778/qitmeer-explorer/external"
@@ -219,4 +220,12 @@ func (q *QitmeerV0_10) avgHashRate(blocks []*dbtypes.Block, lastDiff uint64) (st
 	}
 
 	return fmt.Sprintf("%.2f", sum/float64(length)), finalUint
+}
+
+func (q *QitmeerV0_10) CoinIdList() []string {
+	var coins []string
+	for _, item := range qts.CoinIDList {
+		coins = append(coins, item.Name())
+	}
+	return coins
 }

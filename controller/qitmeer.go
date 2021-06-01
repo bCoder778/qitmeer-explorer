@@ -10,4 +10,5 @@ type IQitmeer interface {
 	StartFindPeer() error
 	StopFindPeer() error
 	PeerList() []*types.PeerResp
+	CoinIdList() []string
 }

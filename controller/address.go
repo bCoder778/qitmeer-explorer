@@ -22,7 +22,7 @@ func (c *Controller) BalanceTop(page, size int) (*types.ListResp, error) {
 }
 
 func (c *Controller) balanceTop(page, size int) (*types.ListResp, error) {
-	address, err := c.storage.BalanceTop(page, size)
+	address, err := c.storage.BalanceTop(page, size, "MEER")
 	if err != nil {
 		return nil, err
 	}
@@ -53,16 +53,25 @@ func (c *Controller) AddressStatus(address string) (*types.AddressStatusResp, er
 }
 
 func (c *Controller) addressStatus(address string) (*types.AddressStatusResp, error) {
-	usable, err := c.storage.GetUsableAmount(address)
+
+	getAmount := func(coinId string, value int64) float64 {
+		amount := types2.Amount{
+			Id:    types2.NewCoinID(coinId),
+			Value: value,
+		}
+		return amount.ToCoin()
+	}
+
+	usable, err := c.storage.GetUsableAmount(address, types2.MEERID.Name())
 	if err != nil {
 		return nil, err
 	}
-	locked, err := c.storage.GetLockedAmount(address)
+	locked, err := c.storage.GetLockedAmount(address, types2.MEERID.Name())
 	if err != nil {
 		return nil, err
 	}
-	usable = types2.Amount(uint64(usable)).ToCoin()
-	locked = types2.Amount(uint64(locked)).ToCoin()
+	usable = getAmount(types2.MEERID.Name(), int64(usable))
+	locked = getAmount(types2.MEERID.Name(), int64(locked))
 	return &types.AddressStatusResp{
 		Address: address,
 		Balance: usable + locked,

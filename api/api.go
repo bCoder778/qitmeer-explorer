@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-explorer/controller"
+	"github.com/bCoder778/qitmeer-sync/verify/stat"
 	"os"
 	"os/signal"
 	"strconv"
@@ -43,16 +44,17 @@ func (a *Api) listenInterrupt() {
 }
 
 func (a *Api) addApi() {
+
 	a.rest.AuthRouteSet("api/v1/list").
-		GetSub("block", a.lastBlocks).
-		GetSub("transaction", a.lastTransactions).
+		GetSub("block", a.queryBLock).
+		GetSub("transaction", a.queryTransaction).
 		GetSub("address/transaction", a.lastAddressTransactions).
 		GetSub("top/address", a.balanceTop).
 		GetSub("node", a.nodeList)
 
 	a.rest.AuthRouteSet("api/v1/detail").
-		GetSub("block", a.blockDetail).
-		GetSub("transaction", a.transactionDetail)
+		GetSub("block", a.getBlock).
+		GetSub("transaction", a.getTransaction)
 
 	a.rest.AuthRouteSet("api/v1/status").
 		GetSub("address", a.addressStatus)
@@ -77,9 +79,41 @@ func (a *Api) addApi() {
 		GetSub("max", a.getMax).
 		GetSub("maxfloat", a.getMaxFloat)
 
+	// Api V2
+	a.rest.AuthRouteSet("api/v2/block").
+		GetSub("detail", a.getBlock).
+		GetSub("list", a.queryBLock).
+		GetSub("pending", a.queryBlockPending).
+		GetSub("completed", a.queryBlockCompleted)
+
+	a.rest.AuthRouteSet("api/v2/tx").
+		GetSub("detail", a.getTransaction).
+		GetSub("list", a.queryTransaction).
+		GetSub("pending", a.queryTransactionPending).
+		GetSub("completed", a.queryTransactionCompleted)
+
+	a.rest.AuthRouteSet("api/v2/token").
+		GetSub("list", a.coinIdList).
+		GetSub("transfers", a.queryTokenTxs)
+
+	a.rest.AuthRouteSet("api/v2/address").
+		GetSub("list", a.balanceTop).
+		GetSub("detail", a.addressStatus).
+		GetSub("transfers", a.lastAddressTransactions)
+
+	a.rest.AuthRouteSet("api/v2/chain").
+		GetSub("tips", a.tips).
+		GetSub("algorithm/list", a.algorithmList).
+		GetSub("algorithm/line", a.algorithmLine).
+		GetSub("miner", a.blocksDistribution).
+		GetSub("circulating", a.getCirculating).
+		GetSub("circulatingfloat", a.getCirculatingFloat).
+		GetSub("max", a.getMax).
+		GetSub("maxfloat", a.getMaxFloat)
+
 }
 
-func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
+func (a *Api) queryBLock(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
@@ -92,12 +126,62 @@ func (a *Api) lastBlocks(ct *Context) (interface{}, *Error) {
 	return blocks, nil
 }
 
-func (a *Api) lastTransactions(ct *Context) (interface{}, *Error) {
+func (a *Api) queryBlockPending(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+
+	blocks, err := a.controller.QueryBlockByStatus(page, size, fmt.Sprintf("%v", stat.Block_Unconfirmed))
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return blocks, nil
+}
+
+func (a *Api) queryBlockCompleted(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+
+	blocks, err := a.controller.QueryBlockByStatus(page, size, fmt.Sprintf("%v", stat.Block_Confirmed))
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return blocks, nil
+}
+
+func (a *Api) queryTransaction(ct *Context) (interface{}, *Error) {
 	page, size, err := a.parseListParam(ct)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	txs, err := a.controller.LastTransactions(page, size)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) queryTransactionPending(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.QueryBlockByStatus(page, size, fmt.Sprintf("%v,%v", stat.TX_Unconfirmed, stat.TX_Memry))
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) queryTransactionCompleted(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.QueryBlockByStatus(page, size, fmt.Sprintf("%v", stat.TX_Confirmed))
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
@@ -128,7 +212,7 @@ func (a *Api) balanceTop(ct *Context) (interface{}, *Error) {
 	return txs, nil
 }
 
-func (a *Api) blockDetail(ct *Context) (interface{}, *Error) {
+func (a *Api) getBlock(ct *Context) (interface{}, *Error) {
 	block, err := a.controller.BlockDetail(ct.Query["hash"])
 	if err != nil {
 		return nil, &Error{
@@ -139,7 +223,7 @@ func (a *Api) blockDetail(ct *Context) (interface{}, *Error) {
 	return block, nil
 }
 
-func (a *Api) transactionDetail(ct *Context) (interface{}, *Error) {
+func (a *Api) getTransaction(ct *Context) (interface{}, *Error) {
 	block, err := a.controller.TransactionDetail(ct.Query["txid"], "")
 	if err != nil {
 		return nil, &Error{
@@ -239,6 +323,11 @@ func (a *Api) tips(ct *Context) (interface{}, *Error) {
 	return tips, nil
 }
 
+func (a *Api) coinIdList(ct *Context) (interface{}, *Error) {
+	tokens := a.controller.GetCoinIds()
+	return tokens, nil
+}
+
 func (a *Api) parseListParam(ct *Context) (int, int, error) {
 	page, err := strconv.Atoi(ct.Query["page"])
 	if err != nil {
@@ -258,4 +347,18 @@ func (a *Api) parseListParam(ct *Context) (int, int, error) {
 		size = 500
 	}
 	return page, size, nil
+}
+
+func (a *Api) queryTokenTxs(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	coinId := ct.Query["coinId"]
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+
+	vs, err := a.controller.QueryTokenTxs(page, size, coinId, "")
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return vs, nil
 }
