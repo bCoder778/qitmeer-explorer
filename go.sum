@@ -68,6 +68,8 @@ github.com/bCoder778/qitmeer-sync v0.1.5 h1:BepJpeom4EWNWwYpg0KMbpdAko56/OO6kOiA
 github.com/bCoder778/qitmeer-sync v0.1.5/go.mod h1:+yCs2wWrnZOuFjPdzhNJ8pDQUB/QlkRllf5cCAj7uh8=
 github.com/bCoder778/qitmeer-sync v0.1.6 h1:X2EkY5DlfOuz6cszZu4OQLSYlwcPoWVDelBYoTD8qxs=
 github.com/bCoder778/qitmeer-sync v0.1.6/go.mod h1:+yCs2wWrnZOuFjPdzhNJ8pDQUB/QlkRllf5cCAj7uh8=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20210601013849-e6d4df917799 h1:nEHGM9A0/SqGX6yEuWV150PgGpsjloD4XzBUvArpHaA=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20210601013849-e6d4df917799/go.mod h1:+yCs2wWrnZOuFjPdzhNJ8pDQUB/QlkRllf5cCAj7uh8=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/bndr/gotabulate v1.1.2/go.mod h1:0+8yUgaPTtLRTjf49E8oju7ojpU11YmXyvq1LbPAb3U=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
