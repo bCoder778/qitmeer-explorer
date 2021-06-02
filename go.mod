@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/Qitmeer/qitmeer v0.10.0-dev.0.20210503110034-927cd48a0b63
+	github.com/Qitmeer/qitmeer v0.10.0-dev.0.20210525055030-b76ef2da66d5
 	github.com/bCoder778/log v0.1.3
 	github.com/bCoder778/qitmeer-sync v0.1.7-0.20210601013849-e6d4df917799
 	github.com/denisenkom/go-mssqldb v0.9.0

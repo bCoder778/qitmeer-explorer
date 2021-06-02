@@ -184,7 +184,6 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 		Id:    qitTypes.NewCoinID(vinout.CoinId),
 		Value: int64(vinout.Amount),
 	}
-
 	return &VinResp{
 		Id:        vinout.Id,
 		TxId:      vinout.TxId,
@@ -262,8 +261,8 @@ func ToBlockResp(block *types.Block) *BlockResp {
 		CircleNonces:  block.CircleNonces,
 		Address:       block.Address,
 		Miner:         miner,
-		Amount:        qittypes.Amount(block.Amount).ToCoin(),
-		Color: 		     block.Color,
+		Amount:        amount.ToCoin(),
+		Color: 		    block.Color,
 		Stat:          block.Stat,
 	}
 }
