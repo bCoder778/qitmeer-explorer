@@ -141,7 +141,7 @@ type BlockResp struct {
 	Address       string         `json:"address"`
 	Amount        float64        `json:"amount"`
 	Miner         *MinerPool     `json:"miner"`
-	Color 		    stat.Color     `json:"miner"`
+	Color 		  stat.Color     `json:"color"`
 	Stat          stat.BlockStat `json:"stat"`
 }
 
