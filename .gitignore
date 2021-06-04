@@ -11,3 +11,4 @@ bin/linux/qitmeer-explorer
 .idea/qitmeer-explorer.iml
 .idea/modules.xml
 .DS_Store
+.idea/watcherTasks.xml

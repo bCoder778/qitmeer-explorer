@@ -112,6 +112,8 @@ type VoutResp struct {
 	Amount       float64             `json:"amount"`
 	ScriptPubKey *types.ScriptPubKey `json:"scriptpubkey"`
 	SpentTx      string              `json:"spenttx"`
+	Locked       bool                `json:"locked"`
+	LockHeight   uint64              `json:"lockheight"`
 	Stat         stat.TxStat         `json:"stat"`
 }
 
@@ -141,7 +143,7 @@ type BlockResp struct {
 	Address       string         `json:"address"`
 	Amount        float64        `json:"amount"`
 	Miner         *MinerPool     `json:"miner"`
-	Color 		  stat.Color     `json:"color"`
+	Color         stat.Color     `json:"color"`
 	Stat          stat.BlockStat `json:"stat"`
 }
 
@@ -201,16 +203,15 @@ func ToVinResp(vinout *types.Vin) *VinResp {
 	}
 }
 
-func ToVoutListResp(vs []*types.Vout) []*VoutResp {
-
+func ToVoutListResp(vs []*types.Vout, height uint64) []*VoutResp {
 	var outs []*VoutResp
 	for _, item := range vs {
-		outs = append(outs, ToVoutResp(item))
+		outs = append(outs, ToVoutResp(item, height))
 	}
 	return outs
 }
 
-func ToVoutResp(vinout *types.Vout) *VoutResp {
+func ToVoutResp(vinout *types.Vout, height uint64) *VoutResp {
 	amount := qitTypes.Amount{
 		Id:    qitTypes.NewCoinID(vinout.CoinId),
 		Value: int64(vinout.Amount),
@@ -227,6 +228,8 @@ func ToVoutResp(vinout *types.Vout) *VoutResp {
 		Amount:       amount.ToCoin(),
 		ScriptPubKey: vinout.ScriptPubKey,
 		SpentTx:      vinout.SpentTx,
+		LockHeight:   vinout.Lock,
+		Locked:       height >= vinout.Lock,
 	}
 }
 
@@ -262,7 +265,7 @@ func ToBlockResp(block *types.Block) *BlockResp {
 		Address:       block.Address,
 		Miner:         miner,
 		Amount:        amount.ToCoin(),
-		Color: 		    block.Color,
+		Color:         block.Color,
 		Stat:          block.Stat,
 	}
 }

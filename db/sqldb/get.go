@@ -28,6 +28,12 @@ func (d *DB) GetLastOrder() (uint64, error) {
 	return block.Order, err
 }
 
+func (d *DB) GetLastHeight() (uint64, error) {
+	var block = &types.Block{}
+	_, err := d.engine.Table(new(types.Block)).Desc("height").Get(block)
+	return block.Height, err
+}
+
 func (d *DB) GetLastUnconfirmedOrder() (uint64, error) {
 	var block = &types.Block{}
 	_, err := d.engine.Table(new(types.Block)).Where("stat = ?", stat.Block_Unconfirmed).OrderBy("`order`").Get(block)

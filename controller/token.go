@@ -29,10 +29,14 @@ func (c *Controller) queryTokenTxs(page, size int, coinId, stat string) (*types.
 	if err != nil {
 		return nil, err
 	}
+	height, err := c.storage.GetLastHeight()
+	if err != nil {
+		return nil, err
+	}
 	return &types.ListResp{
 		Page:  page,
 		Size:  size,
-		List:  types.ToVoutListResp(vs),
+		List:  types.ToVoutListResp(vs, height),
 		Count: count,
 	}, nil
 }

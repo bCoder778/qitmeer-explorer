@@ -18,6 +18,7 @@ type IDB interface {
 
 type IGet interface {
 	GetLastOrder() (uint64, error)
+	GetLastHeight() (uint64, error)
 	GetLastUnconfirmedOrder() (uint64, error)
 	GetTransaction(txId string, blockHash string) (*types.Transaction, error)
 	GetTransactionByTxId(txId string) ([]*types.Transaction, error)

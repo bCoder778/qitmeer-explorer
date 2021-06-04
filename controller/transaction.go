@@ -158,8 +158,12 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	if err != nil {
 		return nil, err
 	}
+	lastHeight, err := c.storage.GetLastHeight()
+	if err != nil {
+		return nil, err
+	}
 	for _, out := range dbVout {
-		vout = append(vout, types.ToVoutResp(out))
+		vout = append(vout, types.ToVoutResp(out, lastHeight))
 
 		change, ok := changeMap[out.CoinId]
 		if ok {
