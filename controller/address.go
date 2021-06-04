@@ -39,21 +39,21 @@ func (c *Controller) balanceTop(page, size int) (*types.ListResp, error) {
 	}, nil
 }
 
-func (c *Controller) AddressStatus(address string) (*types.AddressStatusResp, error) {
-	value, err := c.cache.Value("AddressStatus", address)
+func (c *Controller) AddressStatus(address string, coin string) (*types.AddressStatusResp, error) {
+	key := fmt.Sprintf("%s-%s", address, coin)
+	value, err := c.cache.Value("AddressStatus", key)
 	if err != nil {
-		status, err := c.addressStatus(address)
+		status, err := c.addressStatus(address, coin)
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("AddressStatus", address, 60*time.Second, status)
+		c.cache.Add("AddressStatus", key, 60*time.Second, status)
 		return status, nil
 	}
 	return value.(*types.AddressStatusResp), nil
 }
 
-func (c *Controller) addressStatus(address string) (*types.AddressStatusResp, error) {
-
+func (c *Controller) addressStatus(address string, coin string) (*types.AddressStatusResp, error) {
 	getAmount := func(coinId string, value int64) float64 {
 		amount := types2.Amount{
 			Id:    types2.NewCoinID(coinId),
@@ -62,20 +62,30 @@ func (c *Controller) addressStatus(address string) (*types.AddressStatusResp, er
 		return amount.ToCoin()
 	}
 
-	usable, err := c.storage.GetUsableAmount(address, types2.MEERID.Name())
+	height, err := c.storage.GetLastHeight()
 	if err != nil {
 		return nil, err
 	}
-	locked, err := c.storage.GetLockedAmount(address, types2.MEERID.Name())
+	usable, err := c.storage.GetUsableAmount(address, coin, height)
+	if err != nil {
+		return nil, err
+	}
+	locked, err := c.storage.GetLockedAmount(address, coin, height)
+	if err != nil {
+		return nil, err
+	}
+	unconfirmed, err := c.storage.GetLockedAmount(address, coin, height)
 	if err != nil {
 		return nil, err
 	}
 	usable = getAmount(types2.MEERID.Name(), int64(usable))
 	locked = getAmount(types2.MEERID.Name(), int64(locked))
+	unconfirmed = getAmount(types2.MEERID.Name(), int64(unconfirmed))
 	return &types.AddressStatusResp{
-		Address: address,
-		Balance: usable + locked,
-		Usable:  usable,
-		Locked:  locked,
+		Address:    address,
+		Balance:    usable + locked + unconfirmed,
+		Usable:     usable,
+		Locked:     locked,
+		Uncofirmed: unconfirmed,
 	}, nil
 }

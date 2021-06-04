@@ -101,15 +101,21 @@ func (d *DB) GetAddressCount() (int64, error) {
 		GroupBy("address").Count()
 }
 
-func (d *DB) GetUsableAmount(address, coinId string) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and coin_id = ? and stat = ?",
-		address, "", coinId, stat.TX_Confirmed).
+func (d *DB) GetUsableAmount(address string, coinId string, height uint64) (float64, error) {
+	return d.engine.Table(new(types.Vout)).Where("vout.lock <= ?  and address = ? and coin_id = ? and spent_tx = ? and stat = ?",
+		height, address, coinId, "", stat.TX_Confirmed).
 		Sum(new(types.Vout), "amount")
 }
 
-func (d *DB) GetLockedAmount(address, coinId string) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("address = ? and spent_tx = ? and coin_id = ? and stat = ?",
-		address, "", coinId, stat.TX_Unconfirmed).
+func (d *DB) GetUnconfirmedAmount(address string, coinId string) (float64, error) {
+	return d.engine.Table(new(types.Vout)).Where("address = ? and coin_id = ? and spent_tx = ? and stat in (?, ?)",
+		address, coinId, "", stat.TX_Unconfirmed, stat.TX_Memry).
+		Sum(new(types.Vout), "amount")
+}
+
+func (d *DB) GetLockedAmount(address string, coinId string, height uint64) (float64, error) {
+	return d.engine.Table(new(types.Vout)).Where("vout.lock > ? and address = ? and coin_id = ? and spent_tx = ? and stat = ?",
+		height, address, coinId, "", stat.TX_Confirmed).
 		Sum(new(types.Vout), "amount")
 }
 

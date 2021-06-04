@@ -235,7 +235,7 @@ func (a *Api) getTransaction(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
-	status, err := a.controller.AddressStatus(ct.Query["address"])
+	status, err := a.controller.AddressStatus(ct.Query["address"], ct.Query["coin"])
 	if err != nil {
 		return nil, &Error{
 			Code:    ERROR_UNKNOWN,

@@ -33,8 +33,9 @@ type IGet interface {
 	GetBlockByOrder(order uint64) (*types.Block, error)
 	GetLastBlock() (*types.Block, error)
 	GetAddressCount() (int64, error)
-	GetUsableAmount(address, coinId string) (float64, error)
-	GetLockedAmount(address, coinId string) (float64, error)
+	GetUsableAmount(address, coinId string, height uint64) (float64, error)
+	GetLockedAmount(address, coinId string, height uint64) (float64, error)
+	GetUnconfirmedAmount(address, coinId string) (float64, error)
 	GetLastMinerBlock(address string) *types.Block
 	GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block, error)
 	GetTokenTransactionCount(coinId, stat string) (int64, error)

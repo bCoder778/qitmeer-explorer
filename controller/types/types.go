@@ -308,10 +308,11 @@ func ToAddressResp(addr *types2.Address, id uint64) *AddressResp {
 }
 
 type AddressStatusResp struct {
-	Address string  `json:"address"`
-	Balance float64 `json:"balance"`
-	Usable  float64 `json:"usable"`
-	Locked  float64 `json:"locaked"`
+	Address    string  `json:"address"`
+	Balance    float64 `json:"balance"`
+	Usable     float64 `json:"usable"`
+	Locked     float64 `json:"locaked"`
+	Uncofirmed float64 `json:"uncofirmed"`
 }
 
 type AlgorithmResp struct {
