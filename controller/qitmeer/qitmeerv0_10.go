@@ -100,6 +100,8 @@ func (q *QitmeerV0_10) algorithmResp(difficulty uint64, showName string) *types.
 		return q.hashRate(difficulty, showName)
 	case Blake2b_Show:
 		return q.hashRate(difficulty, showName)
+	case MeerXkeccakV1_Show:
+		return q.hashRate(difficulty, showName)
 	default:
 		return &types.AlgorithmResp{}
 	}
