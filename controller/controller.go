@@ -7,8 +7,7 @@ import (
 	"github.com/bCoder778/qitmeer-explorer/controller/qitmeer"
 	"github.com/bCoder778/qitmeer-explorer/db"
 	"github.com/bCoder778/qitmeer-explorer/db/sqldb"
-	"github.com/bCoder778/qitmeer-sync/config"
-	"github.com/bCoder778/qitmeer-sync/rpc"
+	"github.com/bCoder778/qitmeer-explorer/rpc"
 )
 
 type Controller struct {
@@ -23,7 +22,7 @@ func NewController(conf *conf.Config) (*Controller, error) {
 	if err != nil {
 		return nil, err
 	}
-	rpcCli := rpc.NewClient(&config.Rpc{Host: conf.Rpc.Host, Admin: conf.Rpc.Admin, Password: conf.Rpc.Password})
+	rpcCli := rpc.NewClient(conf.Rpc.Host, conf.Rpc.Admin, conf.Rpc.Password)
 	_, err = rpcCli.GetBlockCount()
 	if err != nil {
 		return nil, fmt.Errorf("connect rpc failed, %s", err.Error())
@@ -33,7 +32,7 @@ func NewController(conf *conf.Config) (*Controller, error) {
 		return nil, err
 	}
 	go qitmeer.StartFindPeer()
-	return &Controller{storage: storage, qitmeer: qitmeer, cache: cache.NewMemCache()}, nil
+	return &Controller{storage: storage, qitmeer: qitmeer, cache: cache.NewMemCache(), rpcClient: rpcCli}, nil
 }
 
 func (c *Controller) Close() {

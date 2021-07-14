@@ -128,3 +128,13 @@ type Node struct {
 	ConnectTime string `json:"connecttime"`
 	Connected   bool   `json:"connected"`
 }
+
+type Token struct {
+	CoinId     uint16 `json:"coinid"`
+	CoinName   string `json:"coinname"`
+	Owners     string `json:"owners"`
+	UpLimit    uint64 `json:"uplimit,omitempty"`
+	Enable     bool   `json:"enable,omitempty"`
+	Balance    int64  `json:"balance,omitempty"`
+	LockedMeer int64  `json:"lockedMEER,omitempty"`
+}
