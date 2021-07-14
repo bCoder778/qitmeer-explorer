@@ -164,13 +164,14 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	}
 	for _, out := range dbVout {
 		vout = append(vout, types.ToVoutResp(out, lastHeight))
-
-		change, ok := changeMap[out.CoinId]
-		if ok {
-			change.UTotalVout += out.Amount
-		} else {
-			changeMap[out.CoinId] = &types.TransferChange{
-				UTotalVout: out.Amount,
+		if out.Address == address {
+			change, ok := changeMap[out.CoinId]
+			if ok {
+				change.UTotalVout += out.Amount
+			} else {
+				changeMap[out.CoinId] = &types.TransferChange{
+					UTotalVout: out.Amount,
+				}
 			}
 		}
 
