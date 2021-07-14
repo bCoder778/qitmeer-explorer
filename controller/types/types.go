@@ -137,7 +137,7 @@ type BlockResp struct {
 	Difficulty    uint64         `json:"difficulty"`
 	PowName       string         `json:"powname"`
 	PowType       int            `json:"powtype"`
-	Nonce         uint64         `json:"nonce"`
+	Nonce         string         `json:"nonce"`
 	EdgeBits      int            `json:"edgebits"`
 	CircleNonces  string         `json:"circlenonces"`
 	Address       string         `json:"address"`

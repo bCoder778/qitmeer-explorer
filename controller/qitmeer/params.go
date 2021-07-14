@@ -1,19 +1,21 @@
 package qitmeer
 
 const (
-	Cuckaroom29_Show = "Cuckaroom29"
-	Keccak256_Show   = "Keccak256"
-	Cuckaroo_Show    = "Cuckaroo"
-	Cryptonight_Show = "Cryptonight"
-	Blake2b_Show     = "Blake2b"
+	Cuckaroom29_Show   = "Cuckaroom29"
+	Keccak256_Show     = "Keccak256"
+	Cuckaroo_Show      = "Cuckaroo"
+	Cryptonight_Show   = "Cryptonight"
+	Blake2b_Show       = "Blake2b"
+	MeerXkeccakV1_Show = "MeerKeccakV1"
 )
 
 const (
-	Cuckaroom29_DB = "cuckaroom"
-	Keccak256_DB   = "qitmeer_keccak256"
-	Cuckaroo_DB    = "cuckaroo"
-	Cryptonight_DB = "cryptonight"
-	Blake2b_DB     = "blake2bd"
+	Cuckaroom29_DB   = "cuckaroom"
+	Keccak256_DB     = "qitmeer_keccak256"
+	Cuckaroo_DB      = "cuckaroo"
+	Cryptonight_DB   = "cryptonight"
+	Blake2b_DB       = "blake2bd"
+	MeerXkeccakV1_DB = "meer_xkeccak_v1"
 )
 
 type Params struct {
@@ -61,6 +63,11 @@ var Params0_10 = &Params{
 		Blake2b_Show: {
 			ShowName: Blake2b_Show,
 			DBName:   Blake2b_DB,
+			EdgeBits: 0,
+		},
+		MeerXkeccakV1_Show: {
+			ShowName: MeerXkeccakV1_Show,
+			DBName:   MeerXkeccakV1_DB,
 			EdgeBits: 0,
 		},
 	},

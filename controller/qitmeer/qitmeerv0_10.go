@@ -187,6 +187,8 @@ func (q *QitmeerV0_10) avgAlgorithmRate(blocks []*dbtypes.Block, algorithm strin
 		return q.avgHashRate(blocks, lastDiff)
 	case Blake2b_Show:
 		return q.avgHashRate(blocks, lastDiff)
+	case MeerXkeccakV1_Show:
+		return q.avgHashRate(blocks, lastDiff)
 	}
 	return "", ""
 }

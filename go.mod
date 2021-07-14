@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Qitmeer/qitmeer v0.10.0-dev.0.20210525055030-b76ef2da66d5
 	github.com/bCoder778/log v0.1.3
-	github.com/bCoder778/qitmeer-sync v0.1.7-0.20210604025534-aade65076b14
+	github.com/bCoder778/qitmeer-sync v0.1.7-0.20210714060208-0fd3d0f2b995
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/gin-gonic/gin v1.7.2 // indirect
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
