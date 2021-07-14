@@ -59,3 +59,9 @@ func (d *DB) QueryPeers() []*dbtypes.Peer {
 	d.engine.Table(new(dbtypes.Peer)).Find(&peers)
 	return peers
 }
+
+func (d *DB) QueryTokens() []string {
+	tokens := []string{}
+	d.engine.Table(new(types.Vout)).Distinct("coinid").Find(&tokens)
+	return tokens
+}

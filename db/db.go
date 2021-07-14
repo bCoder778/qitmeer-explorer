@@ -50,6 +50,7 @@ type IQuery interface {
 	QueryTransactionVout(txId string) ([]*types.Vout, error)
 	QueryTransactionVin(txId string) ([]*types.Vin, error)
 	QueryAlgorithmDiffInTime(algorithm string, edgeBits int, max int64, min int64) []*types.Block
+	QueryTokens() []string
 }
 
 type IList interface {

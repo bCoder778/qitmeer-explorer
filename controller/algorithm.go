@@ -28,5 +28,16 @@ func (c *Controller) AlgorithmLine(algorithm string, sec int) *types.AlgorithmLi
 }
 
 func (c *Controller) GetCoinIds() []string {
-	return c.qitmeer.CoinIdList()
+	key := "getCoinIds"
+	value, err := c.cache.Value("getCoinIds", key)
+	if err != nil {
+		tokens := c.getCoinIds()
+		c.cache.Add("getCoinIds", key, time.Second*60*10, tokens)
+		return tokens
+	}
+	return value.([]string)
+}
+
+func (c *Controller) getCoinIds() []string {
+	return c.storage.QueryTokens()
 }
