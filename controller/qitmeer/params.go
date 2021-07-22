@@ -45,21 +45,21 @@ var Params0_9 = &Params{
 
 var Params0_10 = &Params{
 	AlgorithmList: map[string]*Algorithm{
-		Cuckaroo_Show: {
+		/*	Cuckaroo_Show: {
 			ShowName: Cuckaroo_Show,
 			DBName:   Cuckaroo_DB,
 			EdgeBits: 24,
-		},
-		Keccak256_Show: {
+		},*/
+		/*Keccak256_Show: {
 			ShowName: Keccak256_Show,
 			DBName:   Keccak256_DB,
 			EdgeBits: 0,
-		},
-		Cryptonight_Show: {
+		},*/
+		/*Cryptonight_Show: {
 			ShowName: Cryptonight_Show,
 			DBName:   Cryptonight_DB,
 			EdgeBits: 0,
-		},
+		},*/
 		Blake2b_Show: {
 			ShowName: Blake2b_Show,
 			DBName:   Blake2b_DB,
