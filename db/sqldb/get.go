@@ -73,8 +73,8 @@ func (d *DB) GetTransactionCount(stat string) (int64, error) {
 	return sql.Count()
 }
 
-func (d *DB) GetAddressTransactionCount(address string) (int64, error) {
-	return d.engine.Table(new(types.Transfer)).Where("address = ? ", address).Count()
+func (d *DB) GetAddressTransactionCount(address, coin string) (int64, error) {
+	return d.engine.Table(new(types.Transfer)).Where("address = ? and coin_id = ? ", address, coin).Count()
 }
 
 func (d *DB) GetBlock(hash string) (*types.Block, error) {

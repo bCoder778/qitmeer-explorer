@@ -39,11 +39,11 @@ func (c *Controller) lastTransactions(page, size int) (*types.ListResp, error) {
 	}, nil
 }
 
-func (c *Controller) LastAddressTransactions(page, size int, address string) (*types.ListResp, error) {
-	key := fmt.Sprintf("%s-%s-%s", page, size, address)
+func (c *Controller) LastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
+	key := fmt.Sprintf("%s-%s-%s-%s", page, size, address, coin)
 	value, err := c.cache.Value("LastAddressTransactions", key)
 	if err != nil {
-		list, err := c.lastAddressTransactions(page, size, address)
+		list, err := c.lastAddressTransactions(page, size, address, coin)
 		if err != nil {
 			return nil, err
 		}
@@ -53,12 +53,12 @@ func (c *Controller) LastAddressTransactions(page, size int, address string) (*t
 	return value.(*types.ListResp), nil
 }
 
-func (c *Controller) lastAddressTransactions(page, size int, address string) (*types.ListResp, error) {
-	txIds, err := c.storage.LastAddressTxId(page, size, address)
+func (c *Controller) lastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
+	txIds, err := c.storage.LastAddressTxId(page, size, address, coin)
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.storage.GetAddressTransactionCount(address)
+	count, err := c.storage.GetAddressTransactionCount(address, coin)
 	if err != nil {
 		return nil, err
 	}

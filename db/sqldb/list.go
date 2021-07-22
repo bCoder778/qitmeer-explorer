@@ -25,12 +25,12 @@ func (d *DB) LastTransactions(page, size int) ([]*types.Transaction, error) {
 }
 
 //select td.* from %s td left join (select address, tx_id from %s where address = '%s' group by tx_id) ot on ot.tx_id = td.tx_id left join (select `from`, spent_tx_id from %s where `from` = '%s' group by spent_tx_id) tv on tv.spent_tx_id = td.tx_id where ot.address = '%s' or tv.`from` = '%s' order by td.id desc limit %d, %d;
-func (d *DB) LastAddressTxId(page, size int, address string) ([]string, error) {
+func (d *DB) LastAddressTxId(page, size int, address, coin string) ([]string, error) {
 	page -= 1
 	start := page * size
 	txIds := []string{}
 	transfers := []types.Transfer{}
-	err := d.engine.Table(new(types.Transfer)).Select("tx_id,`timestamp`").Where("address = ?", address).Desc("timestamp").
+	err := d.engine.Table(new(types.Transfer)).Select("tx_id,`timestamp`").Where("address = ? and coin_id = ?", address, coin).Desc("timestamp").
 		Limit(size, start).Find(&transfers)
 	for _, trans := range transfers {
 		txIds = append(txIds, trans.TxId)

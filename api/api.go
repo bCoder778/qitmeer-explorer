@@ -193,7 +193,11 @@ func (a *Api) lastAddressTransactions(ct *Context) (interface{}, *Error) {
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
-	txs, err := a.controller.LastAddressTransactions(page, size, ct.Query["address"])
+	coin := ct.Query["coin"]
+	if coin == "" {
+		coin = "MEER"
+	}
+	txs, err := a.controller.LastAddressTransactions(page, size, ct.Query["address"], coin)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
