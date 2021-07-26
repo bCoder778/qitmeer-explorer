@@ -35,7 +35,7 @@ func getBody(method string, url string, param map[string]interface{}) ([]byte, e
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: time.Second * 20}
+	client := &http.Client{Timeout: time.Second * 100}
 
 	resp, err := client.Do(req)
 	if err != nil {
