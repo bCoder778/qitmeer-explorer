@@ -44,6 +44,7 @@ func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 		return nil
 	}
 	rs := []*types.PeerResp{}
+	ipMap := map[string]bool{}
 	for i, p := range peers {
 		r, _ := regexp.Compile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}`)
 		ip := string(r.Find([]byte(p.Ip)))
@@ -58,12 +59,16 @@ func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 			continue
 		}
 		loc = getLocation(ip)
-		rs = append(rs, &types.PeerResp{
-			Id:       uint64(i),
-			Addr:     ip,
-			Other:    p.Id,
-			Location: loc,
-		})
+		_, exist := ipMap[ip]
+		if !exist {
+			rs = append(rs, &types.PeerResp{
+				Id:       uint64(i),
+				Addr:     ip,
+				Other:    p.Id,
+				Location: loc,
+			})
+			ipMap[ip] = true
+		}
 	}
 	return rs
 }
