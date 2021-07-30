@@ -98,7 +98,7 @@ func (d *DB) GetLastBlock() (*types.Block, error) {
 func (d *DB) GetAddressCount(coin string) (int64, error) {
 	return d.engine.Table(new(types.Vout)).
 		Where("spent_tx = ?  and coin_id = ? and stat in (?, ?)", "", coin, stat.TX_Confirmed, stat.TX_Unconfirmed).
-		GroupBy("address").Count()
+		Distinct("address").Count()
 }
 
 func (d *DB) GetUsableAmount(address string, coinId string, height uint64) (float64, error) {

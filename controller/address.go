@@ -15,7 +15,7 @@ func (c *Controller) BalanceTop(page, size int) (*types.ListResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("BalanceTop", key, 6*60*60*time.Second, balances)
+		c.cache.Add("BalanceTop", key, 6*60*time.Second, balances)
 		return balances, nil
 	}
 	return value.(*types.ListResp), nil
