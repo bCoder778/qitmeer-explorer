@@ -95,9 +95,9 @@ func (d *DB) GetLastBlock() (*types.Block, error) {
 	return block, err
 }
 
-func (d *DB) GetAddressCount() (int64, error) {
+func (d *DB) GetAddressCount(coin string) (int64, error) {
 	return d.engine.Table(new(types.Vout)).
-		Where("spent_tx = ? and stat in (?, ?)", "", stat.TX_Confirmed, stat.TX_Unconfirmed).
+		Where("spent_tx = ?  and coin_id = ? and stat in (?, ?)", "", coin, stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Count()
 }
 

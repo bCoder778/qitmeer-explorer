@@ -32,7 +32,7 @@ type IGet interface {
 	GetBlock(hash string) (*types.Block, error)
 	GetBlockByOrder(order uint64) (*types.Block, error)
 	GetLastBlock() (*types.Block, error)
-	GetAddressCount() (int64, error)
+	GetAddressCount(coin string) (int64, error)
 	GetUsableAmount(address, coinId string, height uint64) (float64, error)
 	GetLockedAmount(address, coinId string, height uint64) (float64, error)
 	GetUnconfirmedAmount(address, coinId string) (float64, error)

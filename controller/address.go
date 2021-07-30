@@ -26,7 +26,7 @@ func (c *Controller) balanceTop(page, size int) (*types.ListResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.storage.GetAddressCount()
+	count, err := c.storage.GetAddressCount("MEER")
 	if err != nil {
 		return nil, err
 	}
