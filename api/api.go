@@ -86,11 +86,14 @@ func (a *Api) addApi() {
 		GetSub("pending", a.queryBlockPending).
 		GetSub("completed", a.queryBlockCompleted)
 
+
 	a.rest.AuthRouteSet("api/v2/tx").
 		GetSub("detail", a.getTransaction).
 		GetSub("list", a.queryTransaction).
 		GetSub("pending", a.queryTransactionPending).
-		GetSub("completed", a.queryTransactionCompleted)
+		GetSub("completed", a.queryTransactionCompleted).
+		GetSub("transfer", a.queryTransfer).
+		GetSub("coinbase", a.queryCoinbase)
 
 	a.rest.AuthRouteSet("api/v2/token").
 		GetSub("list", a.coinIdList).
@@ -182,6 +185,30 @@ func (a *Api) queryTransactionCompleted(ct *Context) (interface{}, *Error) {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	txs, err := a.controller.QueryBlockByStatus(page, size, fmt.Sprintf("%v", stat.TX_Confirmed))
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) queryTransfer(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.QueryTransfer(page, size)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return txs, nil
+}
+
+func (a *Api) queryCoinbase(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	txs, err := a.controller.QueryCoinbase(page, size)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}

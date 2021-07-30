@@ -227,6 +227,69 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	return &types.TransactionDetailResp{Header: header, Vout: vout, Vin: vin}, nil
 }
 
+func (c *Controller)QueryTransfer(page, size int) (*types.ListResp, error) {
+	key := fmt.Sprintf("%d-%d", page, size)
+	value, err := c.cache.Value("QueryTransfer", key)
+	if err != nil {
+		list, err := c.queryTransfer(page, size)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("QueryTransfer", key, 30*time.Second, list)
+		return list, nil
+	}
+	return value.(*types.ListResp), nil
+}
+
+func (c *Controller)queryTransfer(page, size int) (*types.ListResp, error) {
+	txs, err := c.storage.QueryTransfer(page, size)
+	if err != nil{
+		return nil, err
+	}
+	count, err := c.storage.QueryTransferCount()
+	if err != nil {
+		return nil, err
+	}
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  types.ToTransactionRespList(txs),
+		Count: count,
+	}, nil
+}
+
+
+func (c *Controller)QueryCoinbase(page, size int) (*types.ListResp, error) {
+	key := fmt.Sprintf("%d-%d", page, size)
+	value, err := c.cache.Value("QueryCoinbase", key)
+	if err != nil {
+		list, err := c.queryCoinbase(page, size)
+		if err != nil {
+			return nil, err
+		}
+		c.cache.Add("QueryCoinbase", key, 30*time.Second, list)
+		return list, nil
+	}
+	return value.(*types.ListResp), nil
+}
+
+func (c *Controller)queryCoinbase(page, size int) (*types.ListResp, error) {
+	txs, err := c.storage.QueryCoinbase(page, size)
+	if err != nil{
+		return nil, err
+	}
+	count, err := c.storage.QueryCoinbaseCount()
+	if err != nil {
+		return nil, err
+	}
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  types.ToTransactionRespList(txs),
+		Count: count,
+	}, nil
+}
+
 func (c *Controller) QueryTransactionByStatus(page, size int, stat string) (*types.ListResp, error) {
 	key := fmt.Sprintf("%d-%d-%s", page, size, stat)
 	value, err := c.cache.Value("LastTransactions", key)

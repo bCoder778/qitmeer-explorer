@@ -101,3 +101,19 @@ func (d *DB) QueryTokenTransaction(page, size int, coinId, stat string) ([]*type
 
 	return vos, err
 }
+
+func (d *DB)QueryTransfer(page, size int)([]*types.Transaction, error){
+	page -= 1
+	start := page * size
+	var txs []*types.Transaction
+	err := d.engine.Table(new(types.Vout)).Where("is_coinbase = ?", false).Desc("id").Limit(size, start).Find(&txs)
+	return txs, err
+}
+
+func (d *DB)QueryCoinbase(page, size int)([]*types.Transaction, error){
+	page -= 1
+	start := page * size
+	var txs []*types.Transaction
+	err := d.engine.Table(new(types.Vout)).Where("is_coinbase = ?", true).Desc("id").Limit(size, start).Find(&txs)
+	return txs, err
+}
