@@ -74,7 +74,7 @@ func (c *Controller) addressStatus(address string, coin string) (*types.AddressS
 	if err != nil {
 		return nil, err
 	}
-	unconfirmed, err := c.storage.GetLockedAmount(address, coin, height)
+	unconfirmed, err := c.storage.GetUnconfirmedAmount(address, coin)
 	if err != nil {
 		return nil, err
 	}
