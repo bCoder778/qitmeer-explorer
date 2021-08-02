@@ -39,6 +39,9 @@ type TransactionResp struct {
 	Confirmations uint64            `json:"confirmations"`
 	Txsvaild      bool              `json:"txsvaild"`
 	IsCoinbase    bool              `json:"iscoinbase"`
+	VinAcmount    float64 		    `json:"vinamount"`
+	VinAddress    string 		    `json:"vinaddress"`
+	VoutAddress   string 		    `json:"voutaddress"`
 	Vins          int               `json:"vin"`
 	Vouts         int               `json:"vout"`
 	Fees          []*Fees           `json:"fees"`
@@ -148,6 +151,10 @@ type BlockResp struct {
 }
 
 func ToTransactionResp(tx *types.Transaction) *TransactionResp {
+	amount := qitTypes.Amount{
+		Id:    qitTypes.MEERID,
+		Value: int64(tx.VinAmount),
+	}
 	t := &TransactionResp{
 		Id:            tx.Id,
 		TxId:          tx.TxId,
@@ -162,6 +169,9 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Confirmations: tx.Confirmations,
 		Txsvaild:      tx.Txsvaild,
 		IsCoinbase:    tx.IsCoinbase,
+		VinAcmount:    amount.ToCoin(),
+		VinAddress:    tx.VinAddress,
+		VoutAddress:   tx.VoutAddress,
 		Vins:          tx.Vins,
 		Vouts:         tx.Vouts,
 		Fees:          nil,
