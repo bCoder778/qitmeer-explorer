@@ -230,6 +230,7 @@ func ToVoutResp(vinout *types.Vout, height uint64) *VoutResp {
 		SpentTx:      vinout.SpentTx,
 		LockHeight:   vinout.Lock,
 		Locked:       height >= vinout.Lock,
+		Stat:  		  vinout.Stat,
 	}
 }
 
