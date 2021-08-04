@@ -19,7 +19,8 @@ type Peer struct {
 }
 
 type TimeInfo struct {
-	WaitTime int64 `json:"waitTime"`
+	WaitSec int64 `json:"waitSeconds"`
+	WaitTime string `json:"waitTime"`
 	BlockHash string `json:"blockHash"`
 	TxId string `json:"txId"`
 }
@@ -27,7 +28,8 @@ type TimeInfo struct {
 type Package struct {
 	MaxInfo *TimeInfo `json:"maxTime"`
 	MinInfo *TimeInfo `json:"minTime"`
-	AvgTime float64 `json:"avgTime"`
+	AvgTime string `json:"avgTime"`
+	AvgSeconds float64 `json:"avgSeconds"`
 	TxCount int64 `json:"txCount"`
-	SumTime int64 `json:"sumTime"`
+	SumSec int64 `json:"sumSeconds"`
 }

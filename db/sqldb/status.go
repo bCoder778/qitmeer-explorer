@@ -1,6 +1,7 @@
 package sqldb
 
 import (
+	"fmt"
 	dbtype "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
@@ -21,12 +22,15 @@ func (d *DB)PackageTime() *dbtype.Package{
 		return paInfo
 	}
 	max := &dbtype.TimeInfo{
-		WaitTime:  0,
+		WaitTime:  "",
 		BlockHash: "",
 		TxId:      "",
 	}
 	for _, value := range maxRs{
-		max.WaitTime, _ = strconv.ParseInt(value["maxTime"], 10, 64)
+		allsec,  _ := strconv.ParseInt(value["maxTime"], 10, 64)
+		hour, minute, sec := resolveTime(allsec)
+		max.WaitSec = allsec
+		max.WaitTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
 		max.BlockHash, _ = value["block_hash"]
 		max.TxId, _ = value["tx_id"]
 	}
@@ -36,12 +40,15 @@ func (d *DB)PackageTime() *dbtype.Package{
 		return paInfo
 	}
 	min := &dbtype.TimeInfo{
-		WaitTime:  0,
+		WaitTime:  "",
 		BlockHash: "",
 		TxId:      "",
 	}
 	for _, value := range minRs{
-		min.WaitTime, _ = strconv.ParseInt(value["minTime"], 10, 64)
+		allsec,  _ := strconv.ParseInt(value["minTime"], 10, 64)
+		hour, minute, sec := resolveTime(allsec)
+		min.WaitSec = allsec
+		min.WaitTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
 		min.BlockHash, _ = value["block_hash"]
 		min.TxId, _ = value["tx_id"]
 	}
@@ -51,11 +58,21 @@ func (d *DB)PackageTime() *dbtype.Package{
 		return paInfo
 	}
 	for _, value := range avgRs{
-		paInfo.AvgTime, _ = strconv.ParseFloat(value["avgTime"], 64)
-		paInfo.SumTime, _ = strconv.ParseInt(value["sumTime"], 10, 64)
+		paInfo.AvgSeconds, _ = strconv.ParseFloat(value["avgTime"], 64)
+		hour, minute, sec := resolveTime(int64(paInfo.AvgSeconds))
+		paInfo.AvgTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
+		paInfo.SumSec, _ = strconv.ParseInt(value["sumTime"], 10, 64)
 		paInfo.TxCount, _ = strconv.ParseInt(value["count"], 10, 64)
 	}
 	paInfo.MaxInfo = max
 	paInfo.MinInfo = min
 	return paInfo
+}
+
+func resolveTime(seconds int64) (hour, minute, second int64) {
+	var day = seconds / (24 * 3600)
+	hour = (seconds - day * 3600 * 24) / 3600
+	minute = (seconds - day * 24 * 3600 - hour * 3600) / 60
+	second = seconds - day * 24 * 3600 - hour * 3600 - minute * 60
+	return
 }
