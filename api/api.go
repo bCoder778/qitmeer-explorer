@@ -357,7 +357,8 @@ func (a *Api) tips(ct *Context) (interface{}, *Error) {
 
 
 func (a *Api)packageTime(ct *Context) (interface{}, *Error) {
-	packgeInfo := a.controller.PackageTime()
+	count := ct.Query["count"]
+	packgeInfo := a.controller.PackageTime(count)
 	return packgeInfo, nil
 }
 

@@ -15,9 +15,15 @@ func (d *DB) BlocksDistribution() []*dbtype.MinerStatus {
 }
 
 
-func (d *DB)PackageTime() *dbtype.Package{
+func (d *DB)PackageTime(count int) *dbtype.Package{
 	paInfo := &dbtype.Package{}
-	maxRs, err := d.engine.QueryString("select block.timestamp-transaction.timestamp as maxTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp desc limit 1;")
+	sql := ""
+	if count != 0{
+		sql = fmt.Sprintf("select block.timestamp-tx.timestamp as maxTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp desc limit 1;", count)
+	}else{
+		sql = "select block.timestamp-transaction.timestamp as maxTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp desc limit 1;"
+	}
+	maxRs, err := d.engine.QueryString(sql)
 	if err != nil{
 		return paInfo
 	}
@@ -35,7 +41,12 @@ func (d *DB)PackageTime() *dbtype.Package{
 		max.TxId, _ = value["tx_id"]
 	}
 
-	minRs, err := d.engine.QueryString("select block.timestamp-transaction.timestamp as minTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp  limit 1;")
+	if count != 0{
+		sql = fmt.Sprintf("select block.timestamp-tx.timestamp as minTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp limit 1;", count)
+	}else{
+		sql = "select block.timestamp-transaction.timestamp as minTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp limit 1;"
+	}
+	minRs, err := d.engine.QueryString(sql)
 	if err != nil{
 		return paInfo
 	}
@@ -53,7 +64,12 @@ func (d *DB)PackageTime() *dbtype.Package{
 		min.TxId, _ = value["tx_id"]
 	}
 
-	avgRs, err := d.engine.QueryString("select sum(block.timestamp-transaction.timestamp) as sumTime, count(*) as count,sum(block.timestamp-transaction.timestamp)/count(*) as avgTime  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0;")
+	if count == 0{
+		sql = "select sum(block.timestamp-transaction.timestamp) as sumTime, count(*) as count,sum(block.timestamp-transaction.timestamp)/count(*) as avgTime  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0;"
+	}else{
+		sql = fmt.Sprintf("select sum(block.timestamp-tx.timestamp) as sumTime,count(*) as count, sum(block.timestamp-tx.timestamp)/count(*) as avgTime  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 order by transaction.timestamp desc limit %d) as tx  INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0  and block.timestamp-tx.timestamp>0", count)
+	}
+	avgRs, err := d.engine.QueryString(sql)
 	if err != nil{
 		return paInfo
 	}

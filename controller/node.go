@@ -5,6 +5,7 @@ import (
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	dbtype "github.com/bCoder778/qitmeer-explorer/db/types"
 	synctypes "github.com/bCoder778/qitmeer-sync/storage/types"
+	"strconv"
 	"time"
 )
 
@@ -68,17 +69,18 @@ func concurrencyRate(blockTime, mainBlockTime float64) string {
 
 
 
-func (c *Controller) PackageTime()*dbtype.Package{
-	value, err := c.cache.Value("packageTime", "packageTime")
+func (c *Controller) PackageTime(count string)*dbtype.Package{
+	value, err := c.cache.Value("packageTime", count)
 	if err != nil {
-		info := c.packageTime()
-		c.cache.Add("packageTime", "packageTime", 1*time.Second*60, info)
+		info := c.packageTime(count)
+		c.cache.Add("packageTime", count, 1*time.Second*60, info)
 		return info
 	}
 	return value.(*dbtype.Package)
 }
 
 
-func (c *Controller) packageTime()*dbtype.Package{
-	return c.storage.PackageTime()
+func (c *Controller) packageTime(count string)*dbtype.Package{
+	iCount, _ := strconv.Atoi(count)
+	return c.storage.PackageTime(iCount)
 }
