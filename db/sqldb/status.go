@@ -16,7 +16,7 @@ func (d *DB) BlocksDistribution() []*dbtype.MinerStatus {
 
 func (d *DB)PackageTime() *dbtype.Package{
 	paInfo := &dbtype.Package{}
-	maxRs, err := d.engine.QueryString("select block.timestamp-transaction.timestamp as minTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp desc limit 1;")
+	maxRs, err := d.engine.QueryString("select block.timestamp-transaction.timestamp as maxTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 order by block.timestamp-transaction.timestamp desc limit 1;")
 	if err != nil{
 		return paInfo
 	}
