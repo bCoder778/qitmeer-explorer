@@ -18,8 +18,16 @@ type Peer struct {
 	Other    string `xorm:"varchar(64)" json:"other"`
 }
 
+type TimeInfo struct {
+	WaitTime int64 `json:"waitTime"`
+	BlockHash string `json:"blockHash"`
+	TxId string `json:"txId"`
+}
+
 type Package struct {
-	MaxTime int64 `xorm:"bigInt maxTime" json:"maxTime"`
-	MinTime int64 `xorm:"bigInt minTime" json:"minTime"`
-	AvgTime float64 `xorm:"bigInt avgTime" json:"avgTime"`
+	MaxInfo *TimeInfo `json:"maxTime"`
+	MinInfo *TimeInfo `json:"minTime"`
+	AvgTime float64 `json:"avgTime"`
+	TxCount int64 `json:"txCount"`
+	SumTime int64 `json:"sumTime"`
 }
