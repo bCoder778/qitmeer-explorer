@@ -106,7 +106,7 @@ func (d *DB)QueryTransfer(page, size int)([]*types.Transaction, error){
 	page -= 1
 	start := page * size
 	var txs []*types.Transaction
-	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ?", 0).Desc("id").Limit(size, start).Find(&txs)
+	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 0, 0).Desc("id").Limit(size, start).Find(&txs)
 	return txs, err
 }
 
@@ -114,6 +114,6 @@ func (d *DB)QueryCoinbase(page, size int)([]*types.Transaction, error){
 	page -= 1
 	start := page * size
 	var txs []*types.Transaction
-	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ?", 1).Desc("id").Limit(size, start).Find(&txs)
+	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 1, 0).Desc("id").Limit(size, start).Find(&txs)
 	return txs, err
 }

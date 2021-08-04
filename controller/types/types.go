@@ -39,7 +39,8 @@ type TransactionResp struct {
 	Confirmations uint64            `json:"confirmations"`
 	Txsvaild      bool              `json:"txsvaild"`
 	IsCoinbase    bool              `json:"iscoinbase"`
-	VinAcmount    float64 		    `json:"vinamount"`
+	VinAmount    float64 		    `json:"vinamount"`
+	VoutAmount    float64 		    `json:"voutamount"`
 	VinAddress    string 		    `json:"vinaddress"`
 	VoutAddress   string 		    `json:"voutaddress"`
 	Vins          int               `json:"vin"`
@@ -151,9 +152,13 @@ type BlockResp struct {
 }
 
 func ToTransactionResp(tx *types.Transaction) *TransactionResp {
-	amount := qitTypes.Amount{
+	vinAmount := qitTypes.Amount{
 		Id:    qitTypes.MEERID,
 		Value: int64(tx.VinAmount),
+	}
+	voutAmount := qitTypes.Amount{
+		Id:    qitTypes.MEERID,
+		Value: int64(tx.VoutAmount),
 	}
 	t := &TransactionResp{
 		Id:            tx.Id,
@@ -169,14 +174,15 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Confirmations: tx.Confirmations,
 		Txsvaild:      tx.Txsvaild,
 		IsCoinbase:    tx.IsCoinbase,
-		VinAcmount:    amount.ToCoin(),
+		VinAmount:     vinAmount.ToCoin(),
+		VoutAmount:    voutAmount.ToCoin(),
 		VinAddress:    tx.VinAddress,
 		VoutAddress:   tx.VoutAddress,
 		Vins:          tx.Vins,
 		Vouts:         tx.Vouts,
 		Fees:          nil,
 		Changes:       nil,
-		Duplicate:     false,
+		Duplicate:     tx.Duplicate,
 		Stat:          tx.Stat,
 	}
 	return t
@@ -365,4 +371,10 @@ type TipsResp struct {
 	ConcurrencyRate   string `json:"concurrencyrate"`
 	BlockOrder        uint64 `json:"blockorder"`
 	BlockHeight       uint64 `json:"blockheight"`
+}
+
+type Package struct {
+	MaxTime int64 `json:"maxTime"`
+	MinTime int64 `json:"minTime"`
+	AvgTime int64 `json:"avgtime"`
 }

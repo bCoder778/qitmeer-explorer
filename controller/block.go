@@ -14,7 +14,7 @@ func (c *Controller) LastBlocks(page, size int) (*types.ListResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("LastBlocks", key, 30*time.Second, blockList)
+		c.cache.Add("LastBlocks", key, 2*time.Second, blockList)
 		return blockList, nil
 	} else {
 		return value.(*types.ListResp), nil

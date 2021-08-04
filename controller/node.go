@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	dbtype "github.com/bCoder778/qitmeer-explorer/db/types"
 	synctypes "github.com/bCoder778/qitmeer-sync/storage/types"
 	"time"
 )
@@ -63,4 +64,21 @@ func concurrencyRate(blockTime, mainBlockTime float64) string {
 		return "00.00%"
 	}
 	return fmt.Sprintf("%.2f", mainBlockTime/blockTime*100)
+}
+
+
+
+func (c *Controller) PackageTime()*dbtype.Package{
+	value, err := c.cache.Value("packageTime", "packageTime")
+	if err != nil {
+		info := c.packageTime()
+		c.cache.Add("packageTime", "packageTime", 1*time.Second*60, info)
+		return info
+	}
+	return value.(*dbtype.Package)
+}
+
+
+func (c *Controller) packageTime()*dbtype.Package{
+	return c.storage.PackageTime()
 }

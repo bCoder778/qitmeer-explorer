@@ -69,6 +69,7 @@ type IList interface {
 
 type IStatus interface {
 	BlocksDistribution() []*dbtypes.MinerStatus
+	PackageTime() *dbtypes.Package
 }
 
 func ConnectDB(setting *conf.Config) (*sqldb.DB, error) {

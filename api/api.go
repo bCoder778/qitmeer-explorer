@@ -106,6 +106,7 @@ func (a *Api) addApi() {
 
 	a.rest.AuthRouteSet("api/v2/chain").
 		GetSub("tips", a.tips).
+		GetSub("package", a.packageTime).
 		GetSub("algorithm/list", a.algorithmList).
 		GetSub("algorithm/line", a.algorithmLine).
 		GetSub("miner", a.blocksDistribution).
@@ -353,6 +354,13 @@ func (a *Api) tips(ct *Context) (interface{}, *Error) {
 	tips := a.controller.Tips()
 	return tips, nil
 }
+
+
+func (a *Api)packageTime(ct *Context) (interface{}, *Error) {
+	packgeInfo := a.controller.PackageTime()
+	return packgeInfo, nil
+}
+
 
 func (a *Api) coinIdList(ct *Context) (interface{}, *Error) {
 	tokens := a.controller.GetCoinIds()

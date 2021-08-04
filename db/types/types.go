@@ -17,3 +17,9 @@ type Peer struct {
 	FindTime int64  `xorm:"bigint" json:"findtime"`
 	Other    string `xorm:"varchar(64)" json:"other"`
 }
+
+type Package struct {
+	MaxTime int64 `xorm:"bigInt maxTime" json:"maxTime"`
+	MinTime int64 `xorm:"bigInt minTime" json:"minTime"`
+	AvgTime float64 `xorm:"bigInt avgTime" json:"avgTime"`
+}

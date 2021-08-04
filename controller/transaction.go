@@ -235,7 +235,7 @@ func (c *Controller)QueryTransfer(page, size int) (*types.ListResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("QueryTransfer", key, 30*time.Second, list)
+		c.cache.Add("QueryTransfer", key, 10*time.Second, list)
 		return list, nil
 	}
 	return value.(*types.ListResp), nil
@@ -267,7 +267,7 @@ func (c *Controller)QueryCoinbase(page, size int) (*types.ListResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("QueryCoinbase", key, 30*time.Second, list)
+		c.cache.Add("QueryCoinbase", key, 10*time.Second, list)
 		return list, nil
 	}
 	return value.(*types.ListResp), nil
