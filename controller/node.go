@@ -73,7 +73,7 @@ func (c *Controller) PackageTime(count string)*dbtype.Package{
 	value, err := c.cache.Value("packageTime", count)
 	if err != nil {
 		info := c.packageTime(count)
-		c.cache.Add("packageTime", count, 1*time.Second*60, info)
+		c.cache.Add("packageTime", count, 1*time.Second*5, info)
 		return info
 	}
 	return value.(*dbtype.Package)
