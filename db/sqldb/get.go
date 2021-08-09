@@ -12,7 +12,8 @@ func (d *DB) GetTransaction(txId string, blockHash string) (*types.Transaction, 
 
 func (d *DB) GetTransactionByTxId(txId string) ([]*types.Transaction, error) {
 	txs := []*types.Transaction{}
-	err := d.engine.Table(new(types.Transaction)).Where("tx_id = ? and duplicate = ?", txId, 0).Find(&txs)
+
+	err := d.engine.Table(new(types.Transaction)).Where("tx_id = ? and duplicate != ?", txId, 1).Find(&txs)
 	return txs, err
 }
 
