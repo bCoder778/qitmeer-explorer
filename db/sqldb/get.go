@@ -75,8 +75,8 @@ func (d *DB) GetTransactionCount(stat string) (int64, error) {
 }
 
 func (d *DB) GetAddressTransactionCount(address, coin string) (int64, error) {
-	count, err := d.engine.Table(new(types.Transfer)).Select("DISTINCT(tx_id),`timestamp`").Where("address = ? and coin_id = ? and is_coinbase = ?", address, coin, 0).
-		Or("address = ? and coin_id = ? and is_coinbase = ? and is_blue = ?", address, coin, 1, 1).Count()
+	count, err := d.engine.Table(new(types.Transfer)).Where("address = ? and coin_id = ? and is_coinbase = ?", address, coin, 0).
+		Or("address = ? and coin_id = ? and is_coinbase = ? and is_blue = ?", address, coin, 1, 1).Distinct("tx_id").Count()
 	return count, err
 }
 
