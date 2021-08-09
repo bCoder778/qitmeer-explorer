@@ -30,7 +30,8 @@ func (d *DB) LastAddressTxId(page, size int, address, coin string) ([]string, er
 	start := page * size
 	txIds := []string{}
 	transfers := []types.Transfer{}
-	err := d.engine.Table(new(types.Transfer)).Select("tx_id,`timestamp`").Where("address = ? and coin_id = ?", address, coin).Desc("timestamp").
+	err := d.engine.Table(new(types.Transfer)).Select("DISTINCT(tx_id),`timestamp`").Where("address = ? and coin_id = ? and is_coinbase = ?", address, coin, 0).
+		Or("address = ? and coin_id = ? and is_coinbase = ? and is_blue = ?", address, coin, 1, 1).Desc("timestamp").
 		Limit(size, start).Find(&transfers)
 	for _, trans := range transfers {
 		txIds = append(txIds, trans.TxId)
@@ -46,7 +47,7 @@ func (d *DB) BalanceTop(page, size int, coinId string) ([]*dbtype.Address, error
 	addrs := []*dbtype.Address{}
 	err := d.engine.Table(new(types.Vout)).
 		Select("address, coin_id, sum(amount) as balance").
-		Where("spent_tx = ? and coin_id = ? and stat in (?,?)", "", coinId, stat.TX_Confirmed, stat.TX_Unconfirmed).
+		Where("spent_tx = ? and coin_id = ? and (is_coinbase = 0 or (in_coinbase = 1 and is_blue = 1))and stat in (?,?)", "", coinId, stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Desc("balance").Limit(size, start).Find(&addrs)
 
 	return addrs, err

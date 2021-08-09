@@ -74,7 +74,9 @@ func (d *DB) GetTransactionCount(stat string) (int64, error) {
 }
 
 func (d *DB) GetAddressTransactionCount(address, coin string) (int64, error) {
-	return d.engine.Table(new(types.Transfer)).Where("address = ? and coin_id = ? ", address, coin).Count()
+	count, err := d.engine.Table(new(types.Transfer)).Select("DISTINCT(tx_id),`timestamp`").Where("address = ? and coin_id = ? and is_coinbase = ?", address, coin, 0).
+		Or("address = ? and coin_id = ? and is_coinbase = ? and is_blue = ?", address, coin, 1, 1).Count()
+	return count, err
 }
 
 func (d *DB) GetBlock(hash string) (*types.Block, error) {
@@ -108,8 +110,8 @@ func (d *DB) GetUsableAmount(address string, coinId string, height uint64) (floa
 }
 
 func (d *DB) GetUnconfirmedAmount(address string, coinId string) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("address = ? and coin_id = ? and spent_tx = ? and stat in (?, ?)",
-		address, coinId, "", stat.TX_Unconfirmed, stat.TX_Memry).
+	return d.engine.Table(new(types.Vout)).Where("amount != 0 and address = ? and coin_id = ? and spent_tx = ? and (is_coinbase = ? or (is_coinbase = ? and is_blue = ?)) and stat in (?, ?)",
+		address, coinId, "", 0, 1, 1, stat.TX_Unconfirmed, stat.TX_Memry).
 		Sum(new(types.Vout), "amount")
 }
 
