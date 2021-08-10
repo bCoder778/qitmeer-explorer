@@ -48,6 +48,7 @@ type TransactionResp struct {
 	Fees          []*Fees           `json:"fees"`
 	Changes       []*TransferChange `json:"changes"`
 	Duplicate     bool              `json:"duplicate"`
+	Miner         *MinerPool        `json:"miner"`
 	Stat          stat.TxStat       `json:"stat"`
 }
 
@@ -160,6 +161,13 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Id:    qitTypes.MEERID,
 		Value: int64(tx.VoutAmount),
 	}
+	miner := &MinerPool{
+		Name: "",
+		Url:  "",
+	}
+	if tx.IsCoinbase{
+		_, miner = Miners.Get(tx.VoutAddress)
+	}
 	t := &TransactionResp{
 		Id:            tx.Id,
 		TxId:          tx.TxId,
@@ -183,6 +191,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Fees:          nil,
 		Changes:       nil,
 		Duplicate:     tx.Duplicate,
+		Miner: miner,
 		Stat:          tx.Stat,
 	}
 	return t
