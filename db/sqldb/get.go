@@ -169,7 +169,7 @@ func (d *DB) GetTokenTransactionCount(coinId, stat string) (int64, error) {
 }
 
 func (d *DB)QueryTransferCount()(int64, error){
-	return d.engine.Table(new(types.Transaction)).Where("is_coinbase = ?", 0).Count()
+	return d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 0, 0).Count()
 }
 
 func (d *DB)QueryCoinbaseCount()(int64, error){
