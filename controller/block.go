@@ -57,7 +57,7 @@ func (c *Controller) BlockDetail(condition string) (*types.BlockDetailResp, erro
 func (c *Controller) blockDetail(condition string) (*types.BlockDetailResp, error) {
 	order , err := strconv.ParseUint(condition, 10, 64)
 	var blockHeader *types2.Block
-	if err != nil{
+	if err == nil{
 		blockHeader, err = c.storage.GetBlockByOrder(order)
 		if err != nil {
 			return nil, err
