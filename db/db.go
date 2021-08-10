@@ -22,6 +22,7 @@ type IGet interface {
 	GetLastUnconfirmedOrder() (uint64, error)
 	GetTransaction(txId string, blockHash string) (*types.Transaction, error)
 	GetTransactionByTxId(txId string) ([]*types.Transaction, error)
+	GetTransactionByTxIdBlockHash(txId, hash string) (*types.Transaction, error)
 	GetVout(txId string, vout int) (*types.Vout, error)
 	GetAllUtxo() float64
 	GetConfirmedBlockCount() int64

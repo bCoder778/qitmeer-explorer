@@ -64,7 +64,7 @@ func (c *Controller) lastAddressTransactions(page, size int, address, coin strin
 	}
 	txsDetail := []*types.TransactionDetailResp{}
 	for _, txId := range txIds {
-		tx, err := c.TransactionDetail(txId, address)
+		tx, err := c.TransactionDetail(txId, "", address)
 		if err != nil {
 			return nil, err
 		}
@@ -79,11 +79,11 @@ func (c *Controller) lastAddressTransactions(page, size int, address, coin strin
 	}, nil
 }
 
-func (c *Controller) TransactionDetail(txId string, address string) (*types.TransactionDetailResp, error) {
-	key := fmt.Sprintf("%s-%s", txId, address)
+func (c *Controller) TransactionDetail(txId string, hash, address string) (*types.TransactionDetailResp, error) {
+	key := fmt.Sprintf("%s-%s-%s", txId, hash, address)
 	value, err := c.cache.Value("TransactionDetail", key)
 	if err != nil {
-		detail, err := c.transactionDetail(txId, address)
+		detail, err := c.transactionDetail(txId, hash, address)
 		if err != nil {
 			return nil, err
 		}
@@ -93,7 +93,7 @@ func (c *Controller) TransactionDetail(txId string, address string) (*types.Tran
 	return value.(*types.TransactionDetailResp), nil
 }
 
-func (c *Controller) transactionDetail(txId string, address string) (*types.TransactionDetailResp, error) {
+func (c *Controller) transactionDetail(txId string, hash, address string) (*types.TransactionDetailResp, error) {
 	var header *types.TransactionResp = &types.TransactionResp{}
 	vin := []*types.VinResp{}
 	vout := []*types.VoutResp{}
@@ -101,22 +101,32 @@ func (c *Controller) transactionDetail(txId string, address string) (*types.Tran
 	feesMap := map[string]*types.Fees{}
 	changeList := []*types.TransferChange{}
 	feesList := []*types.Fees{}
-	txs, err := c.storage.GetTransactionByTxId(txId)
-	if err != nil {
-		return nil, err
-	}
 
-	if len(txs) != 0 {
-		header = types.ToTransactionResp(txs[0])
-	}
-	if len(txs) > 1 {
-		for _, tx := range txs {
-			if tx.Stat == stat.TX_Unconfirmed || tx.Stat == stat.TX_Confirmed {
-				header = types.ToTransactionResp(tx)
-				break
+	if hash != ""{
+		tx, err := c.storage.GetTransactionByTxIdBlockHash(txId, hash)
+		if err != nil{
+			return nil, err
+		}
+		header = types.ToTransactionResp(tx)
+	}else{
+		txs, err := c.storage.GetTransactionByTxId(txId)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(txs) != 0 {
+			header = types.ToTransactionResp(txs[0])
+		}
+		if len(txs) > 1 {
+			for _, tx := range txs {
+				if tx.Stat == stat.TX_Unconfirmed || tx.Stat == stat.TX_Confirmed {
+					header = types.ToTransactionResp(tx)
+					break
+				}
 			}
 		}
 	}
+
 	dbVin, err := c.storage.QueryTransactionVin(txId)
 	if err != nil {
 		return nil, err

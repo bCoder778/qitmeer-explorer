@@ -60,7 +60,7 @@ func (c *Controller) blockDetail(hash string) (*types.BlockDetailResp, error) {
 	txDetails := []*types.TransactionDetailResp{}
 	txs, err := c.storage.QueryTransactionsByBlockHash(hash)
 	for _, tx := range txs {
-		tx, err := c.TransactionDetail(tx.TxId, "no address")
+		tx, err := c.TransactionDetail(tx.TxId, hash, "no address")
 		if err != nil {
 			return nil, err
 		}
