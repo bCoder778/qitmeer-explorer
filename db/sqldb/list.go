@@ -47,7 +47,7 @@ func (d *DB) BalanceTop(page, size int, coinId string) ([]*dbtype.Address, error
 	addrs := []*dbtype.Address{}
 	err := d.engine.Table(new(types.Vout)).
 		Select("address, coin_id, sum(amount) as balance").
-		Where("spent_tx = ? and coin_id = ? and (is_coinbase = 0 or (in_coinbase = 1 and is_blue = 1))and stat in (?,?)", "", coinId, stat.TX_Confirmed, stat.TX_Unconfirmed).
+		Where("spent_tx = ? and coin_id = ? and (is_coinbase = 0 or (is_coinbase = 1 and is_blue = 1)) and stat in (?,?)", "", coinId, stat.TX_Confirmed, stat.TX_Unconfirmed).
 		GroupBy("address").Desc("balance").Limit(size, start).Find(&addrs)
 
 	return addrs, err
