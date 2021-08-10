@@ -53,11 +53,11 @@ func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 			Lat:  0,
 			Lon:  0,
 		}
-		if (ip >= "172.16.0.0" && ip <= "172.31.255.255") ||
+	/*	if (ip >= "172.16.0.0" && ip <= "172.31.255.255") ||
 			(ip >= "192.168.0.0" && ip <= "192.168.255.255") ||
 			ip == "127.0.0.1" {
 			continue
-		}
+		}*/
 		loc = getLocation(ip)
 		_, exist := ipMap[ip]
 		if !exist {
