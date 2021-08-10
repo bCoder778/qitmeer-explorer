@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-explorer/controller"
+	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 	"os"
 	"os/signal"
@@ -245,7 +246,14 @@ func (a *Api) balanceTop(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) getBlock(ct *Context) (interface{}, *Error) {
-	block, err := a.controller.BlockDetail(ct.Query["hash"])
+	var block *types.BlockDetailResp
+	var err error
+	hash := ct.Query["hash"]
+	if hash != ""{
+		block, err = a.controller.BlockDetail(hash)
+	}else{
+		block, err = a.controller.BlockDetail(ct.Query["order"])
+	}
 	if err != nil {
 		return nil, &Error{
 			Code:    ERROR_UNKNOWN,

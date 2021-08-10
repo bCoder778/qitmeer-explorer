@@ -3,6 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	types2 "github.com/bCoder778/qitmeer-sync/storage/types"
+	"strconv"
 	"time"
 )
 
@@ -38,29 +40,38 @@ func (c *Controller) lastBlocks(page, size int) (*types.ListResp, error) {
 	}, nil
 }
 
-func (c *Controller) BlockDetail(hash string) (*types.BlockDetailResp, error) {
-	value, err := c.cache.Value("BlockDetail", hash)
+func (c *Controller) BlockDetail(condition string) (*types.BlockDetailResp, error) {
+	value, err := c.cache.Value("BlockDetail", condition)
 	if err != nil {
-		detail, err := c.blockDetail(hash)
+		detail, err := c.blockDetail(condition)
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("BlockDetail", hash, 10*time.Second, detail)
+		c.cache.Add("BlockDetail", condition, 10*time.Second, detail)
 		return detail, nil
 	} else {
 		return value.(*types.BlockDetailResp), nil
 	}
 }
 
-func (c *Controller) blockDetail(hash string) (*types.BlockDetailResp, error) {
-	blockHeader, err := c.storage.GetBlock(hash)
-	if err != nil {
-		return nil, err
+func (c *Controller) blockDetail(condition string) (*types.BlockDetailResp, error) {
+	order , err := strconv.ParseUint(condition, 10, 64)
+	var blockHeader *types2.Block
+	if err != nil{
+		blockHeader, err = c.storage.GetBlockByOrder(order)
+		if err != nil {
+			return nil, err
+		}
+	}else{
+		blockHeader, err = c.storage.GetBlock(condition)
+		if err != nil {
+			return nil, err
+		}
 	}
 	txDetails := []*types.TransactionDetailResp{}
-	txs, err := c.storage.QueryTransactionsByBlockHash(hash)
+	txs, err := c.storage.QueryTransactionsByBlockHash(blockHeader.Hash)
 	for _, tx := range txs {
-		tx, err := c.TransactionDetail(tx.TxId, hash, "no address")
+		tx, err := c.TransactionDetail(tx.TxId, blockHeader.Hash, "no address")
 		if err != nil {
 			return nil, err
 		}
