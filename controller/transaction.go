@@ -16,7 +16,7 @@ func (c *Controller) LastTransactions(page, size int) (*types.ListResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("LastTransactions", key, 2*60*time.Second, list)
+		c.cache.Add("LastTransactions", key, 10*time.Second, list)
 		return list, nil
 	}
 	return value.(*types.ListResp), nil
@@ -87,7 +87,7 @@ func (c *Controller) TransactionDetail(txId string, hash, address string) (*type
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("TransactionDetail", key, 2*60*time.Second, detail)
+		c.cache.Add("TransactionDetail", key, 5*time.Second, detail)
 		return detail, nil
 	}
 	return value.(*types.TransactionDetailResp), nil

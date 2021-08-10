@@ -45,7 +45,7 @@ func (c *Controller) BlockDetail(hash string) (*types.BlockDetailResp, error) {
 		if err != nil {
 			return nil, err
 		}
-		c.cache.Add("BlockDetail", hash, 2*60*time.Second, detail)
+		c.cache.Add("BlockDetail", hash, 10*time.Second, detail)
 		return detail, nil
 	} else {
 		return value.(*types.BlockDetailResp), nil
