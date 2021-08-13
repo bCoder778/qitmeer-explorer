@@ -53,7 +53,7 @@ func (c *Controller) blockTimeAvg(curBlock *synctypes.Block) (*avgTime, bool) {
 			perBlockOrder = curBlock.Order - blockCount
 		}
 		preBlock, err = c.storage.GetBlockByOrder(perBlockOrder)
-		if err != nil{
+		if err != nil || preBlock.Order == 0{
 			blockCount++
 		} else{
 			break
