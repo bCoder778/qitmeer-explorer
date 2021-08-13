@@ -101,7 +101,7 @@ func (d *DB) GetBlockByOrder(order uint64) (*types.Block, error) {
 
 func (d *DB) GetLastBlock() (*types.Block, error) {
 	var block = &types.Block{}
-	_, err := d.engine.Table(new(types.Block)).Desc("order").Get(block)
+	_, err := d.engine.Table(new(types.Block)).Where("block.order != 0").Desc("order").Get(block)
 	return block, err
 }
 
