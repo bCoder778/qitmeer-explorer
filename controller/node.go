@@ -44,11 +44,23 @@ type avgTime struct {
 }
 
 func (c *Controller) blockTimeAvg(curBlock *synctypes.Block) (*avgTime, bool) {
+	var blockCount uint64 = 15
 	var perBlockOrder uint64
-	if curBlock.Order >= 15 {
-		perBlockOrder = curBlock.Order - 15
+	var preBlock *synctypes.Block
+	var err error
+	for blockCount < 200{
+		if curBlock.Order >= blockCount {
+			perBlockOrder = curBlock.Order - blockCount
+		}
+		preBlock, err = c.storage.GetBlockByOrder(perBlockOrder)
+		if err != nil{
+			blockCount++
+		} else{
+			break
+		}
 	}
-	preBlock, _ := c.storage.GetBlockByOrder(perBlockOrder)
+
+
 
 	return &avgTime{
 		Order:        curBlock.Order,
