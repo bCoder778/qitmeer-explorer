@@ -8,9 +8,11 @@ import (
 	"strconv"
 )
 
-func (d *DB) BlocksDistribution() []*dbtype.MinerStatus {
+func (d *DB) BlocksDistribution(page, size int) []*dbtype.MinerStatus {
+	page -= 1
+	start := page * size
 	status := []*dbtype.MinerStatus{}
-	d.engine.Table(new(types.Block)).Select("address, count(*) as count").Where("`order` > ? and stat in (?, ?)", 0, stat.Block_Confirmed, stat.Block_Unconfirmed).GroupBy("address").Find(&status)
+	d.engine.Table(new(types.Block)).Select("address, count(*) as count").Where("`order` > ? and stat in (?, ?)", 0, stat.Block_Confirmed, stat.Block_Unconfirmed).GroupBy("address").Desc("count").Limit(size, start).Find(&status)
 	return status
 }
 

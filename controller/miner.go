@@ -6,18 +6,19 @@ import (
 	"time"
 )
 
-func (c *Controller) BlocksDistribution() []*types.DistributionResp {
-	value, err := c.cache.Value("BlocksDistribution", "BlocksDistribution")
+func (c *Controller) BlocksDistribution(page, size int) []*types.DistributionResp {
+	key := fmt.Sprintf("'BlocksDistribution'-%d-%d", page, size)
+	value, err := c.cache.Value("BlocksDistribution", key)
 	if err != nil {
-		distributions := c.blocksDistribution()
-		c.cache.Add("BlocksDistribution", "BlocksDistribution", 60*60*time.Second, distributions)
+		distributions := c.blocksDistribution(page, size)
+		c.cache.Add("BlocksDistribution", key, 60*60*time.Second, distributions)
 		return distributions
 	}
 	return value.([]*types.DistributionResp)
 }
 
-func (c *Controller) blocksDistribution() []*types.DistributionResp {
-	minerStatus := c.storage.BlocksDistribution()
+func (c *Controller) blocksDistribution(page, size int) []*types.DistributionResp {
+	minerStatus := c.storage.BlocksDistribution(page, size)
 	distributions := map[string]*types.DistributionResp{}
 	rs := make([]*types.DistributionResp, 0)
 	var all uint64

@@ -286,7 +286,11 @@ func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) blocksDistribution(ct *Context) (interface{}, *Error) {
-	distribution := a.controller.BlocksDistribution()
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	distribution := a.controller.BlocksDistribution(page, size)
 	return distribution, nil
 }
 
