@@ -16,6 +16,11 @@ func (d *DB) BlocksDistribution(page, size int) []*dbtype.MinerStatus {
 	return status
 }
 
+func (d *DB) BlocksDistributionCount() int64 {
+	count, _ := d.engine.Table(new(types.Block)).Select("address, count(*) as count").Where("`order` > ? and stat in (?, ?)", 0, stat.Block_Confirmed, stat.Block_Unconfirmed).GroupBy("address").Count()
+	return count
+}
+
 
 func (d *DB)PackageTime(count int) *dbtype.Package{
 	paInfo := &dbtype.Package{}

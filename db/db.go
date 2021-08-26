@@ -70,6 +70,7 @@ type IList interface {
 
 type IStatus interface {
 	BlocksDistribution(page, size int) []*dbtypes.MinerStatus
+	BlocksDistributionCount() int64
 	PackageTime(count int) *dbtypes.Package
 }
 

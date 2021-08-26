@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (c *Controller) BlocksDistribution(page, size int) []*types.DistributionResp {
+func (c *Controller) BlocksDistribution(page, size int) *types.DistributionsResp {
 	key := fmt.Sprintf("'BlocksDistribution'-%d-%d", page, size)
 	value, err := c.cache.Value("BlocksDistribution", key)
 	if err != nil {
@@ -14,11 +14,12 @@ func (c *Controller) BlocksDistribution(page, size int) []*types.DistributionRes
 		c.cache.Add("BlocksDistribution", key, 60*60*time.Second, distributions)
 		return distributions
 	}
-	return value.([]*types.DistributionResp)
+	return value.(*types.DistributionsResp)
 }
 
-func (c *Controller) blocksDistribution(page, size int) []*types.DistributionResp {
+func (c *Controller) blocksDistribution(page, size int) *types.DistributionsResp {
 	minerStatus := c.storage.BlocksDistribution(page, size)
+	count := c.storage.BlocksDistributionCount()
 	distributions := map[string]*types.DistributionResp{}
 	rs := make([]*types.DistributionResp, 0)
 	var all uint64
@@ -54,7 +55,12 @@ func (c *Controller) blocksDistribution(page, size int) []*types.DistributionRes
 	for _, dt := range distributions {
 		rs = append(rs, dt)
 	}
-	return rs
+	return &types.DistributionsResp{
+		Page:  page,
+		Size:  size,
+		List:  rs,
+		Count: count,
+	}
 }
 
 func blocksProportion(blocks, all uint64) string {

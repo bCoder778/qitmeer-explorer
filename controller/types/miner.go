@@ -59,3 +59,11 @@ type DistributionResp struct {
 	LastOrder        uint64  `json:"lastorder"`
 	LastTimestamp    int64   `json:"lasttimestamp"`
 }
+
+
+type DistributionsResp struct {
+	Page  int `json:"page"`
+	Size  int `json:"size"`
+	List  []*DistributionResp `json:"list"`
+	Count int64 `json:"count"`
+}
