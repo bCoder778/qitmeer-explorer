@@ -89,6 +89,36 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 	}
 	paInfo.MaxInfo = max
 	paInfo.MinInfo = min
+
+	if count == 0{
+		sql = "select block.address, sum(block.timestamp-transaction.timestamp) as sumTime, count(*) as count,sum(block.timestamp-transaction.timestamp)/count(*) as avgTime  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 group by block.address order by avgTime desc;"
+	}else{
+		sql = fmt.Sprintf("select block.address, sum(block.timestamp-tx.timestamp) as sumTime,count(*) as count, sum(block.timestamp-tx.timestamp)/count(*) as avgTime  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx  INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0  and block.timestamp-tx.timestamp>0 group by block.address order by avgTime desc;", count)
+	}
+	minerRs, err := d.engine.QueryString(sql)
+	if err != nil{
+		return paInfo
+	}
+	miners := []dbtype.MinerInfo{}
+	for _, value := range minerRs{
+		miner := dbtype.MinerInfo{
+			Address:    value["address"],
+			Miner:      "",
+			TxCount:    0,
+			AvgTime:    "",
+			AvgSeconds: 0,
+		}
+		miner.Address = value["address"]
+		miner.AvgSeconds, _ = strconv.ParseFloat(value["avgTime"], 64)
+		hour, minute, sec := resolveTime(int64(paInfo.AvgSeconds))
+		miner.AvgTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
+		miner.SumSec, _ = strconv.ParseInt(value["sumTime"], 10, 64)
+		miner.TxCount, _ = strconv.ParseInt(value["count"], 10, 64)
+		miners = append(miners, miner)
+	}
+	paInfo.Miners = miners
+
+
 	return paInfo
 }
 

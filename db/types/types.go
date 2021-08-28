@@ -32,4 +32,14 @@ type Package struct {
 	AvgSeconds float64 `json:"avgSeconds"`
 	TxCount int64 `json:"txCount"`
 	SumSec int64 `json:"sumSeconds"`
+	Miners []MinerInfo `json:"miners"`
+}
+
+type MinerInfo struct {
+	Address string `json:"address"`
+	Miner string `json:"miner"`
+	TxCount int64 `json:"txCount"`
+	AvgTime string `json:"avgTime"`
+	SumSec int64 `json:"sumSec"`
+	AvgSeconds float64 `json:"avgSeconds"`
 }
