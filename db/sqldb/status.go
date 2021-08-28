@@ -110,7 +110,7 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 		}
 		miner.Address = value["address"]
 		miner.AvgSeconds, _ = strconv.ParseFloat(value["avgTime"], 64)
-		hour, minute, sec := resolveTime(int64(paInfo.AvgSeconds))
+		hour, minute, sec := resolveTime(int64(miner.AvgSeconds))
 		miner.AvgTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
 		miner.SumSec, _ = strconv.ParseInt(value["sumTime"], 10, 64)
 		miner.TxCount, _ = strconv.ParseInt(value["count"], 10, 64)
