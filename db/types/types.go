@@ -19,6 +19,8 @@ type Peer struct {
 }
 
 type TimeInfo struct {
+	Address string `json:"address"`
+	Miner string `json:"miner"`
 	WaitSec int64 `json:"waitSeconds"`
 	WaitTime string `json:"waitTime"`
 	BlockHash string `json:"blockHash"`
