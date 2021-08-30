@@ -26,9 +26,9 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 	paInfo := &dbtype.Package{}
 	sql := ""
 	if count != 0{
-		sql = fmt.Sprintf("select block.address, block.timestamp-tx.timestamp as maxTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp desc limit 1;", count)
+		sql = fmt.Sprintf("select block.address, block.peer_id, block.timestamp-tx.timestamp as maxTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp desc limit 1;", count)
 	}else{
-		sql = "select block.address, block.timestamp-transaction.timestamp as maxTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 and transaction.duplicate = 0 order by block.timestamp-transaction.timestamp desc limit 1;"
+		sql = "select block.address, block.peer_id, block.timestamp-transaction.timestamp as maxTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 and transaction.duplicate = 0 order by block.timestamp-transaction.timestamp desc limit 1;"
 	}
 	maxRs, err := d.engine.QueryString(sql)
 	if err != nil{
@@ -47,12 +47,13 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 		max.BlockHash, _ = value["block_hash"]
 		max.TxId, _ = value["tx_id"]
 		max.Address = value["address"]
+		max.PeerId = value["peer_id"]
 	}
 
 	if count != 0{
-		sql = fmt.Sprintf("select block.address, block.timestamp-tx.timestamp as minTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp limit 1;", count)
+		sql = fmt.Sprintf("select block.address, block.peer_id, block.timestamp-tx.timestamp as minTime, tx_id, block_hash  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0 and block.timestamp-tx.timestamp > 0 order by block.timestamp-tx.timestamp limit 1;", count)
 	}else{
-		sql = "select block.address, block.timestamp-transaction.timestamp as minTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 and transaction.duplicate = 0 order by block.timestamp-transaction.timestamp limit 1;"
+		sql = "select block.address, block.peer_id, block.timestamp-transaction.timestamp as minTime, tx_id, block_hash  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0 and block.timestamp-transaction.timestamp > 0 and transaction.duplicate = 0 order by block.timestamp-transaction.timestamp limit 1;"
 	}
 	minRs, err := d.engine.QueryString(sql)
 	if err != nil{
@@ -71,6 +72,7 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 		min.BlockHash, _ = value["block_hash"]
 		min.TxId, _ = value["tx_id"]
 		min.Address = value["address"]
+		min.PeerId = value["peer_id"]
 	}
 
 	if count == 0{
@@ -93,9 +95,9 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 	paInfo.MinInfo = min
 
 	if count == 0{
-		sql = "select block.address, sum(block.timestamp-transaction.timestamp) as sumTime, count(*) as count,sum(block.timestamp-transaction.timestamp)/count(*) as avgTime  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 group by block.address order by avgTime desc;"
+		sql = "select block.address, block.peer_id, sum(block.timestamp-transaction.timestamp) as sumTime, count(*) as count,sum(block.timestamp-transaction.timestamp)/count(*) as avgTime  from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 group by block.address order by avgTime desc;"
 	}else{
-		sql = fmt.Sprintf("select block.address, sum(block.timestamp-tx.timestamp) as sumTime,count(*) as count, sum(block.timestamp-tx.timestamp)/count(*) as avgTime  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx  INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0  and block.timestamp-tx.timestamp>0 group by block.address order by avgTime desc;", count)
+		sql = fmt.Sprintf("select block.address, block.peer_id, sum(block.timestamp-tx.timestamp) as sumTime,count(*) as count, sum(block.timestamp-tx.timestamp)/count(*) as avgTime  from (select transaction.tx_id, transaction.block_hash,transaction.timestamp,transaction.is_coinbase from transaction INNER JOIN block on transaction.block_hash = block.hash where transaction.is_coinbase=0  and block.timestamp-transaction.timestamp>0 and transaction.duplicate = 0 order by transaction.timestamp desc limit %d) as tx  INNER JOIN block on tx.block_hash = block.hash where tx.is_coinbase=0  and block.timestamp-tx.timestamp>0 group by block.peer_id order by avgTime desc;", count)
 	}
 	minerRs, err := d.engine.QueryString(sql)
 	if err != nil{
@@ -116,6 +118,7 @@ func (d *DB)PackageTime(count int) *dbtype.Package{
 		miner.AvgTime  = fmt.Sprintf("%02dh:%02dm:%02ds", hour, minute, sec)
 		miner.SumSec, _ = strconv.ParseInt(value["sumTime"], 10, 64)
 		miner.TxCount, _ = strconv.ParseInt(value["count"], 10, 64)
+		miner.PeerId = value["peer_id"]
 		miners = append(miners, miner)
 	}
 	paInfo.Miners = miners
