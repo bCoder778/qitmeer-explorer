@@ -2,33 +2,33 @@ package cache
 
 import (
 	"fmt"
-	"github.com/muesli/cache2go"
+	//"github.com/muesli/cache2go"
+	"github.com/bluele/gcache"
 	"sync"
 	"time"
 )
 
 type MemCache struct {
-	cacheTables map[string]*cache2go.CacheTable
+	cacheTables map[string]gcache.Cache
 	mutex       sync.RWMutex
 }
 
 func NewMemCache() *MemCache {
 	return &MemCache{
-		cacheTables: make(map[string]*cache2go.CacheTable),
+		cacheTables: make(map[string]gcache.Cache),
 	}
 }
 
 func (m *MemCache) Add(table string, key string, sec time.Duration, iTerm interface{}) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-
 	t, ok := m.cacheTables[table]
 	if !ok {
-		cacheTable := cache2go.Cache(table)
-		cacheTable.Add(key, sec, iTerm)
+		cacheTable := gcache.New(20).LFU().Build()
+		cacheTable.SetWithExpire(key, iTerm, sec)
 		m.cacheTables[table] = cacheTable
 	} else {
-		t.Add(key, sec, iTerm)
+		t.SetWithExpire(key, iTerm, sec)
 	}
 }
 
@@ -40,10 +40,10 @@ func (m *MemCache) Value(table, key string) (interface{}, error) {
 	if !ok {
 		return nil, fmt.Errorf("not table %s", table)
 	} else {
-		iTerm, err := t.Value(key)
+		iTerm, err := t.Get(key)
 		if err != nil {
 			return nil, err
 		}
-		return iTerm.Data(), nil
+		return iTerm, nil
 	}
 }
