@@ -7,6 +7,7 @@ require (
 	github.com/Qitmeer/qitmeer v0.10.0-dev.0.20210719034054-6450a17ac94c
 	github.com/bCoder778/log v0.1.3
 	github.com/bCoder778/qitmeer-sync v0.1.7-0.20210809080004-e254572011ce
+	github.com/bluele/gcache v0.0.2
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/gin-gonic/gin v1.7.2 // indirect
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
