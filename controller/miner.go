@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	"sort"
 	"time"
 )
 
@@ -11,7 +12,7 @@ func (c *Controller) BlocksDistribution(page, size int) *types.DistributionsResp
 	value, err := c.cache.Value("BlocksDistribution", key)
 	if err != nil {
 		distributions := c.blocksDistribution(page, size)
-		c.cache.Add("BlocksDistribution", key, 60*60*time.Second, distributions)
+		c.cache.Add("BlocksDistribution", key, 60*time.Second, distributions)
 		return distributions
 	}
 	return value.(*types.DistributionsResp)
@@ -53,6 +54,9 @@ func (c *Controller) blocksDistribution(page, size int) *types.DistributionsResp
 	for _, dt := range distributions {
 		rs = append(rs, dt)
 	}
+	sort.Slice(rs, func(i, j int) bool {
+		return rs[i].Blocks > rs[j].Blocks
+	})
 	return &types.DistributionsResp{
 		Page:  page,
 		Size:  size,
