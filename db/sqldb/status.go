@@ -17,9 +17,14 @@ func (d *DB) BlocksDistribution(page, size int) []*dbtype.MinerStatus {
 }
 
 func (d *DB) BlocksDistributionCount() int64 {
-	count, err := d.engine.Table(new(types.Block)).Where("`order` > ? and stat in (?, ?)", 0, stat.Block_Confirmed, stat.Block_Unconfirmed).GroupBy("address").Count()
-	fmt.Println(err)
-	return count
+	sql := fmt.Sprintf("select count(t.address) as count from (select address from block where block.order>%d and stat in (%d, %d)  group by  address) t", 0, stat.Block_Confirmed, stat.Block_Unconfirmed)
+	rs , _ := d.engine.QueryString(sql)
+	for _, value := range rs{
+		sCount := value["count"]
+		count, _ := strconv.ParseUint(sCount, 10, 64)
+		return int64(count)
+	}
+	return 0
 }
 
 
