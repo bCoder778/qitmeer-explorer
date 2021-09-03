@@ -8,6 +8,11 @@ import (
 	"strconv"
 )
 
+func (d *DB) BlocksCount() int64 {
+	count, _ := d.engine.Table(new(types.Block)).Where("`order` > ? and stat in (?, ?)", 0, stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
+	return count
+}
+
 func (d *DB) BlocksDistribution(page, size int) []*dbtype.MinerStatus {
 	page -= 1
 	start := page * size
