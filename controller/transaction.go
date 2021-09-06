@@ -102,13 +102,13 @@ func (c *Controller) transactionDetail(txId string, hash, address string) (*type
 	changeList := []*types.TransferChange{}
 	feesList := []*types.Fees{}
 
-	if hash != ""{
+	if hash != "" {
 		tx, err := c.storage.GetTransactionByTxIdBlockHash(txId, hash)
-		if err != nil{
+		if err != nil {
 			return nil, err
 		}
 		header = types.ToTransactionResp(tx)
-	}else{
+	} else {
 		txs, err := c.storage.GetTransactionByTxId(txId)
 		if err != nil {
 			return nil, err
@@ -237,7 +237,7 @@ func (c *Controller) transactionDetail(txId string, hash, address string) (*type
 	return &types.TransactionDetailResp{Header: header, Vout: vout, Vin: vin}, nil
 }
 
-func (c *Controller)QueryTransfer(page, size int) (*types.ListResp, error) {
+func (c *Controller) QueryTransfer(page, size int) (*types.ListResp, error) {
 	key := fmt.Sprintf("%d-%d", page, size)
 	value, err := c.cache.Value("QueryTransfer", key)
 	if err != nil {
@@ -251,9 +251,9 @@ func (c *Controller)QueryTransfer(page, size int) (*types.ListResp, error) {
 	return value.(*types.ListResp), nil
 }
 
-func (c *Controller)queryTransfer(page, size int) (*types.ListResp, error) {
+func (c *Controller) queryTransfer(page, size int) (*types.ListResp, error) {
 	txs, err := c.storage.QueryTransfer(page, size)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	count, err := c.storage.QueryTransferCount()
@@ -268,8 +268,7 @@ func (c *Controller)queryTransfer(page, size int) (*types.ListResp, error) {
 	}, nil
 }
 
-
-func (c *Controller)QueryCoinbase(page, size int) (*types.ListResp, error) {
+func (c *Controller) QueryCoinbase(page, size int) (*types.ListResp, error) {
 	key := fmt.Sprintf("%d-%d", page, size)
 	value, err := c.cache.Value("QueryCoinbase", key)
 	if err != nil {
@@ -283,9 +282,9 @@ func (c *Controller)QueryCoinbase(page, size int) (*types.ListResp, error) {
 	return value.(*types.ListResp), nil
 }
 
-func (c *Controller)queryCoinbase(page, size int) (*types.ListResp, error) {
+func (c *Controller) queryCoinbase(page, size int) (*types.ListResp, error) {
 	txs, err := c.storage.QueryCoinbase(page, size)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	count, err := c.storage.QueryCoinbaseCount()

@@ -30,9 +30,10 @@ func (d *DB) QueryTransactions(txId string) ([]types.Transaction, error) {
 	return txs, err
 }
 
-func (d *DB) QueryTransactionsByBlockHash(hash string) ([]types.Transaction, error) {
-	txs := []types.Transaction{}
-	err := d.engine.Where("block_hash = ?", hash).Find(&txs)
+func (d *DB) QueryTransactionsByBlockHash(hash string, size, p int) ([]types.Transaction, error) {
+	var txs []types.Transaction
+	start := (p - 1) * size
+	err := d.engine.Where("block_hash = ?", hash).Limit(size, start).Find(&txs)
 	return txs, err
 }
 
