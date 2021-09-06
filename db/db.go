@@ -40,8 +40,8 @@ type IGet interface {
 	GetLastMinerBlock(address string) *types.Block
 	GetLastAlgorithmBlock(algorithm string, edgeBits int) (*types.Block, error)
 	GetTokenTransactionCount(coinId, stat string) (int64, error)
-	QueryTransferCount()(int64, error)
-	QueryCoinbaseCount()(int64, error)
+	QueryTransferCount() (int64, error)
+	QueryCoinbaseCount() (int64, error)
 }
 
 type IQuery interface {
@@ -49,7 +49,7 @@ type IQuery interface {
 	QueryMemTransaction() ([]types.Transaction, error)
 	QueryUnConfirmedOrders() ([]uint64, error)
 	QueryTransactions(txId string) ([]types.Transaction, error)
-	QueryTransactionsByBlockHash(hash string) ([]types.Transaction, error)
+	QueryTransactionsByBlockHash(hash string, size, p int) ([]types.Transaction, error)
 	QueryTransactionVout(txId string) ([]*types.Vout, error)
 	QueryTransactionVin(txId string) ([]*types.Vin, error)
 	QueryAlgorithmDiffInTime(algorithm string, edgeBits int, max int64, min int64) []*types.Block
@@ -64,8 +64,8 @@ type IList interface {
 	QueryBlock(page, size int, stat string) ([]*types.Block, error)
 	QueryTransaction(page, size int, stat string) ([]*types.Transaction, error)
 	QueryTokenTransaction(page, size int, coinId, stat string) ([]*types.Vout, error)
-	QueryTransfer(page, size int)([]*types.Transaction, error)
-	QueryCoinbase(page, size int)([]*types.Transaction, error)
+	QueryTransfer(page, size int) ([]*types.Transaction, error)
+	QueryCoinbase(page, size int) ([]*types.Transaction, error)
 }
 
 type IStatus interface {

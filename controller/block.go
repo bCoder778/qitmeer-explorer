@@ -55,29 +55,47 @@ func (c *Controller) BlockDetail(condition string) (*types.BlockDetailResp, erro
 }
 
 func (c *Controller) blockDetail(condition string) (*types.BlockDetailResp, error) {
-	order , err := strconv.ParseUint(condition, 10, 64)
+	order, err := strconv.ParseUint(condition, 10, 64)
 	var blockHeader *types2.Block
-	if err == nil{
+	if err == nil {
 		blockHeader, err = c.storage.GetBlockByOrder(order)
 		if err != nil {
 			return nil, err
 		}
-	}else{
+	} else {
 		blockHeader, err = c.storage.GetBlock(condition)
 		if err != nil {
 			return nil, err
 		}
 	}
-	txDetails := []*types.TransactionDetailResp{}
-	txs, err := c.storage.QueryTransactionsByBlockHash(blockHeader.Hash)
-	for _, tx := range txs {
-		tx, err := c.TransactionDetail(tx.TxId, blockHeader.Hash, "no address")
+
+	var txDetails []*types.TransactionDetailResp
+	if blockHeader.Transactions <= 10 {
+		txs, _ := c.storage.QueryTransactionsByBlockHash(blockHeader.Hash, 100, 1)
+		for _, tx := range txs {
+			tx, err := c.TransactionDetail(tx.TxId, blockHeader.Hash, "no address")
+			if err != nil {
+				return nil, err
+			}
+			txDetails = append(txDetails, tx)
+		}
+	}
+
+	return &types.BlockDetailResp{Header: types.ToBlockResp(blockHeader), Transactions: txDetails}, nil
+}
+
+func (c *Controller) BlockTransactions(hash string, size, p int) (*types.ListResp, error) {
+
+	var txs []*types.TransactionDetailResp
+	rs, _ := c.storage.QueryTransactionsByBlockHash(hash, size, p)
+	for _, tx := range rs {
+		tx, err := c.TransactionDetail(tx.TxId, hash, "no address")
 		if err != nil {
 			return nil, err
 		}
-		txDetails = append(txDetails, tx)
+		txs = append(txs, tx)
 	}
-	return &types.BlockDetailResp{Header: types.ToBlockResp(blockHeader), Transactions: txDetails}, nil
+	return &types.ListResp{List: txs, Size: size, Page: p, Count: 0}, nil
 }
 
 func (c *Controller) QueryBlockByStatus(page, size int, stat string) (*types.ListResp, error) {

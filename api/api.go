@@ -84,9 +84,9 @@ func (a *Api) addApi() {
 	a.rest.AuthRouteSet("api/v2/block").
 		GetSub("detail", a.getBlock).
 		GetSub("list", a.queryBLock).
+		GetSub("txs", a.queryTransactionsByBlockHash).
 		GetSub("pending", a.queryBlockPending).
 		GetSub("completed", a.queryBlockCompleted)
-
 
 	a.rest.AuthRouteSet("api/v2/tx").
 		GetSub("detail", a.getTransaction).
@@ -249,9 +249,9 @@ func (a *Api) getBlock(ct *Context) (interface{}, *Error) {
 	var block *types.BlockDetailResp
 	var err error
 	hash := ct.Query["hash"]
-	if hash != ""{
+	if hash != "" {
 		block, err = a.controller.BlockDetail(hash)
-	}else{
+	} else {
 		block, err = a.controller.BlockDetail(ct.Query["order"])
 	}
 	if err != nil {
@@ -367,13 +367,11 @@ func (a *Api) tips(ct *Context) (interface{}, *Error) {
 	return tips, nil
 }
 
-
-func (a *Api)packageTime(ct *Context) (interface{}, *Error) {
+func (a *Api) packageTime(ct *Context) (interface{}, *Error) {
 	count := ct.Query["count"]
 	packgeInfo := a.controller.PackageTime(count)
 	return packgeInfo, nil
 }
-
 
 func (a *Api) coinIdList(ct *Context) (interface{}, *Error) {
 	tokens := a.controller.GetCoinIds()
@@ -413,4 +411,18 @@ func (a *Api) queryTokenTxs(ct *Context) (interface{}, *Error) {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	return vs, nil
+}
+
+func (a *Api) queryTransactionsByBlockHash(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	hash := ct.Query["hash"]
+
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	rs, err := a.controller.BlockTransactions(hash, size, page)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return rs, nil
 }
