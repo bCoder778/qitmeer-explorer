@@ -33,6 +33,7 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 		new(types.Vout),
 		new(types.Transfer),
 		new(dbtypes.Peer),
+		new(dbtypes.Location),
 	); err != nil {
 		return nil, err
 	}
@@ -55,6 +56,7 @@ func ConnectSqlServer(conf *conf.DB) (*DB, error) {
 		new(types.Vout),
 		new(types.Transfer),
 		new(dbtypes.Peer),
+		new(dbtypes.Location),
 	); err != nil {
 		return nil, err
 	}

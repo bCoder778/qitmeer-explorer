@@ -168,10 +168,19 @@ func (d *DB) GetTokenTransactionCount(coinId, stat string) (int64, error) {
 	return sql.Count()
 }
 
-func (d *DB)QueryTransferCount()(int64, error){
+func (d *DB) QueryTransferCount() (int64, error) {
 	return d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 0, 0).Count()
 }
 
-func (d *DB)QueryCoinbaseCount()(int64, error){
+func (d *DB) QueryCoinbaseCount() (int64, error) {
 	return d.engine.Table(new(types.Transaction)).Where("is_coinbase = ?", 1).Count()
+}
+
+func (d *DB) GetLocation(ip string) *dbtypes.Location {
+	local := new(dbtypes.Location)
+	_, err := d.engine.Where("ip = ?", ip).Get(local)
+	if err != nil {
+		return nil
+	}
+	return local
 }

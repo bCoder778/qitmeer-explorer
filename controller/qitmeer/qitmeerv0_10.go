@@ -5,6 +5,7 @@ import (
 	qts "github.com/Qitmeer/qitmeer/core/types"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	db "github.com/bCoder778/qitmeer-explorer/db"
+	dbtype "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-explorer/external"
 	"github.com/bCoder778/qitmeer-explorer/rpc"
 	dbtypes "github.com/bCoder778/qitmeer-sync/storage/types"
@@ -13,7 +14,7 @@ import (
 )
 
 const (
-	node_rpc_host = "http://127.0.0.1:2024"
+	node_rpc_host = "https://testnet.meerscan.io/crawler"
 	node_rpc_user = "admin"
 	node_rpc_pas  = "123"
 )
@@ -43,31 +44,42 @@ func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 	if err != nil {
 		return nil
 	}
-	rs := []*types.PeerResp{}
+	var rs []*types.PeerResp
 	ipMap := map[string]bool{}
 	for i, p := range peers {
 		r, _ := regexp.Compile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}`)
 		ip := string(r.Find([]byte(p.Ip)))
+
+		local := q.storage.GetLocation(ip)
+
 		loc := &types.Location{
 			City: "",
 			Lat:  0,
 			Lon:  0,
 		}
-	/*	if (ip >= "172.16.0.0" && ip <= "172.31.255.255") ||
-			(ip >= "192.168.0.0" && ip <= "192.168.255.255") ||
-			ip == "127.0.0.1" {
-			continue
-		}*/
-		loc = getLocation(ip)
-		_, exist := ipMap[ip]
-		if !exist {
-			rs = append(rs, &types.PeerResp{
-				Id:       uint64(i),
-				Addr:     ip,
-				Other:    p.Id,
-				Location: loc,
+		if local.Id < 1 {
+			loc = getLocation(ip)
+		} else {
+			loc.City = local.City
+			loc.Lat = local.Lat
+			loc.Lon = local.Lon
+		}
+		rs = append(rs, &types.PeerResp{
+			Id:       uint64(i),
+			Addr:     ip,
+			Other:    p.Id,
+			Location: loc,
+		})
+		ipMap[ip] = true
+
+		if len(loc.City) > 0 {
+			_ = q.storage.UpdateLocation(&dbtype.Location{
+				IpAddress: ip,
+				City:      loc.City,
+				Lon:       loc.Lon,
+				Lat:       loc.Lat,
+				Other:     p.Id,
 			})
-			ipMap[ip] = true
 		}
 	}
 	return rs
