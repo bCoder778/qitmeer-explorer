@@ -62,7 +62,7 @@ func (d *DB) QueryBlock(page, size int, stat string) ([]*types.Block, error) {
 
 	sql := d.engine.Table(new(types.Block)).Where("1 = 1")
 	if len(stat) > 0 {
-		sql.Where("stat in (?)", stat)
+		sql.Where("stat in (?)", stat).And("block.order != 0 or color != 2")
 	}
 
 	err := sql.Desc("order").Limit(size, start).Find(&bs)
