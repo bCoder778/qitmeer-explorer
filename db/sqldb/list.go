@@ -11,7 +11,8 @@ func (d *DB) LastBlocks(page, size int) ([]*types.Block, error) {
 	start := page * size
 
 	blocks := []*types.Block{}
-	err := d.engine.Table(new(types.Block)).Desc("order").Limit(size, start).Find(&blocks)
+	// 除去不被认可的order = 0的块
+	err := d.engine.Table(new(types.Block)).Where("block.order != 0 or color != 2").Desc("order").Limit(size, start).Find(&blocks)
 	return blocks, err
 }
 
