@@ -62,7 +62,7 @@ func (d *DB) GetBlockCount(stat string) (int64, error) {
 
 	sql := d.engine.Table(new(types.Block))
 	if len(stat) > 0 {
-		sql.Where("find_in_set(stat, ?) and (block.order != 0 or color != 2)", stat)
+		sql.Where("find_in_set(stat, ?)", stat).And("block.order != 0 or color != 2")
 	}
 
 	return sql.Count()
