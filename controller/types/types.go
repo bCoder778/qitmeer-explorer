@@ -254,7 +254,7 @@ func ToVoutResp(vinout *types.Vout, height uint64) *VoutResp {
 		ScriptPubKey: vinout.ScriptPubKey,
 		SpentTx:      vinout.SpentTx,
 		LockHeight:   vinout.Lock,
-		Locked:       height >= vinout.Lock,
+		Locked:       height < vinout.Lock,
 		Stat:  		  vinout.Stat,
 	}
 }

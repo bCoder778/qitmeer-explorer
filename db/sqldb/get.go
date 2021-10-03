@@ -62,14 +62,14 @@ func (d *DB) GetBlockCount(stat string) (int64, error) {
 
 	sql := d.engine.Table(new(types.Block))
 	if len(stat) > 0 {
-		sql.Where("find_in_set(stat, ?)", stat)
+		sql.Where("find_in_set(stat, ?)", stat).And("block.order != 0 or color != 2")
 	}
 
 	return sql.Count()
 }
 
 func (d *DB) GetValidBlockCount() (int64, error) {
-	return d.engine.Table(new(types.Block)).Where("stat in (?, ?)", stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
+	return d.engine.Table(new(types.Block)).Where("stat in (?, ?) and block.height <> 0 and block.order <> 0", stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
 }
 
 func (d *DB) GetTransactionCount(stat string) (int64, error) {
@@ -124,7 +124,7 @@ func (d *DB) GetUnconfirmedAmount(address string, coinId string) (float64, error
 }
 
 func (d *DB) GetLockedAmount(address string, coinId string, height uint64) (float64, error) {
-	return d.engine.Table(new(types.Vout)).Where("vout.lock > ? and address = ? and coin_id = ? and spent_tx = ? and stat = ?",
+	return d.engine.Table(new(types.Vout)).Where("vout.lock >  ? and address = ? and coin_id = ? and spent_tx = ? and stat = ?",
 		height, address, coinId, "", stat.TX_Confirmed).
 		Sum(new(types.Vout), "amount")
 }

@@ -28,7 +28,7 @@ func (c *Controller) lastBlocks(page, size int) (*types.ListResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	count, err := c.storage.GetBlockCount("")
+	count, err := c.storage.GetBlockCount("0,1,3,4")
 	if err != nil {
 		return nil, err
 	}
