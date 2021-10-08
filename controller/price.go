@@ -81,9 +81,9 @@ func (c *Controller) getCirculating() string {
 	}
 	reward := params.Qitmeer10Params.BlockReward
 	genesisUTXO := params.Qitmeer10Params.GenesisUTXO["MEER"]
-	unlock := uint64(math.Floor(float64(height)/2880)) * 2640287564088
+	unlock := uint64(math.Floor(float64(height)/2880)+1) * 2640287564088
 
-	reward = reward + unlock
+	genesisUTXO = genesisUTXO + unlock
 	circulating := (uint64(count)-1)*reward + genesisUTXO
 
 	sCirculating := strconv.FormatUint(circulating, 10)
