@@ -39,10 +39,10 @@ type TransactionResp struct {
 	Confirmations uint64            `json:"confirmations"`
 	Txsvaild      bool              `json:"txsvaild"`
 	IsCoinbase    bool              `json:"iscoinbase"`
-	VinAmount    float64 		    `json:"vinamount"`
-	VoutAmount    float64 		    `json:"voutamount"`
-	VinAddress    string 		    `json:"vinaddress"`
-	VoutAddress   string 		    `json:"voutaddress"`
+	VinAmount     float64           `json:"vinamount"`
+	VoutAmount    float64           `json:"voutamount"`
+	VinAddress    string            `json:"vinaddress"`
+	VoutAddress   string            `json:"voutaddress"`
 	Vins          int               `json:"vin"`
 	Vouts         int               `json:"vout"`
 	Fees          []*Fees           `json:"fees"`
@@ -165,7 +165,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Name: "",
 		Url:  "",
 	}
-	if tx.IsCoinbase{
+	if tx.IsCoinbase {
 		_, miner = Miners.Get(tx.VoutAddress)
 	}
 	t := &TransactionResp{
@@ -191,7 +191,7 @@ func ToTransactionResp(tx *types.Transaction) *TransactionResp {
 		Fees:          nil,
 		Changes:       nil,
 		Duplicate:     tx.Duplicate,
-		Miner: miner,
+		Miner:         miner,
 		Stat:          tx.Stat,
 	}
 	return t
@@ -255,7 +255,7 @@ func ToVoutResp(vinout *types.Vout, height uint64) *VoutResp {
 		SpentTx:      vinout.SpentTx,
 		LockHeight:   vinout.Lock,
 		Locked:       height < vinout.Lock,
-		Stat:  		  vinout.Stat,
+		Stat:         vinout.Stat,
 	}
 }
 
@@ -386,4 +386,9 @@ type Package struct {
 	MaxTime int64 `json:"maxTime"`
 	MinTime int64 `json:"minTime"`
 	AvgTime int64 `json:"avgtime"`
+}
+
+type SearchResult struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
 }
