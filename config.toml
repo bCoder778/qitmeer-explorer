@@ -2,17 +2,17 @@
 listen="0.0.0.0:11360"
 
 [rpc]
-host="http://127.0.0.1:1234"
-admin="admin"
-password="123"
+host="http://203.86.236.20:8131"
+admin="qitmeer"
+password="6qFQw!N7JgE8D.R"
 
 [db]
 # mysql | sqlserver
 dbtype="mysql"
-user="root"
-password="kahfxwxsx113"
-address="127.0.0.1:3306"
-dbname="qitmeersync3"
+user="client"
+password="Qitmeer@mariadb.client"
+address="203.86.236.20:3306"
+dbname="mainnet"
 
 [log]
 # console=12 | file=11
@@ -27,4 +27,4 @@ gc-percent=20
 [qitmeer]
 # 0.9|0.10
 version="0.10"
-network="testnet"
+network="mainnet"
