@@ -264,7 +264,7 @@ func (a *Api) getBlock(ct *Context) (interface{}, *Error) {
 }
 
 func (a *Api) getTransaction(ct *Context) (interface{}, *Error) {
-	block, err := a.controller.TransactionDetail(ct.Query["txid"], ct.Query["blockhash"], "")
+	block, err := a.controller.TransactionDetail(ct.Query["txid"], ct.Query["blockhash"], ct.Query["address"])
 	if err != nil {
 		return nil, &Error{
 			Code:    ERROR_UNKNOWN,
