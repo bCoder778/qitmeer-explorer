@@ -42,6 +42,9 @@ type IGet interface {
 	GetTokenTransactionCount(coinId, stat string) (int64, error)
 	QueryTransferCount() (int64, error)
 	QueryCoinbaseCount() (int64, error)
+	QueryLocation() []*dbtypes.Location
+	GetLocation(ip string) *dbtypes.Location
+	UpdateLocation(local *dbtypes.Location) error
 }
 
 type IQuery interface {

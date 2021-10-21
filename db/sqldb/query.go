@@ -66,3 +66,9 @@ func (d *DB) QueryTokens() []string {
 	d.engine.Table(new(types.Vout)).Distinct("coinid").Find(&tokens)
 	return tokens
 }
+
+func (d *DB) QueryLocation() []*dbtypes.Location {
+	var locals []*dbtypes.Location
+	_ = d.engine.Table(new(dbtypes.Location)).Find(&locals)
+	return locals
+}
