@@ -12,11 +12,31 @@ import (
 func (c *Controller) NodeList() interface{} {
 	value, err := c.cache.Value("NodeList", "NodeList")
 	if err != nil {
-		list := c.qitmeer.PeerList()
-		c.cache.Add("NodeList", "NodeList", 60*time.Second*10, list)
+		list := c.queryNode()
+		c.cache.Add("NodeList", "NodeList", time.Minute*60, list)
 		return list
 	}
 	return value.([]*types.PeerResp)
+}
+
+func (c *Controller) queryNode() []*types.PeerResp {
+	rs := c.storage.QueryLocation()
+
+	list := make([]*types.PeerResp, 0)
+	for _, item := range rs {
+		list = append(list, &types.PeerResp{
+			Id:    uint64(item.Id),
+			Other: item.Other,
+			Addr:  item.IpAddress,
+			Location: &types.Location{
+				City: item.City,
+				Lon:  item.Lon,
+				Lat:  item.Lat,
+			},
+		})
+	}
+	go c.qitmeer.PeerList()
+	return list
 }
 
 func (c *Controller) Tips() *types.TipsResp {
@@ -48,19 +68,17 @@ func (c *Controller) blockTimeAvg(curBlock *synctypes.Block) (*avgTime, bool) {
 	var perBlockOrder uint64
 	var preBlock *synctypes.Block
 	var err error
-	for blockCount < 200{
+	for blockCount < 200 {
 		if curBlock.Order >= blockCount {
 			perBlockOrder = curBlock.Order - blockCount
 		}
 		preBlock, err = c.storage.GetBlockByOrder(perBlockOrder)
-		if err != nil || preBlock.Order == 0{
+		if err != nil || preBlock.Order == 0 {
 			blockCount++
-		} else{
+		} else {
 			break
 		}
 	}
-
-
 
 	return &avgTime{
 		Order:        curBlock.Order,
@@ -79,9 +97,7 @@ func concurrencyRate(blockTime, mainBlockTime float64) string {
 	return fmt.Sprintf("%.2f", mainBlockTime/blockTime*100)
 }
 
-
-
-func (c *Controller) PackageTime(count string)*dbtype.Package{
+func (c *Controller) PackageTime(count string) *dbtype.Package {
 	value, err := c.cache.Value("packageTime", count)
 	if err != nil {
 		info := c.packageTime(count)
@@ -91,8 +107,7 @@ func (c *Controller) PackageTime(count string)*dbtype.Package{
 	return value.(*dbtype.Package)
 }
 
-
-func (c *Controller) packageTime(count string)*dbtype.Package{
+func (c *Controller) packageTime(count string) *dbtype.Package {
 	iCount, _ := strconv.Atoi(count)
 	return c.storage.PackageTime(iCount)
 }

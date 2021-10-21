@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bCoder778/qitmeer-explorer/conf"
 	"github.com/bCoder778/qitmeer-sync/params"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -75,20 +75,17 @@ func (c *Controller) GetCirculating() string {
 
 func (c *Controller) getCirculating() string {
 	count, err := c.storage.GetValidBlockCount()
+	height, err := c.storage.GetLastHeight()
 	if err != nil {
 		return "0"
 	}
-	var reward uint64
-	var genesisUTXO uint64
-	switch conf.Setting.Qitmeer.Version {
-	case "0.9":
-		reward = params.Qitmeer9Params.BlockReward
-		genesisUTXO = params.Qitmeer9Params.GenesisUTXO["PMEER"]
-	case "0.10":
-		reward = params.Qitmeer10Params.BlockReward
-		genesisUTXO = params.Qitmeer10Params.GenesisUTXO["MEER"]
-	}
+	reward := params.Qitmeer10Params.BlockReward
+	genesisUTXO := params.Qitmeer10Params.GenesisUTXO["MEER"]
+	unlock := uint64(math.Floor(float64(height)/2880)+1) * 2640287564088
+
+	genesisUTXO = genesisUTXO + unlock
 	circulating := (uint64(count)-1)*reward + genesisUTXO
+
 	sCirculating := strconv.FormatUint(circulating, 10)
 	return sCirculating
 }

@@ -15,3 +15,17 @@ func (d *DB) UpdatePeer(peer *dbtypes.Peer) error {
 	}
 	return err
 }
+
+func (d *DB) UpdateLocation(local *dbtypes.Location) error {
+	loc := &dbtypes.Location{}
+
+	ok, err := d.engine.Table(new(dbtypes.Location)).Where("ip = ?", local.IpAddress).Get(loc)
+	if ok {
+		_, err = d.engine.Table(new(dbtypes.Location)).Where("ip = ?", local.IpAddress).Update(map[string]interface{}{
+			"other": local.Other,
+		})
+	} else {
+		_, err = d.engine.Insert(local)
+	}
+	return err
+}

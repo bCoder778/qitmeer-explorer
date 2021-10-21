@@ -18,32 +18,41 @@ type Peer struct {
 	Other    string `xorm:"varchar(64)" json:"other"`
 }
 
+type Location struct {
+	Id        int     `xorm:"int autoincr pk"`
+	IpAddress string  `xorm:"varchar(100) ip"`
+	Other     string  `xorm:"varchar(200)"`
+	City      string  `xorm:"nvarchar(100)"`
+	Lat       float64 `xorm:"varchar(100)"`
+	Lon       float64 `xorm:"varchar(100)"`
+}
+
 type TimeInfo struct {
-	Address string `json:"address"`
-	PeerId string `json:"peerId"`
-	Miner string `json:"miner"`
-	WaitSec int64 `json:"waitSeconds"`
-	WaitTime string `json:"waitTime"`
+	Address   string `json:"address"`
+	PeerId    string `json:"peerId"`
+	Miner     string `json:"miner"`
+	WaitSec   int64  `json:"waitSeconds"`
+	WaitTime  string `json:"waitTime"`
 	BlockHash string `json:"blockHash"`
-	TxId string `json:"txId"`
+	TxId      string `json:"txId"`
 }
 
 type Package struct {
-	MaxInfo *TimeInfo `json:"maxTime"`
-	MinInfo *TimeInfo `json:"minTime"`
-	AvgTime string `json:"avgTime"`
-	AvgSeconds float64 `json:"avgSeconds"`
-	TxCount int64 `json:"txCount"`
-	SumSec int64 `json:"sumSeconds"`
-	Miners []MinerInfo `json:"miners"`
+	MaxInfo    *TimeInfo   `json:"maxTime"`
+	MinInfo    *TimeInfo   `json:"minTime"`
+	AvgTime    string      `json:"avgTime"`
+	AvgSeconds float64     `json:"avgSeconds"`
+	TxCount    int64       `json:"txCount"`
+	SumSec     int64       `json:"sumSeconds"`
+	Miners     []MinerInfo `json:"miners"`
 }
 
 type MinerInfo struct {
-	PeerId string `json:"peerId"`
-	Address string `json:"address"`
-	Miner string `json:"miner"`
-	TxCount int64 `json:"txCount"`
-	AvgTime string `json:"avgTime"`
-	SumSec int64 `json:"sumSec"`
+	PeerId     string  `json:"peerId"`
+	Address    string  `json:"address"`
+	Miner      string  `json:"miner"`
+	TxCount    int64   `json:"txCount"`
+	AvgTime    string  `json:"avgTime"`
+	SumSec     int64   `json:"sumSec"`
 	AvgSeconds float64 `json:"avgSeconds"`
 }

@@ -106,6 +106,7 @@ func (a *Api) addApi() {
 		GetSub("transfers", a.lastAddressTransactions)
 
 	a.rest.AuthRouteSet("api/v2/chain").
+		GetSub("search", a.searchV2).
 		GetSub("tips", a.tips).
 		GetSub("txWaitTime", a.packageTime).
 		GetSub("algorithm/list", a.algorithmList).
@@ -423,6 +424,18 @@ func (a *Api) queryTransactionsByBlockHash(ct *Context) (interface{}, *Error) {
 	rs, err := a.controller.BlockTransactions(hash, size, page)
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	return rs, nil
+}
+
+func (a *Api) searchV2(ct *Context) (interface{}, *Error) {
+	val := ct.Query["value"]
+	if len(val) == 0 {
+		return "", &Error{ERROR_PARAM, "condition is required"}
+	}
+	rs, err := a.controller.SearchV2(val)
+	if err != nil {
+		return "", &Error{ERROR_UNKNOWN, err.Error()}
 	}
 	return rs, nil
 }
