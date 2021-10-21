@@ -15,7 +15,7 @@ func (c *Controller) SearchV2(value string) (interface{}, error) {
 	}
 
 	block, _ := c.storage.GetBlock(value)
-	if block != nil {
+	if len(block.Hash) > 0 {
 		return &types.SearchResult{
 			Type:  "block",
 			Value: value,
@@ -23,12 +23,12 @@ func (c *Controller) SearchV2(value string) (interface{}, error) {
 	}
 
 	tx, _ := c.storage.GetTransactionByTxId(value)
-	if tx != nil {
+	if len(tx) > 0 {
 		return &types.SearchResult{
 			Type:  "transaction",
 			Value: value,
 		}, nil
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, fmt.Errorf("SEARCH_NOT_FOUND")
 }
