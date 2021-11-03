@@ -80,7 +80,8 @@ func (a *Api) addApi() {
 		GetSub("max", a.getMax).
 		GetSub("maxfloat", a.getMaxFloat)
 
-	// Api V2
+
+		// Api V2
 	a.rest.AuthRouteSet("api/v2/block").
 		GetSub("detail", a.getBlock).
 		GetSub("list", a.queryBLock).
@@ -115,7 +116,8 @@ func (a *Api) addApi() {
 		GetSub("circulating", a.getCirculating).
 		GetSub("circulatingfloat", a.getCirculatingFloat).
 		GetSub("max", a.getMax).
-		GetSub("maxfloat", a.getMaxFloat)
+		GetSub("maxfloat", a.getMaxFloat).
+		GetSub("volume", a.volume)
 
 }
 
@@ -377,6 +379,22 @@ func (a *Api) packageTime(ct *Context) (interface{}, *Error) {
 func (a *Api) coinIdList(ct *Context) (interface{}, *Error) {
 	tokens := a.controller.GetCoinIds()
 	return tokens, nil
+}
+
+func(a *Api)volume (ct *Context) (interface{}, *Error) {
+	var before int64
+	var err error
+	b := ct.Query["before"]
+	if len(b) == 0{
+		before = 0
+	}else{
+		before, err = strconv.ParseInt(b, 10, 64)
+		if err != nil{
+			return "", &Error{ERROR_UNKNOWN, err.Error()}
+		}
+	}
+	v := a.controller.Volume(before)
+	return v, nil
 }
 
 func (a *Api) parseListParam(ct *Context) (int, int, error) {
