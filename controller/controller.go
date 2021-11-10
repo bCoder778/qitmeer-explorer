@@ -15,6 +15,7 @@ type Controller struct {
 	qitmeer   IQitmeer
 	cache     *cache.MemCache
 	rpcClient *rpc.Client
+	conf *conf.Config
 }
 
 func NewController(conf *conf.Config) (*Controller, error) {
@@ -32,7 +33,7 @@ func NewController(conf *conf.Config) (*Controller, error) {
 		return nil, err
 	}
 	go qitmeer.StartFindPeer()
-	return &Controller{storage: storage, qitmeer: qitmeer, cache: cache.NewMemCache(), rpcClient: rpcCli}, nil
+	return &Controller{storage: storage, qitmeer: qitmeer, cache: cache.NewMemCache(), rpcClient: rpcCli, conf:conf}, nil
 }
 
 func (c *Controller) Close() {
