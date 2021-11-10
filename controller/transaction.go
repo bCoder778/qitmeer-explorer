@@ -55,7 +55,7 @@ func (c *Controller) LastAddressTransactions(page, size int, address, coin strin
 
 func (c *Controller) lastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
 	if !CheckAddress(address, c.conf.Qitmeer.Network){
-		return &types.ListResp{}, fmt.Errorf("invalid address")
+		return &types.ListResp{}, InvalidAddr
 	}
 
 	txIds, err := c.storage.LastAddressTxId(page, size, address, coin)
