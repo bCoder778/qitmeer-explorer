@@ -52,7 +52,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Warn(err.Message)
-		rs, e := json.Marshal(*err.DealError())
+		rs, e := json.Marshal(err)
 		if e != nil {
 			log.Error(e.Error())
 		}
