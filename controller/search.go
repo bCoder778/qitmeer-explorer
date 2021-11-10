@@ -5,6 +5,8 @@ import (
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 )
 
+var InvalidAddr = fmt.Errorf("invalid address")
+
 func (c *Controller) SearchV2(value string) (interface{}, error) {
 
 	if len(value) == 35 {
@@ -12,7 +14,7 @@ func (c *Controller) SearchV2(value string) (interface{}, error) {
 			return &types.SearchResult{
 				Type:  "address",
 				Value: value,
-			}, fmt.Errorf("invalid address")
+			}, InvalidAddr
 		}
 	}
 

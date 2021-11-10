@@ -453,7 +453,7 @@ func (a *Api) searchV2(ct *Context) (interface{}, *Error) {
 	}
 	rs, err := a.controller.SearchV2(val)
 	if err != nil {
-		return "", &Error{ERROR_UNKNOWN, err.Error()}
+		return "", ParseError(err)
 	}
 	return rs, nil
 }
