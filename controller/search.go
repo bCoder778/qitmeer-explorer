@@ -15,6 +15,11 @@ func (c *Controller) SearchV2(value string) (interface{}, error) {
 				Type:  "address",
 				Value: value,
 			}, InvalidAddr
+		}else{
+			return &types.SearchResult{
+				Type:  "address",
+				Value: value,
+			}, nil
 		}
 	}
 

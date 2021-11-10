@@ -37,7 +37,6 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 	); err != nil {
 		return nil, err
 	}
-
 	return &DB{engine: engine}, nil
 }
 
