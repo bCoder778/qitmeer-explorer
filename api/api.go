@@ -231,7 +231,7 @@ func (a *Api) lastAddressTransactions(ct *Context) (interface{}, *Error) {
 	}
 	txs, err := a.controller.LastAddressTransactions(page, size, ct.Query["address"], coin)
 	if err != nil {
-		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+		return txs, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	return txs, nil
 }
@@ -280,7 +280,7 @@ func (a *Api) getTransaction(ct *Context) (interface{}, *Error) {
 func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
 	status, err := a.controller.AddressStatus(ct.Query["address"], ct.Query["coin"])
 	if err != nil {
-		return nil, &Error{
+		return status, &Error{
 			Code:    ERROR_UNKNOWN,
 			Message: err.Error(),
 		}
