@@ -392,3 +392,8 @@ type SearchResult struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
 }
+
+type MeerPrice struct {
+	Price     float64 `json:"price"`
+	Fluctuate float64 `json:"fluctuate"`
+}

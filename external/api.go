@@ -10,7 +10,7 @@ import (
 
 const (
 	getIpInfo = "http://ip-api.com/json/"
-	getPrices = "https://www.ubcoin.pro/api/ubcoin-recharge/runDown/getAllRunDown"
+	getPrices = "https://api.jbex.com/openapi/quote/v1/ticker/24hr?symbol=MEERUSDT"
 )
 
 func GetIpInfo(ip string) (*IpInfo, error) {
@@ -21,6 +21,21 @@ func GetIpInfo(ip string) (*IpInfo, error) {
 		return nil, err
 	}
 	return ipInfo, err
+}
+
+func GetPrice() (*JbexResp, error) {
+	body, err := getBody("GET", getPrices, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &JbexResp{}
+	err = json.Unmarshal(body, resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func getBody(method string, url string, param map[string]interface{}) ([]byte, error) {

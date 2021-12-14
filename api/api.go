@@ -115,7 +115,8 @@ func (a *Api) addApi() {
 		GetSub("circulating", a.getCirculating).
 		GetSub("circulatingfloat", a.getCirculatingFloat).
 		GetSub("max", a.getMax).
-		GetSub("maxfloat", a.getMaxFloat)
+		GetSub("maxfloat", a.getMaxFloat).
+		GetSub("price", a.meerPrice)
 
 }
 
@@ -437,5 +438,10 @@ func (a *Api) searchV2(ct *Context) (interface{}, *Error) {
 	if err != nil {
 		return "", &Error{ERROR_UNKNOWN, err.Error()}
 	}
+	return rs, nil
+}
+
+func (a *Api) meerPrice(ct *Context) (interface{}, *Error) {
+	rs := a.controller.GetMeerPrice()
 	return rs, nil
 }
