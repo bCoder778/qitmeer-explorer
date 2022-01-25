@@ -20,7 +20,7 @@ var Miners = MinerPools{
 		Name: "MeerPool",
 		Url:  "https://www.meerpool.com",
 	},
-	"MmQvwPfLRBZ4ujEwmdj8Fp7Ge6CFAEoiof5 ": {
+	"MmQvwPfLRBZ4ujEwmdj8Fp7Ge6CFAEoiof5": {
 		Name: "HashPool",
 		Url:  "https://hashpool.com",
 	},
