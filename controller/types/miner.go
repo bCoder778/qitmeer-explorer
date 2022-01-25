@@ -16,35 +16,19 @@ func (m MinerPools) Get(address string) (bool, *MinerPool) {
 }
 
 var Miners = MinerPools{
-	"TmPrXkjpjSUBiFG9RZKPjfdsAPbiaar94Ta": &MinerPool{
-		Name: "666pool.cn",
-		Url:  "https://www.666pool.cn",
-	},
-	"TmVfDq18VqSg735ko9aAo36tFwYww4PBGMC": {
-		Name: "meerpool.com",
+	"MmPS2J6VqkJEotaxQSakvEkDsHHV6oJniaV": {
+		Name: "MeerPool",
 		Url:  "https://www.meerpool.com",
 	},
-	"TmekMwXHgk6NHD2i9ZtHeWfnC8ypfPvxvgf": {
-		Name: "meerpool.com",
-		Url:  "https://www.meerpool.com",
-	},
-	"TmUHh6bAdLbto9AYhodEwGZi9WY77CoBFXr": {
-		Name: "Hashpool",
+	"MmQvwPfLRBZ4ujEwmdj8Fp7Ge6CFAEoiof5 ": {
+		Name: "HashPool",
 		Url:  "https://hashpool.com",
 	},
-	"TmRfnZPT3r93WG1LhHdEgeJi36gmPN4MytD": {
-		Name: "uupool.cn",
-		Url:  "https://uupool.cn",
-	},
-	"TmX7F5yEq65Yb5x3uHmNNEVZ7DwwqZxTKtg": {
-		Name: "hpt.com",
+	"MmcepjS9G4oNhQrhKs6J6XaVALsKAVEWz5F": {
+		Name: "HuobiPool",
 		Url:  "https://hpt.com",
 	},
-	"TmRVpyzdG26WjygpTxqPb82H1HWVhD6nuZJ": {
-		Name: "hpt.com",
-		Url:  "https://hpt.com",
-	},
-	"TmYEsUQbcbFG3t2rEZfRqgk5DhDBhof9qSJ": {
+	"MmUt7mUmQSCSAU7FJPmKAEHdiGsKkrKhdoD": {
 		Name: "F2Pool",
 		Url:  "https://www.f2pool.com",
 	},
@@ -60,10 +44,9 @@ type DistributionResp struct {
 	LastTimestamp    int64   `json:"lasttimestamp"`
 }
 
-
 type DistributionsResp struct {
-	Page  int `json:"page"`
-	Size  int `json:"size"`
+	Page  int                 `json:"page"`
+	Size  int                 `json:"size"`
 	List  []*DistributionResp `json:"list"`
-	Count int64 `json:"count"`
+	Count int64               `json:"count"`
 }
