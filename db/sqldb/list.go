@@ -104,15 +104,15 @@ func (d *DB) QueryTokenTransaction(page, size int, coinId, stat string) ([]*type
 	return vos, err
 }
 
-func (d *DB)QueryTransfer(page, size int)([]*types.Transaction, error){
+func (d *DB) QueryTransfer(page, size int) ([]*types.Transaction, error) {
 	page -= 1
 	start := page * size
 	var txs []*types.Transaction
-	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 0, 0).Desc("timestamp").Limit(size, start).Find(&txs)
+	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 0, 0).Desc("block_order").Limit(size, start).Find(&txs)
 	return txs, err
 }
 
-func (d *DB)QueryCoinbase(page, size int)([]*types.Transaction, error){
+func (d *DB) QueryCoinbase(page, size int) ([]*types.Transaction, error) {
 	page -= 1
 	start := page * size
 	var txs []*types.Transaction
