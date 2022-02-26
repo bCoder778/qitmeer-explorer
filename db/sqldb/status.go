@@ -6,6 +6,7 @@ import (
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
 	"strconv"
+	"time"
 )
 
 func (d *DB) BlocksCount() int64 {
@@ -144,4 +145,18 @@ func resolveTime(seconds int64) (hour, minute, second int64) {
 	minute = (seconds - day * 24 * 3600 - hour * 3600) / 60
 	second = seconds - day * 24 * 3600 - hour * 3600 - minute * 60
 	return
+}
+
+func (d *DB)GetChainVolume(before int64) int64{
+	var rs int64
+	if before == 0{
+		rs, _ = d.engine.Table(new(types.Transfer)).Where("is_coinbase = ? and tx_id <> ? and transfer.change < ? ",
+			0, "d67673726970e06d866052188d1da4711570c343ea22ad334cac14d6de958599", 0).SumInt(new(types.Transfer), "change")
+	}else{
+		end := time.Now().Unix()
+		start := end - before
+		rs, _ = d.engine.Where("timestamp between ? and ? and is_coinbase = ? and tx_id <> ? and transfer.change < ? ",
+			start, end, 0, "d67673726970e06d866052188d1da4711570c343ea22ad334cac14d6de958599", 0).SumInt(new(types.Transfer), "change")
+	}
+	return rs
 }

@@ -17,7 +17,7 @@ func (c *Controller) AlgorithmList() []*types.AlgorithmResp {
 }
 
 func (c *Controller) AlgorithmLine(algorithm string, sec int) *types.AlgorithmLineResp {
-	key := fmt.Sprintf("%s-%s", algorithm, sec)
+	key := fmt.Sprintf("%s-%d", algorithm, sec)
 	value, err := c.cache.Value("AlgorithmLine", key)
 	if err != nil {
 		line := c.qitmeer.AlgorithmLine(algorithm, sec)

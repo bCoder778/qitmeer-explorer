@@ -80,7 +80,8 @@ func (a *Api) addApi() {
 		GetSub("max", a.getMax).
 		GetSub("maxfloat", a.getMaxFloat)
 
-	// Api V2
+
+		// Api V2
 	a.rest.AuthRouteSet("api/v2/block").
 		GetSub("detail", a.getBlock).
 		GetSub("list", a.queryBLock).
@@ -117,7 +118,7 @@ func (a *Api) addApi() {
 		GetSub("max", a.getMax).
 		GetSub("maxfloat", a.getMaxFloat).
 		GetSub("price", a.meerPrice)
-
+		GetSub("volume", a.volume)
 }
 
 func (a *Api) queryBLock(ct *Context) (interface{}, *Error) {
@@ -230,7 +231,7 @@ func (a *Api) lastAddressTransactions(ct *Context) (interface{}, *Error) {
 	}
 	txs, err := a.controller.LastAddressTransactions(page, size, ct.Query["address"], coin)
 	if err != nil {
-		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+		return txs, ParseError(err)
 	}
 	return txs, nil
 }
@@ -279,10 +280,7 @@ func (a *Api) getTransaction(ct *Context) (interface{}, *Error) {
 func (a *Api) addressStatus(ct *Context) (interface{}, *Error) {
 	status, err := a.controller.AddressStatus(ct.Query["address"], ct.Query["coin"])
 	if err != nil {
-		return nil, &Error{
-			Code:    ERROR_UNKNOWN,
-			Message: err.Error(),
-		}
+		return status, ParseError(err)
 	}
 	return status, nil
 }
@@ -380,6 +378,22 @@ func (a *Api) coinIdList(ct *Context) (interface{}, *Error) {
 	return tokens, nil
 }
 
+func(a *Api)volume (ct *Context) (interface{}, *Error) {
+	var before int64
+	var err error
+	b := ct.Query["before"]
+	if len(b) == 0{
+		before = 0
+	}else{
+		before, err = strconv.ParseInt(b, 10, 64)
+		if err != nil{
+			return "", &Error{ERROR_UNKNOWN, err.Error()}
+		}
+	}
+	v := a.controller.Volume(before)
+	return v, nil
+}
+
 func (a *Api) parseListParam(ct *Context) (int, int, error) {
 	page, err := strconv.Atoi(ct.Query["page"])
 	if err != nil {
@@ -436,7 +450,7 @@ func (a *Api) searchV2(ct *Context) (interface{}, *Error) {
 	}
 	rs, err := a.controller.SearchV2(val)
 	if err != nil {
-		return "", &Error{ERROR_UNKNOWN, err.Error()}
+		return "", ParseError(err)
 	}
 	return rs, nil
 }

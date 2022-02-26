@@ -76,6 +76,7 @@ type IStatus interface {
 	BlocksDistributionCount() int64
 	BlocksCount() int64
 	PackageTime(count int) *dbtypes.Package
+	GetChainVolume(before int64) int64
 }
 
 func ConnectDB(setting *conf.Config) (*sqldb.DB, error) {

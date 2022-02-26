@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/Qitmeer/qitmeer/common/encode/base58"
 	types2 "github.com/Qitmeer/qitmeer/core/types"
+	"github.com/Qitmeer/qitmeer/qx"
 	"github.com/bCoder778/qitmeer-explorer/controller/types"
 	"time"
 )
@@ -54,6 +57,9 @@ func (c *Controller) AddressStatus(address string, coin string) (*types.AddressS
 }
 
 func (c *Controller) addressStatus(address string, coin string) (*types.AddressStatusResp, error) {
+	if !CheckAddress(address, c.conf.Qitmeer.Network){
+		return &types.AddressStatusResp{}, InvalidAddr
+	}
 	getAmount := func(coinId string, value int64) float64 {
 		amount := types2.Amount{
 			Id:    types2.NewCoinID(coinId),
@@ -88,4 +94,14 @@ func (c *Controller) addressStatus(address string, coin string) (*types.AddressS
 		Locked:     locked,
 		Uncofirmed: unconfirmed,
 	}, nil
+}
+
+func CheckAddress(address string, net string) bool {
+	_, v, err := base58.QitmeerCheckDecode(address)
+	if err != nil {
+		return false
+	}
+	flag := qx.QitmeerBase58checkVersionFlag{}
+	flag.Set(net)
+	return bytes.Compare(flag.Ver, v[:]) == 0
 }

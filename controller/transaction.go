@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Controller) LastTransactions(page, size int) (*types.ListResp, error) {
-	key := fmt.Sprintf("%s-%s", page, size)
+	key := fmt.Sprintf("%d-%d", page, size)
 	value, err := c.cache.Value("LastTransactions", key)
 	if err != nil {
 		list, err := c.lastTransactions(page, size)
@@ -40,7 +40,7 @@ func (c *Controller) lastTransactions(page, size int) (*types.ListResp, error) {
 }
 
 func (c *Controller) LastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
-	key := fmt.Sprintf("%s-%s-%s-%s", page, size, address, coin)
+	key := fmt.Sprintf("%d-%d-%s-%s", page, size, address, coin)
 	value, err := c.cache.Value("LastAddressTransactions", key)
 	if err != nil {
 		list, err := c.lastAddressTransactions(page, size, address, coin)
@@ -54,6 +54,10 @@ func (c *Controller) LastAddressTransactions(page, size int, address, coin strin
 }
 
 func (c *Controller) lastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
+	if !CheckAddress(address, c.conf.Qitmeer.Network){
+		return &types.ListResp{}, InvalidAddr
+	}
+
 	txIds, err := c.storage.LastAddressTxId(page, size, address, coin)
 	if err != nil {
 		return nil, err
