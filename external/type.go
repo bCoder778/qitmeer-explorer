@@ -16,3 +16,8 @@ type IpInfo struct {
 	As          string  `json:"as"`
 	Query       string  `json:"query"`
 }
+
+type JbexResp struct {
+	LastPrice string `json:"lastPrice"`
+	OpenPrice string `json:"openPrice"`
+}

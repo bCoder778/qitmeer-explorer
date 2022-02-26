@@ -231,10 +231,8 @@ func (c *Controller) transactionDetail(txId string, hash, address string) (*type
 			fees.TotalVin = getAmount(coinId, fees.UTotalVin)
 			fees.TotalVout = getAmount(coinId, fees.UTotalVout)
 			fees.Amount = getAmount(coinId, fees.UTotalVin-fees.UTotalVout)
-		} else {
-			fees.Amount = 0
+			feesList = append(feesList, fees)
 		}
-		feesList = append(feesList, fees)
 	}
 	header.Changes = changeList
 	header.Fees = feesList

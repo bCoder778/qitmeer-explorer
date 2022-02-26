@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bCoder778/qitmeer-explorer/controller/types"
+	"github.com/bCoder778/qitmeer-explorer/external"
 	"github.com/bCoder778/qitmeer-sync/params"
 	"io/ioutil"
 	"math"
@@ -128,4 +130,25 @@ func getBody(method string, url string, param map[string]interface{}) ([]byte, e
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	return body, err
+}
+
+func (c *Controller) GetMeerPrice() types.MeerPrice {
+	value, err := c.cache.Value("MeerPrice", "MeerPrice")
+	if err != nil {
+
+		rs, err := external.GetPrice()
+		if err != nil {
+			return types.MeerPrice{Price: 0, Fluctuate: 0}
+		}
+
+		last, _ := strconv.ParseFloat(rs.LastPrice, 32)
+		open, _ := strconv.ParseFloat(rs.OpenPrice, 32)
+		price := types.MeerPrice{
+			Price:     last,
+			Fluctuate: (last - open) / open,
+		}
+		c.cache.Add("MeerPrice", "MeerPrice", 15*60*time.Second, price)
+		return price
+	}
+	return value.(types.MeerPrice)
 }
