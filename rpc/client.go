@@ -185,6 +185,19 @@ func (c *Client) GetPeerInfo() ([]PeerInfo, error) {
 	return rs, nil
 }
 
+func (c *Client) GetNodeInfo() (*Node, error) {
+	var params []interface{}
+	resp := NewReqeust(params).SetMethod("getNodeInfo").call(c.auth)
+	if resp.Error != nil {
+		return nil, errors.New(resp.Error.Message)
+	}
+	var rs *Node
+	if err := json.Unmarshal(resp.Result, &rs); err != nil {
+		return nil, err
+	}
+	return rs, nil
+}
+
 func (c *Client) GetNodeList() ([]Node, error) {
 	var params []interface{}
 	resp := NewReqeust(params).SetMethod("getNodeList").call(c.auth)
