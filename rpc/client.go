@@ -185,7 +185,7 @@ func (c *Client) GetPeerInfo() ([]PeerInfo, error) {
 	return rs, nil
 }
 
-func (c *Client) GetNodeInfo() (*Node, error) {
+func (c *Client) GetNodeInfo() (*NodeI, error) {
 	var params []interface{}
 	resp := NewReqeust(params).SetMethod("getNodeInfo").call(c.auth)
 	if resp.Error != nil {

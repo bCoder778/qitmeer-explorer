@@ -123,10 +123,11 @@ type PeerInfo struct {
 }
 
 type Node struct {
-	Id          string `json:"id"`
-	Ip          string `json:"ip"`
-	ConnectTime string `json:"connecttime"`
-	Connected   bool   `json:"connected"`
+	Id          string     `json:"id"`
+	Ip          string     `json:"ip"`
+	ConnectTime string     `json:"connecttime"`
+	Connected   bool       `json:"connected"`
+	GraphState  GraphState `json:"graphstate"`
 }
 
 type Token struct {
