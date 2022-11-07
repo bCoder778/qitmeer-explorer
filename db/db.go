@@ -77,6 +77,7 @@ type IStatus interface {
 	BlocksCount() int64
 	PackageTime(count int) *dbtypes.Package
 	GetChainVolume(before int64) int64
+	AvgBlocks(sec uint64) float64
 }
 
 func ConnectDB(setting *conf.Config) (*sqldb.DB, error) {

@@ -109,6 +109,7 @@ func (a *Api) addApi() {
 		GetSub("search", a.searchV2).
 		GetSub("tips", a.tips).
 		GetSub("txWaitTime", a.packageTime).
+		GetSub("avgBlocks", a.avgBlocks).
 		GetSub("algorithm/list", a.algorithmList).
 		GetSub("algorithm/line", a.algorithmLine).
 		GetSub("miner", a.blocksDistribution).
@@ -369,6 +370,16 @@ func (a *Api) tips(ct *Context) (interface{}, *Error) {
 func (a *Api) packageTime(ct *Context) (interface{}, *Error) {
 	count := ct.Query["count"]
 	packgeInfo := a.controller.PackageTime(count)
+	return packgeInfo, nil
+}
+
+func (a *Api) avgBlocks(ct *Context) (interface{}, *Error) {
+	sec := ct.Query["sec"]
+	iSec, err := strconv.ParseUint(sec, 10, 64)
+	if err != nil {
+		return "", &Error{ERROR_UNKNOWN, err.Error()}
+	}
+	packgeInfo := a.controller.AvgBlocks(iSec)
 	return packgeInfo, nil
 }
 

@@ -111,3 +111,7 @@ func (c *Controller) packageTime(count string) *dbtype.Package {
 	iCount, _ := strconv.Atoi(count)
 	return c.storage.PackageTime(iCount)
 }
+
+func (c *Controller) AvgBlocks(sec uint64) float64 {
+	return c.storage.AvgBlocks(sec)
+}

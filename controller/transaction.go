@@ -54,7 +54,8 @@ func (c *Controller) LastAddressTransactions(page, size int, address, coin strin
 }
 
 func (c *Controller) lastAddressTransactions(page, size int, address, coin string) (*types.ListResp, error) {
-	if !CheckAddress(address, c.conf.Qitmeer.Network){
+	address = PkAddressToAddress(address)
+	if !CheckAddress(address, c.conf.Qitmeer.Network) {
 		return &types.ListResp{}, InvalidAddr
 	}
 
@@ -98,6 +99,7 @@ func (c *Controller) TransactionDetail(txId string, hash, address string) (*type
 }
 
 func (c *Controller) transactionDetail(txId string, hash, address string) (*types.TransactionDetailResp, error) {
+	address = PkAddressToAddress(address)
 	var header *types.TransactionResp = &types.TransactionResp{}
 	vin := []*types.VinResp{}
 	vout := []*types.VoutResp{}

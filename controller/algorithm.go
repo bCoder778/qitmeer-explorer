@@ -39,10 +39,10 @@ func (c *Controller) GetCoinIds() []string {
 }
 
 func (c *Controller) getCoinIds() []string {
-	coinIds := []string{}
-	tokens, _ := c.rpcClient.GetTokens()
-	for _, token := range tokens {
-		coinIds = append(coinIds, token.CoinName)
-	}
+	coinIds := []string{"MEER", "MEER Balance"}
+	//tokens, _ := c.rpcClient.GetTokens()
+	//for _, token := range tokens {
+	//	coinIds = append(coinIds, token.CoinName)
+	//}
 	return coinIds
 }

@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Qitmeer/qitmeer v0.10.6
+	github.com/Qitmeer/qng-core v1.2.16 // indirect
 	github.com/bCoder778/log v0.1.3
 	github.com/bCoder778/qitmeer-sync v0.1.7-0.20220401024614-3873aa709917
 	github.com/bluele/gcache v0.0.2

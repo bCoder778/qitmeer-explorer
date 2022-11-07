@@ -26,17 +26,17 @@ func ConnectMysql(conf *conf.DB) (*DB, error) {
 	}
 	engine.ShowSQL(true)
 
-	if err = engine.Sync2(
-		new(types.Block),
-		new(types.Transaction),
-		new(types.Vin),
-		new(types.Vout),
-		new(types.Transfer),
-		new(dbtypes.Peer),
-		new(dbtypes.Location),
-	); err != nil {
-		return nil, err
-	}
+	//if err = engine.Sync2(
+	//	new(types.Block),
+	//	new(types.Transaction),
+	//	new(types.Vin),
+	//	new(types.Vout),
+	//	new(types.Transfer),
+	//	new(dbtypes.Peer),
+	//	new(dbtypes.Location),
+	//); err != nil {
+	//	return nil, err
+	//}
 	return &DB{engine: engine}, nil
 }
 

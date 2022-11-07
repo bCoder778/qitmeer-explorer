@@ -105,11 +105,11 @@ func (p *PeerManager) Find() {
 		case <-p.stop:
 			return
 		case <-t.C:
-			if ps, _ := p.rpcClient.GetPeerInfo(); len(ps) != 0 {
-				for _, peer := range ps {
-					p.AddPeer(&types.Peer{Address: peer.Addr})
-				}
-			}
+			//if ps, _ := p.rpcClient.GetPeerInfo(); len(ps) != 0 {
+			//	for _, peer := range ps {
+			//		p.AddPeer(&types.Peer{Address: peer.Addr})
+			//	}
+			//}
 			peers := p.getFindPeer()
 			if len(peers) != 0 {
 				for _, peer := range peers {

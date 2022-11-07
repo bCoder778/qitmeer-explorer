@@ -57,7 +57,8 @@ func (c *Controller) AddressStatus(address string, coin string) (*types.AddressS
 }
 
 func (c *Controller) addressStatus(address string, coin string) (*types.AddressStatusResp, error) {
-	if !CheckAddress(address, c.conf.Qitmeer.Network){
+	address = PkAddressToAddress(address)
+	if !CheckAddress(address, c.conf.Qitmeer.Network) {
 		return &types.AddressStatusResp{}, InvalidAddr
 	}
 	getAmount := func(coinId string, value int64) float64 {
