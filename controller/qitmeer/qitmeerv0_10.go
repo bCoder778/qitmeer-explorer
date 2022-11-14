@@ -51,13 +51,12 @@ func (q *QitmeerV0_10) PeerList() []*types.PeerResp {
 		ip := string(r.Find([]byte(p.Ip)))
 
 		local := q.storage.GetLocation(ip)
-
 		loc := &types.Location{
 			City: "",
 			Lat:  0,
 			Lon:  0,
 		}
-		if local.Id < 1 {
+		if local == nil || local.Id < 1 {
 			loc = getLocation(ip)
 		} else {
 			loc.City = local.City
