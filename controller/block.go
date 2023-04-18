@@ -129,3 +129,36 @@ func (c *Controller) queryBlockByStatus(page, size int, stat string) (*types.Lis
 		Count: count,
 	}, nil
 }
+
+type InvalidBlock struct {
+	Order   uint64 `json:"order"`
+	Height  uint64 `json:"height"`
+	Hash    string `json:"hash"`
+	TxValid bool   `json:"txvalid"`
+}
+
+func (c *Controller) QueryInvalidBlock(page, size int) (*types.ListResp, error) {
+	blocks, err := c.storage.QueryInvalidBlock(page, size)
+	if err != nil {
+		return nil, err
+	}
+	count, err := c.storage.GetInvalidBlockCount()
+	if err != nil {
+		return nil, err
+	}
+	var rs []*InvalidBlock
+	for _, block := range blocks {
+		rs = append(rs, &InvalidBlock{
+			Order:   block.Order,
+			Height:  block.Height,
+			Hash:    block.Hash,
+			TxValid: block.Txvalid,
+		})
+	}
+	return &types.ListResp{
+		Page:  page,
+		Size:  size,
+		List:  rs,
+		Count: count,
+	}, nil
+}

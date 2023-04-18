@@ -86,7 +86,8 @@ func (a *Api) addApi() {
 		GetSub("list", a.queryBLock).
 		GetSub("txs", a.queryTransactionsByBlockHash).
 		GetSub("pending", a.queryBlockPending).
-		GetSub("completed", a.queryBlockCompleted)
+		GetSub("completed", a.queryBlockCompleted).
+		GetSub("invalid", a.queryBlockInvalid)
 
 	a.rest.AuthRouteSet("api/v2/tx").
 		GetSub("detail", a.getTransaction).
@@ -158,6 +159,17 @@ func (a *Api) queryBlockCompleted(ct *Context) (interface{}, *Error) {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
 	return blocks, nil
+}
+
+func (a *Api) queryBlockInvalid(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+	blocks, err := a.controller.QueryInvalidBlock(page, size)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
 }
 
 func (a *Api) queryTransaction(ct *Context) (interface{}, *Error) {

@@ -27,6 +27,7 @@ type IGet interface {
 	GetAllUtxo() float64
 	GetConfirmedBlockCount() int64
 	GetBlockCount(stat string) (int64, error)
+	GetInvalidBlockCount() (int64, error)
 	GetValidBlockCount() (int64, error)
 	GetTransactionCount(stat string) (int64, error)
 	GetAddressTransactionCount(address, coin string) (int64, error)
@@ -65,6 +66,7 @@ type IList interface {
 	LastAddressTxId(page, size int, address, coin string) ([]string, error)
 	BalanceTop(page, size int, coinId string) ([]*dbtypes.Address, error)
 	QueryBlock(page, size int, stat string) ([]*types.Block, error)
+	QueryInvalidBlock(page, size int) ([]*types.Block, error)
 	QueryTransaction(page, size int, stat string) ([]*types.Transaction, error)
 	QueryTokenTransaction(page, size int, coinId, stat string) ([]*types.Vout, error)
 	QueryTransfer(page, size int) ([]*types.Transaction, error)

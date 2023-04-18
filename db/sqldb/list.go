@@ -25,7 +25,7 @@ func (d *DB) LastTransactions(page, size int) ([]*types.Transaction, error) {
 	return txs, err
 }
 
-//select td.* from %s td left join (select address, tx_id from %s where address = '%s' group by tx_id) ot on ot.tx_id = td.tx_id left join (select `from`, spent_tx_id from %s where `from` = '%s' group by spent_tx_id) tv on tv.spent_tx_id = td.tx_id where ot.address = '%s' or tv.`from` = '%s' order by td.id desc limit %d, %d;
+// select td.* from %s td left join (select address, tx_id from %s where address = '%s' group by tx_id) ot on ot.tx_id = td.tx_id left join (select `from`, spent_tx_id from %s where `from` = '%s' group by spent_tx_id) tv on tv.spent_tx_id = td.tx_id where ot.address = '%s' or tv.`from` = '%s' order by td.id desc limit %d, %d;
 func (d *DB) LastAddressTxId(page, size int, address, coin string) ([]string, error) {
 	page -= 1
 	start := page * size
@@ -40,7 +40,7 @@ func (d *DB) LastAddressTxId(page, size int, address, coin string) ([]string, er
 	return txIds, err
 }
 
-//select address, sum(Amount) as sumamount from %s WHERE spent_tx_id = '' and stat < %d GROUP BY address ORDER BY sumamount Desc Limit %d, %d
+// select address, sum(Amount) as sumamount from %s WHERE spent_tx_id = ” and stat < %d GROUP BY address ORDER BY sumamount Desc Limit %d, %d
 func (d *DB) BalanceTop(page, size int, coinId string) ([]*dbtype.Address, error) {
 	page -= 1
 	start := page * size
@@ -64,6 +64,18 @@ func (d *DB) QueryBlock(page, size int, stat string) ([]*types.Block, error) {
 	if len(stat) > 0 {
 		sql.Where("stat in (?)", stat).And("block.order != 0 or color != 2")
 	}
+
+	err := sql.Desc("order").Limit(size, start).Find(&bs)
+	return bs, err
+}
+
+func (d *DB) QueryInvalidBlock(page, size int) ([]*types.Block, error) {
+	page -= 1
+	start := page * size
+
+	var bs []*types.Block
+
+	sql := d.engine.Table(new(types.Block)).Where("txvalid = true").And("block.order != 0 and block.height != 0")
 
 	err := sql.Desc("order").Limit(size, start).Find(&bs)
 	return bs, err

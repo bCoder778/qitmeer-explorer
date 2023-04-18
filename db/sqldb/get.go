@@ -68,6 +68,10 @@ func (d *DB) GetBlockCount(stat string) (int64, error) {
 	return sql.Count()
 }
 
+func (d *DB) GetInvalidBlockCount(stat string) (int64, error) {
+	return d.engine.Table(new(types.Block)).Where("txvalid = true and block.height <> 0 and block.order <> 0").Count()
+}
+
 func (d *DB) GetValidBlockCount() (int64, error) {
 	return d.engine.Table(new(types.Block)).Where("stat in (?, ?) and block.height <> 0 and block.order <> 0", stat.Block_Confirmed, stat.Block_Unconfirmed).Count()
 }
