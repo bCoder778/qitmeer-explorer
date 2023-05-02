@@ -75,7 +75,7 @@ func (d *DB) QueryInvalidBlock(page, size int) ([]*types.Block, error) {
 
 	var bs []*types.Block
 
-	sql := d.engine.Table(new(types.Block)).Where("txvalid = true").And("block.order != 0 and block.height != 0")
+	sql := d.engine.Table(new(types.Block)).Where("txvalid = false").And("block.order != 0 and block.height != 0")
 
 	err := sql.Desc("order").Limit(size, start).Find(&bs)
 	return bs, err
@@ -130,4 +130,12 @@ func (d *DB) QueryCoinbase(page, size int) ([]*types.Transaction, error) {
 	var txs []*types.Transaction
 	err := d.engine.Table(new(types.Transaction)).Where("is_coinbase = ? and duplicate = ?", 1, 0).Desc("timestamp").Limit(size, start).Find(&txs)
 	return txs, err
+}
+
+func (d *DB) QueryReorg(page, size int) ([]*types.Block, error) {
+	page -= 1
+	start := page * size
+	var blocks []*types.Block
+	err := d.engine.Table(new(types.Block)).Where("block.order = 0 and block.height != 0").Desc("block.height").Limit(size, start).Find(&blocks)
+	return blocks, err
 }

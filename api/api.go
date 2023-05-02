@@ -120,6 +120,31 @@ func (a *Api) addApi() {
 		GetSub("maxfloat", a.getMaxFloat).
 		GetSub("price", a.meerPrice).
 		GetSub("volume", a.volume)
+
+	a.rest.AuthRouteSet("api/v2/reorg").Get(a.queryReorg)
+	a.rest.AuthRouteSet("api/v2/orderReorg").Get(a.queryOrderReorg)
+}
+
+func (a *Api) queryReorg(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+
+	reorgs := a.controller.QueryReorg(page, size)
+
+	return reorgs, nil
+}
+
+func (a *Api) queryOrderReorg(ct *Context) (interface{}, *Error) {
+	page, size, err := a.parseListParam(ct)
+	if err != nil {
+		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
+	}
+
+	reorgs := a.controller.QueryOrderReorg(page, size)
+
+	return reorgs, nil
 }
 
 func (a *Api) queryBLock(ct *Context) (interface{}, *Error) {
@@ -170,6 +195,7 @@ func (a *Api) queryBlockInvalid(ct *Context) (interface{}, *Error) {
 	if err != nil {
 		return nil, &Error{Code: ERROR_UNKNOWN, Message: err.Error()}
 	}
+	return blocks, nil
 }
 
 func (a *Api) queryTransaction(ct *Context) (interface{}, *Error) {

@@ -1,6 +1,7 @@
 package sqldb
 
 import (
+	"fmt"
 	dbtypes "github.com/bCoder778/qitmeer-explorer/db/types"
 	"github.com/bCoder778/qitmeer-sync/storage/types"
 	"github.com/bCoder778/qitmeer-sync/verify/stat"
@@ -68,8 +69,8 @@ func (d *DB) GetBlockCount(stat string) (int64, error) {
 	return sql.Count()
 }
 
-func (d *DB) GetInvalidBlockCount(stat string) (int64, error) {
-	return d.engine.Table(new(types.Block)).Where("txvalid = true and block.height <> 0 and block.order <> 0").Count()
+func (d *DB) GetInvalidBlockCount() (int64, error) {
+	return d.engine.Table(new(types.Block)).Where("txvalid = false and block.height <> 0 and block.order <> 0").Count()
 }
 
 func (d *DB) GetValidBlockCount() (int64, error) {
@@ -95,6 +96,11 @@ func (d *DB) GetBlock(hash string) (*types.Block, error) {
 	block := &types.Block{}
 	_, err := d.engine.Table(block).Where("hash = ?", hash).Get(block)
 	return block, err
+}
+
+func (d *DB) GetReorgCount() int64 {
+	count, _ := d.engine.Table(new(types.Block)).Where("block.order = 0 and block.height != 0").Count()
+	return count
 }
 
 func (d *DB) GetBlockByOrder(order uint64) (*types.Block, error) {
@@ -187,4 +193,11 @@ func (d *DB) GetLocation(ip string) *dbtypes.Location {
 		return nil
 	}
 	return local
+}
+
+func (d *DB) GetReorgInfo(hash string) *types.Reorg {
+	reorg := &types.Reorg{}
+	_, err := d.engine.Table(new(types.Reorg)).Where("hash = ?", hash).Get(reorg)
+	fmt.Println(err)
+	return reorg
 }

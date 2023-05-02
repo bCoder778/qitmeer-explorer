@@ -17,6 +17,8 @@ type IDB interface {
 }
 
 type IGet interface {
+	GetReorgCount() int64
+	GetOrderReorgCount() int64
 	GetLastOrder() (uint64, error)
 	GetLastHeight() (uint64, error)
 	GetLastUnconfirmedOrder() (uint64, error)
@@ -46,6 +48,7 @@ type IGet interface {
 	QueryLocation() []*dbtypes.Location
 	GetLocation(ip string) *dbtypes.Location
 	UpdateLocation(local *dbtypes.Location) error
+	GetReorgInfo(hash string) *types.Reorg
 }
 
 type IQuery interface {
@@ -71,6 +74,8 @@ type IList interface {
 	QueryTokenTransaction(page, size int, coinId, stat string) ([]*types.Vout, error)
 	QueryTransfer(page, size int) ([]*types.Transaction, error)
 	QueryCoinbase(page, size int) ([]*types.Transaction, error)
+	QueryReorg(page, size int) ([]*types.Block, error)
+	QueryOrderReorg(page, size int) ([]*types.ReorgV2, error)
 }
 
 type IStatus interface {

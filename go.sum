@@ -114,6 +114,10 @@ github.com/bCoder778/qitmeer-sync v0.1.7-0.20210930014235-02201e452030 h1:C7xz4T
 github.com/bCoder778/qitmeer-sync v0.1.7-0.20210930014235-02201e452030/go.mod h1:qovexpn+WgskY7QgCpyeJVD4jdQN71GZtFTp5eirBtg=
 github.com/bCoder778/qitmeer-sync v0.1.7-0.20220401024614-3873aa709917 h1:jUbEqCNwSB6pZyx3CotXPpxvZkDdYr61dICf+FO/qAA=
 github.com/bCoder778/qitmeer-sync v0.1.7-0.20220401024614-3873aa709917/go.mod h1:mKLGlw0jiBwIaKnWCmRFD61SkqtUnhMjBLx1ZXdZzEM=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20221105071406-8708c56bf7fe h1:6SEg1wozMxNB+SRrxRjBIiG7OnoHEdy3uI/dnzp8x2I=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20221105071406-8708c56bf7fe/go.mod h1:mKLGlw0jiBwIaKnWCmRFD61SkqtUnhMjBLx1ZXdZzEM=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20230425081828-6c1aeb3b2909 h1:Cqjo1jF9vzPqgfVyqt3/oQzO28p8Lxa+ihl6JsAdlbc=
+github.com/bCoder778/qitmeer-sync v0.1.7-0.20230425081828-6c1aeb3b2909/go.mod h1:mKLGlw0jiBwIaKnWCmRFD61SkqtUnhMjBLx1ZXdZzEM=
 github.com/benbjohnson/clock v1.0.2/go.mod h1:bGMdMPoPVvcYyt1gHDf4J2KE153Yf9BuiUKYMaxlTDM=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=

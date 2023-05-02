@@ -7,7 +7,7 @@ require (
 	github.com/Qitmeer/qitmeer v0.10.6
 	github.com/Qitmeer/qng-core v1.2.16 // indirect
 	github.com/bCoder778/log v0.1.3
-	github.com/bCoder778/qitmeer-sync v0.1.7-0.20220401024614-3873aa709917
+	github.com/bCoder778/qitmeer-sync v0.1.7-0.20230425081828-6c1aeb3b2909
 	github.com/bluele/gcache v0.0.2
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/gin-gonic/gin v1.7.2 // indirect
